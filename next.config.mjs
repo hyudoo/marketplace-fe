@@ -1,22 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  experimental: {
-    appDir: true,
-    swcPlugins: [["next-superjson-plugin", {}]],
+  webpack: (config) => {
+    config.externals.push({
+      "utf-8-validate": "commonjs utf-8-validate",
+      bufferutil: "commonjs bufferutil",
+    });
+
+    return config;
   },
   images: {
-    loader: "cloudinary",
-    domains: [
-      "res.cloudinary.com",
-      "avatars.githubusercontent.com",
-      "lh3.googleusercontent.com",
-    ],
-  },
-  webpack: (config) => {
-    config.externals = [...config.externals, "bcrypt"];
-    return config;
+    domains: ["uploadthing.com", "utfs.io"],
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

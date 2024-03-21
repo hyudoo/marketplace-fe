@@ -1,22 +1,21 @@
 import React from "react";
-export type Pokemon = {
+export type Product = {
   name: string;
-  url: string;
 };
 
-export type UsePokemonListProps = {
+export type UseProductListProps = {
   /** Delay to wait before fetching more items */
   fetchDelay?: number;
 };
 
-export function usePokemonList({ fetchDelay = 0 }: UsePokemonListProps = {}) {
-  const [items, setItems] = React.useState<Pokemon[]>([]);
+export function useProductList({ fetchDelay = 0 }: UseProductListProps = {}) {
+  const [items, setItems] = React.useState<Product[]>([]);
   const [hasMore, setHasMore] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [offset, setOffset] = React.useState(0);
   const limit = 10; // Number of items per page, adjust as necessary
 
-  const loadPokemon = async (currentOffset: number) => {
+  const loadProduct = async (currentOffset: number) => {
     const controller = new AbortController();
     const { signal } = controller;
 
@@ -29,7 +28,7 @@ export function usePokemonList({ fetchDelay = 0 }: UsePokemonListProps = {}) {
       }
 
       let res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?offset=${currentOffset}&limit=${limit}`,
+        `https://pokeapi.co/api/v2/Product?offset=${currentOffset}&limit=${limit}`,
         { signal }
       );
 
@@ -54,14 +53,14 @@ export function usePokemonList({ fetchDelay = 0 }: UsePokemonListProps = {}) {
   };
 
   React.useEffect(() => {
-    loadPokemon(offset);
+    loadProduct(offset);
   }, []);
 
   const onLoadMore = () => {
     const newOffset = offset + limit;
 
     setOffset(newOffset);
-    loadPokemon(newOffset);
+    loadProduct(newOffset);
   };
 
   return {
