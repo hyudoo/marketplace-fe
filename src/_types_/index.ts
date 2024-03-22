@@ -14,6 +14,11 @@ export interface IPackage {
   amount: number;
 }
 
+export interface IProduct {
+  label: string;
+  value: string;
+}
+
 export interface IMenu {
   name: string;
   url: string;

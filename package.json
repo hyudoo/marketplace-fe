@@ -9,14 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-react": "^6.2.0",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@hookform/resolvers": "^3.3.4",
     "@nextui-org/react": "^2.2.10",
     "@nextui-org/system": "^2.0.15",
     "@nextui-org/theme": "^2.1.18",
     "@nextui-org/use-infinite-scroll": "^2.1.2",
+    "@pinata/sdk": "^2.1.0",
     "@reduxjs/toolkit": "^2.2.1",
     "@uploadthing/react": "^6.4.0",
+    "axios": "^1.6.8",
+    "ckeditor5-custom-build": "file:./ckeditor5",
     "ethers": "^6.11.1",
     "framer-motion": "^11.0.10",
     "latest": "^0.2.0",

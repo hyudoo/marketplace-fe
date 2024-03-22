@@ -6,7 +6,6 @@ import {
   Button,
   CardBody,
   CardHeader,
-  Spinner,
 } from "@nextui-org/react";
 import { IPackage, IWalletInfo } from "@/_types_";
 import { numberFormat } from "@/utils";
@@ -55,8 +54,9 @@ export default function InvestCard({
           color="default"
           radius="lg"
           size="sm"
+          isLoading={isBuying}
           onClick={onBuy}>
-          {isBuying ? <Spinner size="sm" aria-label="Loading..." /> : "Buy"}
+          Buy
         </Button>
       </CardFooter>
     </Card>

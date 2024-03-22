@@ -5,15 +5,9 @@ interface IProductProps {
   name?: string;
   image: string;
   price?: number | string;
-  onBuy?: () => void;
 }
 
-export default function ProductCard({
-  name,
-  image,
-  price,
-  onBuy,
-}: IProductProps) {
+export default function ProductCard({ name, image, price }: IProductProps) {
   return (
     <Card shadow="sm" isPressable>
       <CardBody className="overflow-visible p-0">

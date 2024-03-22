@@ -1,5 +1,4 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { ContractRunner } from "ethers";
 import { BigNumberish, ethers, Overrides } from "ethers";
 
 export default class BaseInterface {
@@ -22,8 +21,8 @@ export default class BaseInterface {
   }
 
   _handleTransactionResponse = async (tx: TransactionResponse) => {
-    const recept = await tx.wait();
-    return recept.transactionHash;
+    await tx.wait();
+    return tx.hash;
   };
 
   _numberToEth = (amount: number) => {

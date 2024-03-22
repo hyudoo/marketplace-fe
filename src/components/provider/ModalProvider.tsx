@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import CrowdSaleProviderModal from "../modal/CrowdSaleModal";
+import ProcessingModal from "../modal/ProcessingModal";
+import SuccessModal from "../modal/SuccessModal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -16,6 +18,8 @@ export const ModalProvider = () => {
   return (
     <>
       <CrowdSaleProviderModal />
+      <ProcessingModal />
+      <SuccessModal />
     </>
   );
 };

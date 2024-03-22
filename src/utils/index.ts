@@ -25,7 +25,7 @@ export const formatAccountBalance = (balance: number) => {
   return shortBalance + suffixes[suffixNum];
 };
 
-export const showTransactionHash = (tranHash: string) => {
+export const showTransactionHash = (tranHash: String) => {
   return `${tranHash?.substring(0, 10)}
   ${"".padStart(5, "*")}
   ${tranHash?.substring(tranHash.length - 10, tranHash.length)}`;

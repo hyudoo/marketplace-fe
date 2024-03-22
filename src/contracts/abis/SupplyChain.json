@@ -232,9 +232,9 @@
             },
             {
                 "indexed": false,
-                "internalType": "uint256",
+                "internalType": "string",
                 "name": "_productType",
-                "type": "uint256"
+                "type": "string"
             },
             {
                 "indexed": false,
@@ -367,7 +367,7 @@
     },
     {
         "inputs": [],
-        "name": "CREATER_ROLE",
+        "name": "DEFAULT_ADMIN_ROLE",
         "outputs": [
             {
                 "internalType": "bytes32",
@@ -380,7 +380,7 @@
     },
     {
         "inputs": [],
-        "name": "DEFAULT_ADMIN_ROLE",
+        "name": "MINTER_ROLE",
         "outputs": [
             {
                 "internalType": "bytes32",
@@ -389,6 +389,19 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "minter",
+                "type": "address"
+            }
+        ],
+        "name": "addMinter",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -469,6 +482,25 @@
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getProductURI",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "bytes32",
                 "name": "role",
                 "type": "bytes32"
@@ -523,6 +555,25 @@
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "cid",
+                "type": "string"
+            }
+        ],
+        "name": "getTransitHistory",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "",
+                "type": "address[]"
             }
         ],
         "stateMutability": "view",
@@ -626,9 +677,9 @@
                 "type": "string"
             },
             {
-                "internalType": "uint256",
+                "internalType": "string",
                 "name": "productType",
-                "type": "uint256"
+                "type": "string"
             }
         ],
         "name": "mint",
@@ -685,6 +736,19 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "minter",
+                "type": "address"
+            }
+        ],
+        "name": "removeMinter",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -808,6 +872,24 @@
             }
         ],
         "name": "setBaseURI",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "cid",
+                "type": "string"
+            }
+        ],
+        "name": "setCID",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

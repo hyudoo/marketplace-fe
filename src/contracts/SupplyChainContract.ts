@@ -1,3 +1,4 @@
+import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ProductItem } from "@/_types_";
 import { ethers } from "ethers";
 import { getRPC } from "./utils/common";
@@ -29,12 +30,22 @@ export default class SupplyChainContract extends BaseInterface {
     return ids;
   };
 
+  addProduct = async (data: any) => {
+    console.log("data", data);
+    const tx: TransactionResponse = await this._contract.mint(
+      data.address,
+      data.cid,
+      data.type
+    );
+    return this._handleTransactionResponse(tx);
+  };
+
   getListProduct = async (address: string): Promise<ProductItem[]> => {
     const ids = await this._listProductIds(address);
     return Promise.all(
       ids.map(async (id) => {
-        const productUrl = await this._contract.tokenURI(id);
-        const obj = await (await fetch(`${productUrl}.json`)).json();
+        const productUrl = await this._contract.getProductURI(id);
+        const obj = await (await fetch(`${productUrl}`)).json();
         const item: ProductItem = { ...obj, id };
         return item;
       })
@@ -44,8 +55,8 @@ export default class SupplyChainContract extends BaseInterface {
   getProductInfo = async (products: Array<any>) => {
     return Promise.all(
       products.map(async (o: any) => {
-        const productUrl = await this._contract.tokenURI(o.productId);
-        const obj = await (await fetch(`${productUrl}.json`)).json();
+        const productUrl = await this._contract.getProductURI(o.productId);
+        const obj = await (await fetch(`${productUrl}`)).json();
         const item: ProductItem = {
           ...obj,
           id: o.productId,

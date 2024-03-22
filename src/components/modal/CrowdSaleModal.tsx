@@ -4,8 +4,7 @@ import { IPackage, IRate } from "../../_types_";
 import { useModal } from "@/reduxs/use-modal-store";
 import InvestCard from "@/components/InvestCard";
 import CrowdSaleContract from "../../contracts/CrowdSaleContract";
-import MarketCoinsContract from "../../contracts/MarketCoinsContract";
-import { useAppSelector, useAppDispatch } from "@/reduxs/hooks";
+import { useAppSelector } from "@/reduxs/hooks";
 import { packages } from "../../constants";
 
 import {
@@ -13,8 +12,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
-  Button,
   useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
@@ -23,12 +20,12 @@ const CrowdSaleProviderModal = () => {
   const [rate, setRate] = React.useState<IRate>({ bnbRate: 0 });
   const [isProcessing, setIsProcessing] = React.useState<boolean>(false);
   const { wallet, signer } = useAppSelector((state) => state.account);
-  const [txHash, setTxHash] = React.useState<string>();
 
   // redux
   const { isOpen, onClose, type, data } = useModal();
   const isModalOpen = isOpen && type === "openCrowdSale";
-  const { onOpen, onOpenChange } = useDisclosure();
+  const { onOpen } = useModal();
+  const { onOpenChange } = useDisclosure();
 
   const getRate = React.useCallback(async () => {
     const crowdContract = new CrowdSaleContract();
@@ -45,11 +42,10 @@ const CrowdSaleProviderModal = () => {
       if (!signer) return;
       setPak(pk);
       setIsProcessing(true);
-      let hash = "";
       const crowdContract = new CrowdSaleContract(signer);
-      hash = await crowdContract.buyTokenByBNB(pk.amount);
-      setTxHash(hash);
-      // onOpen();
+      await crowdContract.buyTokenByBNB(pk.amount).then((tx) => {
+        onOpen("success", { hash: tx, title: "Buy Market Coins" });
+      });
     } catch (error) {
       console.log("handleBuyMKC -> error", error);
     } finally {
@@ -60,17 +56,13 @@ const CrowdSaleProviderModal = () => {
 
   return (
     <Modal
-      backdrop="opaque"
+      backdrop="blur"
       isOpen={isModalOpen}
       onOpenChange={onOpenChange}
       placement="center"
       className="overflow-y-auto"
       size="5xl"
-      onClose={onClose}
-      classNames={{
-        backdrop:
-          "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
-      }}>
+      onClose={onClose}>
       <ModalContent>
         <ModalHeader className="flex gap-2 justify-center text-large m-2 border-b-[2px]">
           <svg
@@ -89,7 +81,7 @@ const CrowdSaleProviderModal = () => {
           Crowd Sales
         </ModalHeader>
         <ModalBody>
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+          <div className="gap-2 grid grid-cols-2 md:grid-cols-4">
             {packages.map((pk, index) => (
               <InvestCard
                 pak={pk}
