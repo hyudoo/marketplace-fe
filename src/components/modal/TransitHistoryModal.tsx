@@ -12,7 +12,7 @@ import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
 import { showTransactionHash } from "@/utils";
 
-const SuccessModal = () => {
+const TransitHistoryModal = () => {
   // redux
   const { isOpen, onClose, type, data } = useModal();
   const isModalOpen = isOpen && type === "success";
@@ -54,4 +54,4 @@ const SuccessModal = () => {
   );
 };
 
-export default SuccessModal;
+export default TransitHistoryModal;

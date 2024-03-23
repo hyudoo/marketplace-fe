@@ -52,16 +52,30 @@ export default class SupplyChainContract extends BaseInterface {
     );
   };
 
-  getProductInfo = async (products: Array<any>) => {
+  getProductInfo = async (productId: number) => {
+    const productUrl = await this._contract.getProductURI(productId);
+    const obj = await (await fetch(`${productUrl}`)).json();
+    const transitHistory = await this._contract.getTransitHistory(productId);
+    const product: ProductItem = {
+      ...obj,
+      id: productId,
+      author: transitHistory[transitHistory.length - 1],
+      manufacturer: transitHistory[0],
+    };
+    return product;
+  };
+
+  getProductsInfo = async (productIds: Array<number>) => {
     return Promise.all(
-      products.map(async (o: any) => {
-        const productUrl = await this._contract.getProductURI(o.productId);
+      productIds.map(async (id: number) => {
+        const productUrl = await this._contract.getProductURI(id);
         const obj = await (await fetch(`${productUrl}`)).json();
+        const transitHistory = await this._contract.getTransitHistory(id);
         const item: ProductItem = {
           ...obj,
-          id: o.productId,
-          author: o.author,
-          price: o.price,
+          id,
+          author: transitHistory[transitHistory.length - 1],
+          manufacturer: transitHistory[0],
         };
         return item;
       })

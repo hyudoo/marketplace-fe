@@ -1,8 +1,13 @@
 import { create } from "zustand";
 
-export type ModalType = "openCrowdSale" | "processing" | "success";
+export type ModalType =
+  | "openCrowdSale"
+  | "processing"
+  | "success"
+  | "transitHistory";
 
 interface ModalData {
+  id?: number;
   title?: String;
   hash?: String;
 }

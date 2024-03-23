@@ -28,8 +28,9 @@ export interface ProductItem {
   id: number;
   name?: string;
   description?: string;
-  image: string;
+  images: string[];
   //Listing
   price?: number;
-  seller?: string;
+  author?: string;
+  manufacturer?: string;
 }

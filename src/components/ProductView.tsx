@@ -1,63 +1,52 @@
 "use client";
 import React from "react";
-import { Button, Image, image } from "@nextui-org/react";
+import { Button, Chip, Image, image } from "@nextui-org/react";
+import SupplyChainContract from "@/contracts/SupplyChainContract";
+import { useModal } from "@/reduxs/use-modal-store";
+import { ProductItem } from "@/_types_";
 
-export default function ProductView() {
-  const images = [
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-1.jpeg",
-    },
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-2.jpeg",
-    },
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-3.jpeg",
-    },
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-4.jpeg",
-    },
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-5.jpeg",
-    },
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-6.jpeg",
-    },
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-6.jpeg",
-    },
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-6.jpeg",
-    },
-    {
-      image:
-        "https://app.requestly.io/delay/1000/https://nextui-docs-v2.vercel.app/images/fruit-6.jpeg",
-    },
-  ];
-  const [mainImage, setMainImage] = React.useState<string>(images[0].image);
+interface IProductViewProps {
+  productId: number;
+}
+const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
   const [index, setIndex] = React.useState(0);
-  const [slideImage, setSlideImage] = React.useState(
-    images.slice(index, index + 4)
-  );
+  const [product, setProduct] = React.useState<ProductItem>();
+  const [mainImage, setMainImage] = React.useState<string>();
+  const [slideImage, setSlideImage] = React.useState<string[]>();
+  const { onOpen } = useModal();
+  const getProductInfo = React.useCallback(async () => {
+    try {
+      const contract = new SupplyChainContract();
+      const product = await contract.getProductInfo(productId);
+      setProduct(product);
+      setMainImage(product?.images[index]);
+      setSlideImage(product?.images.slice(index, index + 4));
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    getProductInfo();
+  }, [getProductInfo]);
 
   const handleNextImage = () => {
-    if (index + 4 < images.length) {
+    if (!product || !product.images || product.images.length === 0) {
+      return;
+    }
+    if (index + 4 < product?.images?.length) {
       setIndex(index + 1);
-      setSlideImage(images.slice(index, index + 4));
+      setSlideImage(product?.images?.slice(index, index + 4));
     }
   };
 
   const handlePreviousImage = () => {
+    if (!product || !product.images || product.images.length === 0) {
+      return;
+    }
     if (index > 0) {
       setIndex(index - 1);
-      setSlideImage(images.slice(index, index + 4));
+      setSlideImage(product?.images?.slice(index, index + 4));
     }
   };
 
@@ -91,13 +80,13 @@ export default function ProductView() {
             </Button>
           </div>
           <div className="grid grid-cols-4 gap-1">
-            {slideImage.map((img, index) => (
+            {slideImage?.map((img, index) => (
               <Image
                 key={index}
                 className="w-full h-full object-cover"
-                src={img.image}
+                src={img}
                 alt="NextUI Image with fallback"
-                onClick={() => setMainImage(img.image)}
+                onClick={() => setMainImage(img)}
               />
             ))}
           </div>
@@ -124,25 +113,31 @@ export default function ProductView() {
       </div>
       <div className="col-span-2 pl-3">
         <div className="text-xl font-bold p-2">Product Information:</div>
-        <div className="p-4 border-2 mx-4 space-y-4 border-blue-600 rounded-xl">
-          <div className="text-3xl py-2 mb-2 font-bold border-blue-600 border-b-2">
-            Sỉ 100 Cái Khẩu Trang Y Tế 5D Thịnh Phát
+        <div className="p-4 border-2 mx-4 space-y-4 border-blue-400 rounded-xl">
+          <div className="text-3xl py-2 mb-2 font-bold border-blue-400 border-b-2">
+            {product?.name}
           </div>
           <div className="space-y-2 text-lg">
             <div className="justify-between flex">
               <div className="text-gray-600 font-semibold">Manufacturer:</div>
               <div className="text-sm text-gray-600/75">
-                0xF8245050365E42C6FEc0c24539BA4E45675D8FE0
+                {product?.manufacturer}
               </div>
             </div>
             <div className="justify-between flex">
-              <div className="text-gray-600 font-semibold">Seller:</div>
+              <div className="text-gray-600 font-semibold">Author:</div>
               <div className="text-sm text-gray-600/75">
-                0xF8245050365E42C6FEc0c24539BA4E45675D8FE0
+                {product?.author || product?.manufacturer}
               </div>
             </div>
+            <Chip
+              color="primary"
+              variant="flat"
+              onClick={() => onOpen("transitHistory", { id: productId })}>
+              See also Transit History
+            </Chip>
             <div className="justify-between flex border-t-2 border-blue-600 pt-4">
-              <p className="text-500">Price: {10} MKC</p>
+              <p className="text-500">Price: {product?.price} MKC</p>
               <Button variant="bordered" color="primary">
                 Buy Now
               </Button>
@@ -151,11 +146,16 @@ export default function ProductView() {
         </div>
         <div className="text-xl font-bold p-2">Product Description:</div>
         <div className="px-4 space-y-4">
-          <div className="p-4 border-2 border-blue-600 rounded-xl">
-            DESCRIPTION
-          </div>
+          <div
+            className="p-4 border-2 border-blue-400 rounded-xl"
+            dangerouslySetInnerHTML={{
+              __html: product?.description as string,
+            }}
+          />
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default ProductView;

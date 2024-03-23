@@ -563,9 +563,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
-                "name": "cid",
-                "type": "string"
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
             }
         ],
         "name": "getTransitHistory",
