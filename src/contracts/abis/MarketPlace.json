@@ -7,7 +7,7 @@
                 "type": "address"
             },
             {
-                "internalType": "contract IERC721Enumerable",
+                "internalType": "contract SupplyChain",
                 "name": "_product",
                 "type": "address"
             }
@@ -149,7 +149,7 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "contract IERC721Enumerable",
+                "internalType": "contract SupplyChain",
                 "name": "_product",
                 "type": "address"
             }
@@ -344,7 +344,7 @@
     {
         "inputs": [
             {
-                "internalType": "contract IERC721Enumerable",
+                "internalType": "contract SupplyChain",
                 "name": "_product",
                 "type": "address"
             }

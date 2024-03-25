@@ -1,10 +1,4 @@
-import axios from "axios";
 import { NextResponse, NextRequest } from "next/server";
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 // export async function POST(request: NextRequest) {
 //   try {
@@ -54,7 +48,6 @@ export async function POST(request: NextRequest) {
       options
     );
     const IpfsHash = await res.json();
-    console.log("IpfsHash", IpfsHash);
     return NextResponse.json({ IpfsHash }, { status: 200 });
   } catch (error) {
     console.log(error);

@@ -4,6 +4,7 @@ import { Button, Chip, Image, image } from "@nextui-org/react";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useModal } from "@/reduxs/use-modal-store";
 import { ProductItem } from "@/_types_";
+import { getMarketCoinsAddress } from "@/contracts/utils/getAddress";
 
 interface IProductViewProps {
   productId: number;
@@ -14,6 +15,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
   const [mainImage, setMainImage] = React.useState<string>();
   const [slideImage, setSlideImage] = React.useState<string[]>();
   const { onOpen } = useModal();
+  const [canBuy, setCanBuy] = React.useState<boolean>(false);
   const getProductInfo = React.useCallback(async () => {
     try {
       const contract = new SupplyChainContract();
@@ -21,10 +23,13 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
       setProduct(product);
       setMainImage(product?.images[index]);
       setSlideImage(product?.images.slice(index, index + 4));
+      await contract.ownerOf(productId).then((res) => {
+        setCanBuy(res === getMarketCoinsAddress());
+      });
     } catch (err) {
       console.log(err);
     }
-  }, []);
+  }, [productId]);
 
   React.useEffect(() => {
     getProductInfo();
@@ -60,7 +65,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
           alt="NextUI Image with fallback"
         />
         <div className="relative py-2">
-          <div className="absolute z-50 inset-y-2 left-0">
+          <div className="absolute z-20 inset-y-2 left-0">
             <Button
               isIconOnly
               aria-label="previos"
@@ -90,7 +95,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
               />
             ))}
           </div>
-          <div className="absolute z-50 inset-y-2 right-0">
+          <div className="absolute z-10 inset-y-2 right-0">
             <Button
               isIconOnly
               aria-label="next"
@@ -114,17 +119,16 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
       <div className="col-span-2 pl-3">
         <div className="text-xl font-bold p-2">Product Information:</div>
         <div className="p-4 border-2 mx-4 space-y-4 border-blue-400 rounded-xl">
-          <div className="text-3xl py-2 mb-2 font-bold border-blue-400 border-b-2">
-            {product?.name}
+          <div className="text-3xl font-bold">{product?.name}</div>
+          <div className="text-sm mb-2 font-light text-gray-400 border-blue-400 border-b-2">
+            Type: {product?.type}
           </div>
           <div className="space-y-2 text-lg">
-            <div className="justify-between flex">
+            <div className="justify-between flex text-xs md:text-sm">
               <div className="text-gray-600 font-semibold">Manufacturer:</div>
-              <div className="text-sm text-gray-600/75">
-                {product?.manufacturer}
-              </div>
+              <div className="text-gray-600/75">{product?.manufacturer}</div>
             </div>
-            <div className="justify-between flex">
+            <div className="justify-between flex text-xs md:text-sm">
               <div className="text-gray-600 font-semibold">Author:</div>
               <div className="text-sm text-gray-600/75">
                 {product?.author || product?.manufacturer}
@@ -133,15 +137,23 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
             <Chip
               color="primary"
               variant="flat"
-              onClick={() => onOpen("transitHistory", { id: productId })}>
+              className="cursor-pointer hover:bg-primary/10"
+              onClick={() =>
+                onOpen("transitHistory", {
+                  id: productId,
+                  title: product?.name,
+                })
+              }>
               See also Transit History
             </Chip>
-            <div className="justify-between flex border-t-2 border-blue-600 pt-4">
-              <p className="text-500">Price: {product?.price} MKC</p>
-              <Button variant="bordered" color="primary">
-                Buy Now
-              </Button>
-            </div>
+            {canBuy && (
+              <div className="justify-between flex border-t-2 border-blue-600 pt-4">
+                <p className="text-500">Price: {product?.price} MKC</p>
+                <Button variant="bordered" color="primary">
+                  Buy Now
+                </Button>
+              </div>
+            )}
           </div>
         </div>
         <div className="text-xl font-bold p-2">Product Description:</div>

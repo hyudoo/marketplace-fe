@@ -15,10 +15,10 @@ import { useModal } from "@/reduxs/use-modal-store";
 const CustomEditor = dynamic(() => import("./custom-editor"), { ssr: false });
 
 export default function App() {
+  const [isLoading, setIsLoading] = React.useState(false);
   const { handleSubmit, setValue, watch } = useForm<FieldValues>({
     defaultValues: {
       name: "",
-      price: 0,
       type: "",
       images: [],
       description: "",
@@ -41,6 +41,7 @@ export default function App() {
     }
 
     try {
+      setIsLoading(true);
       let res = await axios.post("/api/files", data);
       let { IpfsHash } = res.data;
       const contract = new SupplyChainContract(signer);
@@ -55,6 +56,8 @@ export default function App() {
         });
     } catch (error) {
       console.log("handleSubmit -> error", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,25 +71,14 @@ export default function App() {
           variant={"bordered"}
           label="Name"
           isClearable
+          isDisabled={isLoading}
           isRequired
           placeholder="Enter your product name"
           onChange={(e) => setValue("name", e.target.value)}
         />
-        <Input
-          type="number"
-          variant={"bordered"}
-          label="Prices"
-          isRequired
-          placeholder="Enter your product price"
-          onChange={(e) => setValue("price", e.target.value)}
-          endContent={
-            <div className="pointer-events-none flex items-center">
-              <span className="text-default-400 text-small">MKC</span>
-            </div>
-          }
-        />
         <Select
           isRequired
+          isDisabled={isLoading}
           label="Pick type Product"
           placeholder="Select a Product Type"
           onChange={(e) => setValue("type", e.target.value)}>
@@ -160,7 +152,10 @@ export default function App() {
         onChange={(e: any) => setValue("description", e)}
       />
       <div className="flex justify-center mt-3">
-        <Button className="w-full md:w-3 md:flex" type="submit">
+        <Button
+          className="w-full md:w-3 md:flex"
+          type="submit"
+          isLoading={isLoading}>
           Submit
         </Button>
       </div>

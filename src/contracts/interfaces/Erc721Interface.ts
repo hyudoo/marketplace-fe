@@ -20,7 +20,7 @@ class Erc721 extends BaseInterface {
     return this._toNumber(balance) as number;
   }
 
-  async ownerOf(tokenId: string): Promise<string> {
+  async ownerOf(tokenId: number): Promise<string> {
     return this._contract.ownerOf(tokenId);
   }
 

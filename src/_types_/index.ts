@@ -27,6 +27,7 @@ export interface IMenu {
 export interface ProductItem {
   id: number;
   name?: string;
+  type?: string;
   description?: string;
   images: string[];
   //Listing

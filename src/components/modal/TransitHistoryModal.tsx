@@ -10,20 +10,27 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { showTransactionHash } from "@/utils";
+import SupplyChainContract from "@/contracts/SupplyChainContract";
 
 const TransitHistoryModal = () => {
+  const [history, setHistory] = React.useState<string[]>([]);
   // redux
   const { isOpen, onClose, type, data } = useModal();
-  const isModalOpen = isOpen && type === "success";
+  const isModalOpen = isOpen && type === "transitHistory";
   const { onOpenChange } = useDisclosure();
 
-  const { hash, title } = data;
-  const onNavigation = () => {
-    if (window) {
-      window.open(`https://testnet.bscscan.com/tx/${hash}`, "_blank");
-    }
-  };
+  const { id, title } = data;
+
+  const getTransitHistory = React.useCallback(async () => {
+    const contract = new SupplyChainContract();
+    const history = await contract.getTransitHistory(id as number);
+    setHistory(history);
+  }, [id]);
+
+  React.useEffect(() => {
+    getTransitHistory();
+  }, [getTransitHistory]);
+
   return (
     <Modal
       backdrop="blur"
@@ -33,21 +40,18 @@ const TransitHistoryModal = () => {
       className="overflow-y-auto"
       onClose={onClose}>
       <ModalContent>
-        <ModalHeader className="justify-center text-large m-2 border-b-2">
-          {title}
+        <ModalHeader className="justify-center text-large block border-b-2">
+          <div className="text-center justify-center">TRANSIT HISTORY</div>
+          <div className="text-center justify-center text-sm ">{title}</div>
         </ModalHeader>
         <ModalBody>
-          <div className="flex text-sm text-slate-500 justify-center items-center">
-            Your transaction is successful!
-          </div>
-          <Button
-            fullWidth
-            color="primary"
-            variant="flat"
-            className="mb-4"
-            onClick={onNavigation}>
-            {showTransactionHash(hash || "")}
-          </Button>
+          {history.map((item, index) => (
+            <div
+              key={index}
+              className="flex text-sm text-slate-500 justify-center items-center">
+              {item}
+            </div>
+          ))}
         </ModalBody>
       </ModalContent>
     </Modal>

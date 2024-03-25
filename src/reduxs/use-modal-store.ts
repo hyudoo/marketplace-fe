@@ -4,6 +4,7 @@ export type ModalType =
   | "openCrowdSale"
   | "processing"
   | "success"
+  | "listProduct"
   | "transitHistory";
 
 interface ModalData {

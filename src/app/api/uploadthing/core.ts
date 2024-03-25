@@ -4,7 +4,7 @@ const f = createUploadthing();
 
 export const ourFileRouter = {
   imageUploader: f({
-    image: { maxFileSize: "4MB", maxFileCount: 10 },
+    image: { maxFileSize: "8MB", maxFileCount: 10 },
   }).onUploadComplete(() => {}),
 } satisfies FileRouter;
 

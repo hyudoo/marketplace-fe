@@ -2,12 +2,12 @@ import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ProductItem } from "@/_types_";
 import { ethers } from "ethers";
 import { getRPC } from "./utils/common";
-import { BaseInterface } from "./interfaces";
+import { Erc721 } from "./interfaces";
 import { getSupplyChainAbi } from "./utils/getAbis";
 import { getSupplyChainAddress } from "./utils/getAddress";
 import { BigNumberish } from "ethers";
 
-export default class SupplyChainContract extends BaseInterface {
+export default class SupplyChainContract extends Erc721 {
   constructor(provider?: ethers.JsonRpcSigner) {
     const rpcProvider = new ethers.JsonRpcProvider(getRPC());
     super(
@@ -31,7 +31,6 @@ export default class SupplyChainContract extends BaseInterface {
   };
 
   addProduct = async (data: any) => {
-    console.log("data", data);
     const tx: TransactionResponse = await this._contract.mint(
       data.address,
       data.cid,
@@ -46,6 +45,7 @@ export default class SupplyChainContract extends BaseInterface {
       ids.map(async (id) => {
         const productUrl = await this._contract.getProductURI(id);
         const obj = await (await fetch(`${productUrl}`)).json();
+        obj.images = obj.images.split(",");
         const item: ProductItem = { ...obj, id };
         return item;
       })
@@ -55,6 +55,7 @@ export default class SupplyChainContract extends BaseInterface {
   getProductInfo = async (productId: number) => {
     const productUrl = await this._contract.getProductURI(productId);
     const obj = await (await fetch(`${productUrl}`)).json();
+    obj.images = obj.images.split(",");
     const transitHistory = await this._contract.getTransitHistory(productId);
     const product: ProductItem = {
       ...obj,
@@ -67,18 +68,11 @@ export default class SupplyChainContract extends BaseInterface {
 
   getProductsInfo = async (productIds: Array<number>) => {
     return Promise.all(
-      productIds.map(async (id: number) => {
-        const productUrl = await this._contract.getProductURI(id);
-        const obj = await (await fetch(`${productUrl}`)).json();
-        const transitHistory = await this._contract.getTransitHistory(id);
-        const item: ProductItem = {
-          ...obj,
-          id,
-          author: transitHistory[transitHistory.length - 1],
-          manufacturer: transitHistory[0],
-        };
-        return item;
-      })
+      productIds.map(async (id: number) => this.getProductInfo(id))
     );
+  };
+
+  getTransitHistory = async (productId: number): Promise<string[]> => {
+    return this._contract.getTransitHistory(productId);
   };
 }
