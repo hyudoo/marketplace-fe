@@ -1,4 +1,4 @@
-import { IPackage, IProduct } from "../_types_";
+import { IPackage, IProduct, INavbar } from "../_types_";
 
 export const packages: IPackage[] = [
   {
@@ -20,6 +20,17 @@ export const packages: IPackage[] = [
     key: "bnb-03",
     name: "BNB PACKAGE 03",
     amount: 500,
+  },
+];
+
+export const navbar: INavbar[] = [
+  {
+    name: "Market",
+    url: "/",
+  },
+  {
+    name: "Manage",
+    url: "/manage",
   },
 ];
 

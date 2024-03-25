@@ -19,7 +19,7 @@ export interface IProduct {
   value: string;
 }
 
-export interface IMenu {
+export interface INavbar {
   name: string;
   url: string;
 }

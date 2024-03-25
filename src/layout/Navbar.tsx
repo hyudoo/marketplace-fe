@@ -16,6 +16,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
+import { navbar } from "@/constants";
 import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import {
   setWalletInfo,
@@ -59,21 +60,13 @@ export default function NavigationLayout() {
         <p className="font-bold text-inherit">Blocket</p>
       </NavbarBrand>
       <NavbarContent className="sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Customers
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
-        </NavbarItem>
+        {navbar.map((item, index) => (
+          <NavbarItem key={index}>
+            <Link color="foreground" href={item.url}>
+              {item.name}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
       <NavbarContent as="div" className="items-center" justify="end">
         <Chip
