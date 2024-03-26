@@ -17,8 +17,8 @@ export const packages: IPackage[] = [
     amount: 300,
   },
   {
-    key: "bnb-03",
-    name: "BNB PACKAGE 03",
+    key: "bnb-04",
+    name: "BNB PACKAGE 04",
     amount: 500,
   },
 ];

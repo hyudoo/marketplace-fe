@@ -26,8 +26,10 @@ import {
 import { ethers } from "ethers";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 import { useModal } from "@/reduxs/use-modal-store";
+import { useRouter } from "next/navigation";
 
 export default function NavigationLayout() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { onOpen } = useModal();
   const { wallet } = useAppSelector((state) => state.account);
@@ -62,7 +64,7 @@ export default function NavigationLayout() {
       <NavbarContent className="sm:flex gap-4" justify="center">
         {navbar.map((item, index) => (
           <NavbarItem key={index}>
-            <Link color="foreground" href={item.url}>
+            <Link color="foreground" onClick={() => router.push(item.url)}>
               {item.name}
             </Link>
           </NavbarItem>

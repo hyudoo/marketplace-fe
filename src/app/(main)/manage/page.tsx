@@ -1,51 +1,104 @@
 "use client";
 
 import React from "react";
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Tooltip } from "@nextui-org/react";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/constants";
-import { IProduct, ProductItem } from "@/_types_";
+import { ProductItem } from "@/_types_";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
+import MarketContract from "@/contracts/MarketPlaceContract";
 import { useRouter } from "next/navigation";
-import { useModal } from "@/reduxs/use-modal-store";
 
 export default function Manage() {
-  const router = useRouter();
   const { wallet, signer } = useAppSelector((state) => state.account);
-  const { onOpen } = useModal();
-  const [listproducts, setListProducts] = React.useState<ProductItem[]>();
+  const router = useRouter();
+  const [listedproducts, setListedProducts] = React.useState<ProductItem[]>();
+  const [inventory, setInventory] = React.useState<ProductItem[]>();
+  const [isRender, setIsRender] = React.useState<boolean>(true);
+  const [canCreate, setCanCreate] = React.useState<boolean>(false);
+
   const getListProduct = React.useCallback(async () => {
+    if (!signer || !wallet?.address) return;
     try {
       const productContract = new SupplyChainContract(signer);
-      const listproducts = await productContract.getListProduct(
+      const canCreate = await productContract.hasMinterRole(wallet?.address);
+      setCanCreate(canCreate);
+      const inventory = await productContract.getListProduct(
         wallet?.address as string
       );
-      setListProducts(listproducts);
+      setInventory(inventory);
+      const marketContract = new MarketContract(signer);
+      const ids = await marketContract.getMyProductListed(
+        wallet?.address as string
+      );
+      const listedProducts = await productContract.getProductsInfo(ids);
+      setListedProducts(listedProducts);
     } catch (err) {
       console.log(err);
     }
-  }, [wallet, signer]);
+  }, [wallet, signer, isRender]);
 
   React.useEffect(() => {
     getListProduct();
   }, [getListProduct]);
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col gap-y-2">
       <Card>
+        <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
+          Inventory
+          <Tooltip
+            color="primary"
+            content={"Create new Product"}
+            className="capitalize">
+            <svg
+              onClick={() => router.push("/manage/createProduct")}
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+          </Tooltip>
+        </CardHeader>
         <CardBody>
           <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-            {listproducts?.map((product, index) => (
+            {inventory?.map((product, index) => (
+              <ProductCard
+                key={index}
+                productId={product.id}
+                name={product.name}
+                image={product.images[0]}
+                price={product.price}
+                render={() => setIsRender(!isRender)}
+                type="inventory"
+              />
+            ))}
+          </div>
+        </CardBody>
+      </Card>
+
+      <Card>
+        <CardHeader className="items-center justify-center uppercase font-bold text-xl">
+          Your Listed Products
+        </CardHeader>
+        <CardBody>
+          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+            {listedproducts?.map((product, index) => (
               <ProductCard
                 key={index}
                 name={product.name}
                 image={product.images[0]}
                 price={product.price}
-                onClick={() => router.push(`/product/${product.id}`)}
-                onList={() =>
-                  onOpen("listProduct", { id: product.id, title: product.name })
-                }
+                productId={product.id}
+                type="unlist"
+                render={() => setIsRender(!isRender)}
               />
             ))}
           </div>

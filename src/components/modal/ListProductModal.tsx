@@ -20,7 +20,7 @@ const ListProductModal = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   // redux
   const { isOpen, onOpen, onClose, type, data } = useModal();
-  const { id, title } = data;
+  const { id, title, render } = data;
   const isModalOpen = isOpen && type === "listProduct";
   const { wallet, signer } = useAppSelector((state) => state.account);
 
@@ -33,7 +33,7 @@ const ListProductModal = () => {
   const { onOpenChange } = useDisclosure();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    if (data.price <= 0 || !signer || !wallet || !id) return;
+    if (data.price <= 0 || !signer || !wallet || !id || !render) return;
     try {
       setIsLoading(true);
       const productContract = new SupplyChainContract(signer);
@@ -41,6 +41,7 @@ const ListProductModal = () => {
       await productContract.approve(marketContract._contractAddress, id);
       const tx = await marketContract.listProduct(id, data.price);
       onOpen("success", { hash: tx, title: "List Product" });
+      render();
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {

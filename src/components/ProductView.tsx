@@ -5,6 +5,9 @@ import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useModal } from "@/reduxs/use-modal-store";
 import { ProductItem } from "@/_types_";
 import { getMarketPlaceAddress } from "@/contracts/utils/getAddress";
+import MarketContract from "@/contracts/MarketPlaceContract";
+import { useAppSelector } from "@/reduxs/hooks";
+import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 
 interface IProductViewProps {
   productId: number;
@@ -16,6 +19,10 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
   const [slideImage, setSlideImage] = React.useState<string[]>();
   const { onOpen } = useModal();
   const [canBuy, setCanBuy] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  const { wallet, signer } = useAppSelector((state) => state.account);
+
   const getProductInfo = React.useCallback(async () => {
     try {
       const contract = new SupplyChainContract();
@@ -24,7 +31,15 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
       setMainImage(product?.images[0]);
       setSlideImage(product?.images.slice(0, 4));
       const res = await contract.ownerOf(productId);
-      setCanBuy(res === getMarketPlaceAddress());
+      if (res === getMarketPlaceAddress()) {
+        setCanBuy(true);
+        const marketContract = new MarketContract();
+        const item = await marketContract.getListedProductByIDs(productId);
+        setProduct({
+          ...product,
+          price: item.price,
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -51,6 +66,26 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
     if (index > 0) {
       setIndex(index - 1);
       setSlideImage(product?.images?.slice(index, index + 4));
+    }
+  };
+
+  const handleBuyProduct = async () => {
+    try {
+      if (!signer || !product || !product?.price) return;
+      setIsLoading(true);
+      const marketCoins = new MarketCoinsContract(signer);
+      const marketContract = new MarketContract(signer);
+      await marketCoins.approve(
+        marketContract._contractAddress,
+        product?.price
+      );
+
+      const tx = await marketContract.buyProduct(productId);
+      onOpen("success", { hash: tx, title: "Buy Product" });
+    } catch (err) {
+      console.log("handleBuyProduct->error", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -123,11 +158,11 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
             Type: {product?.type}
           </div>
           <div className="space-y-2 text-lg">
-            <div className="justify-between flex text-xs md:text-sm">
+            <div className="text-xs md:text-sm">
               <div className="text-gray-600 font-semibold">Manufacturer:</div>
               <div className="text-gray-600/75">{product?.manufacturer}</div>
             </div>
-            <div className="justify-between flex text-xs md:text-sm">
+            <div className="text-xs md:text-sm">
               <div className="text-gray-600 font-semibold">Author:</div>
               <div className="text-sm text-gray-600/75">
                 {product?.author || product?.manufacturer}
@@ -148,7 +183,11 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
             {canBuy && (
               <div className="justify-between flex border-t-2 border-blue-600 pt-4">
                 <p className="text-500">Price: {product?.price} MKC</p>
-                <Button variant="bordered" color="primary">
+                <Button
+                  variant="bordered"
+                  color="primary"
+                  isDisabled={!wallet}
+                  onClick={handleBuyProduct}>
                   Buy Now
                 </Button>
               </div>

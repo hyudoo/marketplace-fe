@@ -1,6 +1,6 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ProductItem } from "@/_types_";
-import { ethers } from "ethers";
+import { ethers, keccak256 } from "ethers";
 import { getRPC } from "./utils/common";
 import { Erc721 } from "./interfaces";
 import { getSupplyChainAbi } from "./utils/getAbis";
@@ -80,5 +80,9 @@ export default class SupplyChainContract extends Erc721 {
 
   getTransitHistory = async (productId: number) => {
     return this._contract.getTransitHistory(productId);
+  };
+
+  hasMinterRole = async (address: string) => {
+    return this._contract.hasMinterRole(address);
   };
 }

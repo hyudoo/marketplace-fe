@@ -5,12 +5,14 @@ export type ModalType =
   | "processing"
   | "success"
   | "listProduct"
+  | "unlistProduct"
   | "transitHistory";
 
 interface ModalData {
   id?: number;
   title?: String;
   hash?: String;
+  render?: () => void;
 }
 
 interface ModalStore {

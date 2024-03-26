@@ -1,22 +1,28 @@
 import React from "react";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import { useModal } from "@/reduxs/use-modal-store";
 interface IProductProps {
   name?: string;
   image: string;
   price?: number | string;
-  onClick?: () => void;
-  onList?: () => void;
+  productId?: number;
+  type?: "inventory" | "listed" | "unlist";
+  render?: () => void;
 }
 
 export default function ProductCard({
   name,
   image,
   price,
-  onClick,
-  onList,
+  productId,
+  type,
+  render,
 }: IProductProps) {
+  const router = useRouter();
+  const { onOpen } = useModal();
   return (
-    <div onClick={onClick}>
+    <div onClick={() => router.push(`/product/${productId}`)}>
       <Card shadow="sm">
         <CardBody className="overflow-visible p-0">
           <Image
@@ -31,16 +37,28 @@ export default function ProductCard({
         </CardBody>
         <CardFooter className="text-small justify-between">
           <b className="h-full w-full">{name}</b>
-          {onList ? (
+          {type == "listed" && <p className="text-default-500">{price} MKC</p>}
+          {type == "inventory" && (
             <Button
-              onClick={onList}
+              onClick={() =>
+                onOpen("listProduct", { id: productId, title: name, render })
+              }
               variant="flat"
               color="primary"
               className="p-2 m-0">
               List
             </Button>
-          ) : (
-            <p className="text-default-500">{price} MKC</p>
+          )}
+          {type == "unlist" && (
+            <Button
+              onClick={() =>
+                onOpen("unlistProduct", { id: productId, title: name, render })
+              }
+              variant="flat"
+              color="primary"
+              className="p-2 m-0">
+              Unlist
+            </Button>
           )}
         </CardFooter>
       </Card>

@@ -6,6 +6,7 @@ import ProcessingModal from "../modal/ProcessingModal";
 import SuccessModal from "../modal/SuccessModal";
 import ListProductModal from "../modal/ListProductModal";
 import TransitHistoryModal from "../modal/TransitHistoryModal";
+import UnlistProductModal from "../modal/UnlistProductModal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -24,6 +25,7 @@ export const ModalProvider = () => {
       <SuccessModal />
       <ListProductModal />
       <TransitHistoryModal />
+      <UnlistProductModal />
     </>
   );
 };

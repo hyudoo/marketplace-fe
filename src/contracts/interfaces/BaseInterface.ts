@@ -30,7 +30,11 @@ export default class BaseInterface {
   };
 
   _toNumber = (bigNumber: BigNumberish) => {
-    return Number.parseFloat(ethers.formatEther(bigNumber));
+    try {
+      return bigNumber.toString();
+    } catch (err) {
+      return Number.parseFloat(ethers.formatEther(bigNumber));
+    }
   };
 
   _toEther = (bigNumber: BigNumberish) => {

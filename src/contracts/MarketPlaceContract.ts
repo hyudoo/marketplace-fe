@@ -22,10 +22,10 @@ export default class MarketContract extends Erc721 {
   }
 
   getProductListedOnMarketPlace = async () => {
-    const items = await this._contract.getListedProduct();
+    const items = await this._contract.getListedProducts();
     const products = items.map((item: any) => ({
       author: item.author,
-      price: this._toNumber(item.price),
+      price: this._toEther(item.price),
       productId: item.productId,
     }));
     return products;
@@ -33,7 +33,7 @@ export default class MarketContract extends Erc721 {
 
   getMyProductListed = async (address: string) => {
     const products = await this.getProductListedOnMarketPlace();
-    return products.filter((p: any) => p.seller === address);
+    return products.filter((p: any) => p.author === address);
   };
 
   listProduct = async (tokenId: number, price: number) => {
@@ -50,17 +50,17 @@ export default class MarketContract extends Erc721 {
     return this._handleTransactionResponse(tx);
   };
 
-  buyProduct = async (tokenId: number, price: number) => {
-    const tx = await this._contract.buyProduct(
-      tokenId,
-      this._numberToEth(price),
-      this._option
-    );
+  buyProduct = async (tokenId: number) => {
+    const tx = await this._contract.buyProduct(tokenId, this._option);
     return this._handleTransactionResponse(tx);
   };
 
   getListedProductByIDs = async (id: number) => {
-    const item = await this._contract.getListedProductById(id);
-    return item;
+    const item = await this._contract.getListedProductByID(id);
+    return {
+      author: item.author,
+      price: this._toEther(item.price),
+      productId: item.productId,
+    };
   };
 }
