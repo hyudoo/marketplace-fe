@@ -45,15 +45,12 @@ export default function App() {
       let res = await axios.post("/api/files", data);
       let { IpfsHash } = res.data;
       const contract = new SupplyChainContract(signer);
-      await contract
-        .addProduct({
-          address: wallet?.address,
-          cid: IpfsHash?.IpfsHash,
-          type: data.type,
-        })
-        .then((tx) => {
-          onOpen("success", { hash: tx, title: "Add Product" });
-        });
+      const tx = await contract.addProduct({
+        address: wallet?.address,
+        cid: IpfsHash?.IpfsHash,
+        type: data.type,
+      });
+      onOpen("success", { hash: tx, title: "Add Product" });
     } catch (error) {
       console.log("handleSubmit -> error", error);
     } finally {

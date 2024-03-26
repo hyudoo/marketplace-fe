@@ -24,9 +24,9 @@ export default class MarketContract extends Erc721 {
   getProductListedOnMarketPlace = async () => {
     const items = await this._contract.getListedProduct();
     const products = items.map((item: any) => ({
-      tokenId: this._toNumber(item.tokenId),
-      seller: item.seller,
+      author: item.author,
       price: this._toNumber(item.price),
+      productId: item.productId,
     }));
     return products;
   };
@@ -57,5 +57,10 @@ export default class MarketContract extends Erc721 {
       this._option
     );
     return this._handleTransactionResponse(tx);
+  };
+
+  getListedProductByIDs = async (id: number) => {
+    const item = await this._contract.getListedProductById(id);
+    return item;
   };
 }

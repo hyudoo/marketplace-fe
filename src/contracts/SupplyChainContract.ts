@@ -66,13 +66,19 @@ export default class SupplyChainContract extends Erc721 {
     return product;
   };
 
-  getProductsInfo = async (productIds: Array<number>) => {
+  getProductsInfo = async (products: Array<any>) => {
     return Promise.all(
-      productIds.map(async (id: number) => this.getProductInfo(id))
+      products.map(async (product) => {
+        const obj = await this.getProductInfo(product?.productId);
+        return {
+          ...obj,
+          price: product.price,
+        };
+      })
     );
   };
 
-  getTransitHistory = async (productId: number): Promise<string[]> => {
+  getTransitHistory = async (productId: number) => {
     return this._contract.getTransitHistory(productId);
   };
 }

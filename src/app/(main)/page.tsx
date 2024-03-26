@@ -7,13 +7,16 @@ import { products } from "@/constants";
 import { IProduct, ProductItem } from "@/_types_";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
+import { useRouter } from "next/navigation";
 export default function Home() {
+  const router = useRouter();
   const [listproducts, setListProducts] = React.useState<ProductItem[]>();
   const getListProduct = React.useCallback(async () => {
     try {
       const productContract = new SupplyChainContract();
       const marketContract = new MarketContract();
       const ids = await marketContract.getProductListedOnMarketPlace();
+      console.log("ids", ids);
       const listproducts = await productContract.getProductsInfo(ids);
       setListProducts(listproducts);
     } catch (err) {
@@ -27,29 +30,21 @@ export default function Home() {
 
   return (
     <div className="flex w-full flex-col">
-      <Tabs aria-label="Dynamic tabs" items={products}>
-        {(item: IProduct) => (
-          <Tab key={item.label} title={item.label}>
-            <Card>
-              <CardBody>
-                <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-                  {listproducts?.map(
-                    (product, index) =>
-                      item.value === product.type && (
-                        <ProductCard
-                          key={index}
-                          name={product.name}
-                          image={product.images[0]}
-                          price={product.price}
-                        />
-                      )
-                  )}
-                </div>
-              </CardBody>
-            </Card>
-          </Tab>
-        )}
-      </Tabs>
+      <Card>
+        <CardBody>
+          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+            {listproducts?.map((product, index) => (
+              <ProductCard
+                key={index}
+                name={product.name}
+                image={product.images[0]}
+                price={product.price}
+                onClick={() => router.push(`/product/${product.id}`)}
+              />
+            ))}
+          </div>
+        </CardBody>
+      </Card>
     </div>
   );
 }

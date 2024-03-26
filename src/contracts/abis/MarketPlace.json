@@ -81,7 +81,7 @@
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "_seller",
+                "name": "_author",
                 "type": "address"
             },
             {
@@ -106,7 +106,7 @@
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "_seller",
+                "name": "_author",
                 "type": "address"
             },
             {
@@ -189,7 +189,7 @@
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "_seller",
+                "name": "_author",
                 "type": "address"
             },
             {
@@ -240,14 +240,50 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "getListedProduct",
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_productId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getListedProductByID",
         "outputs": [
             {
                 "components": [
                     {
                         "internalType": "address payable",
-                        "name": "seller",
+                        "name": "author",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "productId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct MarketPlace.ProductDetail",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getListedProducts",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address payable",
+                        "name": "author",
                         "type": "address"
                     },
                     {

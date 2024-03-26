@@ -25,7 +25,7 @@ export default function Manage() {
     } catch (err) {
       console.log(err);
     }
-  }, [wallet]);
+  }, [wallet, signer]);
 
   React.useEffect(() => {
     getListProduct();

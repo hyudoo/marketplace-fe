@@ -22,9 +22,14 @@ const TransitHistoryModal = () => {
   const { id, title } = data;
 
   const getTransitHistory = React.useCallback(async () => {
-    const contract = new SupplyChainContract();
-    const history = await contract.getTransitHistory(id as number);
-    setHistory(history);
+    if (!id) return;
+    try {
+      const contract = new SupplyChainContract();
+      const history = await contract.getTransitHistory(id);
+      setHistory(history);
+    } catch (error) {
+      console.log(error);
+    }
   }, [id]);
 
   React.useEffect(() => {

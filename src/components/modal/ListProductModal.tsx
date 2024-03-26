@@ -39,9 +39,8 @@ const ListProductModal = () => {
       const productContract = new SupplyChainContract(signer);
       const marketContract = new MarketPlaceContract(signer);
       await productContract.approve(marketContract._contractAddress, id);
-      await marketContract.listProduct(id, data.price).then((tx) => {
-        onOpen("success", { hash: tx, title: "List Product" });
-      });
+      const tx = await marketContract.listProduct(id, data.price);
+      onOpen("success", { hash: tx, title: "List Product" });
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {

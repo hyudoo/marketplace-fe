@@ -4,7 +4,7 @@ import { Button, Chip, Image, image } from "@nextui-org/react";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useModal } from "@/reduxs/use-modal-store";
 import { ProductItem } from "@/_types_";
-import { getMarketCoinsAddress } from "@/contracts/utils/getAddress";
+import { getMarketPlaceAddress } from "@/contracts/utils/getAddress";
 
 interface IProductViewProps {
   productId: number;
@@ -21,11 +21,10 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
       const contract = new SupplyChainContract();
       const product = await contract.getProductInfo(productId);
       setProduct(product);
-      setMainImage(product?.images[index]);
-      setSlideImage(product?.images.slice(index, index + 4));
-      await contract.ownerOf(productId).then((res) => {
-        setCanBuy(res === getMarketCoinsAddress());
-      });
+      setMainImage(product?.images[0]);
+      setSlideImage(product?.images.slice(0, 4));
+      const res = await contract.ownerOf(productId);
+      setCanBuy(res === getMarketPlaceAddress());
     } catch (err) {
       console.log(err);
     }
