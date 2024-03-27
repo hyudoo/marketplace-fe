@@ -8,7 +8,9 @@ interface IProductProps {
   price?: number | string;
   productId?: number;
   type?: "inventory" | "listed" | "unlist";
+  isCheck?: boolean;
   render?: () => void;
+  onClick?: () => void;
 }
 
 export default function ProductCard({
@@ -17,13 +19,16 @@ export default function ProductCard({
   price,
   productId,
   type,
+  isCheck,
   render,
+  onClick,
 }: IProductProps) {
   const router = useRouter();
   const { onOpen } = useModal();
   return (
-    <div onClick={() => router.push(`/product/${productId}`)}>
-      <Card shadow="sm">
+    <div
+      onClick={onClick ? onClick : () => router.push(`/product/${productId}`)}>
+      <Card shadow="sm" className={isCheck ? "border-1 border-sky-700" : ""}>
         <CardBody className="overflow-visible p-0">
           <Image
             shadow="sm"

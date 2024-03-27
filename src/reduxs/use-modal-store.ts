@@ -6,12 +6,16 @@ export type ModalType =
   | "success"
   | "listProduct"
   | "unlistProduct"
+  | "exchange"
   | "transitHistory";
 
 interface ModalData {
   id?: number;
   title?: String;
   hash?: String;
+  address?: String;
+  senderIds?: number[];
+  receiverIds?: number[];
   render?: () => void;
 }
 

@@ -1,5 +1,5 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { ProductItem } from "@/_types_";
+import { IProductItem } from "@/_types_";
 import { ethers, keccak256 } from "ethers";
 import { getRPC } from "./utils/common";
 import { Erc721 } from "./interfaces";
@@ -39,14 +39,14 @@ export default class SupplyChainContract extends Erc721 {
     return this._handleTransactionResponse(tx);
   };
 
-  getListProduct = async (address: string): Promise<ProductItem[]> => {
+  getListProduct = async (address: string): Promise<IProductItem[]> => {
     const ids = await this._listProductIds(address);
     return Promise.all(
       ids.map(async (id) => {
         const productUrl = await this._contract.getProductURI(id);
         const obj = await (await fetch(`${productUrl}`)).json();
         obj.images = obj.images.split(",");
-        const item: ProductItem = { ...obj, id };
+        const item: IProductItem = { ...obj, id };
         return item;
       })
     );
@@ -57,7 +57,7 @@ export default class SupplyChainContract extends Erc721 {
     const obj = await (await fetch(`${productUrl}`)).json();
     obj.images = obj.images.split(",");
     const transitHistory = await this._contract.getTransitHistory(productId);
-    const product: ProductItem = {
+    const product: IProductItem = {
       ...obj,
       id: productId,
       author: transitHistory[transitHistory.length - 1],

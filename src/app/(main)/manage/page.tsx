@@ -3,7 +3,7 @@
 import React from "react";
 import { Card, CardBody, CardHeader, Tooltip } from "@nextui-org/react";
 import ProductCard from "@/components/ProductCard";
-import { ProductItem } from "@/_types_";
+import { IProductItem } from "@/_types_";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import MarketContract from "@/contracts/MarketPlaceContract";
@@ -12,8 +12,8 @@ import { useRouter } from "next/navigation";
 export default function Manage() {
   const { wallet, signer } = useAppSelector((state) => state.account);
   const router = useRouter();
-  const [listedproducts, setListedProducts] = React.useState<ProductItem[]>();
-  const [inventory, setInventory] = React.useState<ProductItem[]>();
+  const [listedproducts, setListedProducts] = React.useState<IProductItem[]>();
+  const [inventory, setInventory] = React.useState<IProductItem[]>();
   const [isRender, setIsRender] = React.useState<boolean>(true);
   const [canCreate, setCanCreate] = React.useState<boolean>(false);
 

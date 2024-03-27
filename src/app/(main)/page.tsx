@@ -3,13 +3,13 @@
 import React from "react";
 import { Card, CardBody } from "@nextui-org/react";
 import ProductCard from "@/components/ProductCard";
-import { ProductItem } from "@/_types_";
+import { IProductItem } from "@/_types_";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
-  const [listproducts, setListProducts] = React.useState<ProductItem[]>();
+  const [listproducts, setListProducts] = React.useState<IProductItem[]>();
   const getListProduct = React.useCallback(async () => {
     try {
       const productContract = new SupplyChainContract();

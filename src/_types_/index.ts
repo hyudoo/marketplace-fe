@@ -24,7 +24,7 @@ export interface INavbar {
   url: string;
 }
 
-export interface ProductItem {
+export interface IProductItem {
   id: number;
   name?: string;
   type?: string;
@@ -34,4 +34,13 @@ export interface ProductItem {
   price?: number;
   author?: string;
   manufacturer?: string;
+}
+
+export interface ITransaction {
+  id: number;
+  sender: string;
+  receiver: string;
+  senderToken: number[];
+  receiverToken: number[];
+  active: boolean;
 }

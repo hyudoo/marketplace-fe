@@ -14,3 +14,6 @@ export const getSupplyChainAddress = () =>
 
 export const getMarketPlaceAddress = () =>
   getAddress(SMART_ADDRESS.MarketPlace);
+
+export const getProductTransactionAddress = () =>
+  getAddress(SMART_ADDRESS.ProductTransaction);

@@ -3,7 +3,7 @@ import React from "react";
 import { Button, Chip, Image, image } from "@nextui-org/react";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useModal } from "@/reduxs/use-modal-store";
-import { ProductItem } from "@/_types_";
+import { IProductItem } from "@/_types_";
 import { getMarketPlaceAddress } from "@/contracts/utils/getAddress";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import { useAppSelector } from "@/reduxs/hooks";
@@ -14,7 +14,7 @@ interface IProductViewProps {
 }
 const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
   const [index, setIndex] = React.useState(0);
-  const [product, setProduct] = React.useState<ProductItem>();
+  const [product, setProduct] = React.useState<IProductItem>();
   const [mainImage, setMainImage] = React.useState<string>();
   const [slideImage, setSlideImage] = React.useState<string[]>();
   const { onOpen } = useModal();

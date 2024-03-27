@@ -14,12 +14,12 @@ import { useModal } from "@/reduxs/use-modal-store";
 import { useAppSelector } from "@/reduxs/hooks";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 
-const UnlistProductModal = () => {
+const ExchangeModal = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   // redux
   const { isOpen, onOpen, onClose, type, data } = useModal();
   const { id, title, render } = data;
-  const isModalOpen = isOpen && type === "unlistProduct";
+  const isModalOpen = isOpen && type === "exchange";
   const { wallet, signer } = useAppSelector((state) => state.account);
 
   const { onOpenChange } = useDisclosure();
@@ -41,18 +41,19 @@ const UnlistProductModal = () => {
   return (
     <Modal
       backdrop="blur"
-      isOpen={isModalOpen}
+      isOpen={true}
       onOpenChange={onOpenChange}
       placement="center"
       className="overflow-y-auto"
       onClose={onClose}>
       <ModalContent>
         <ModalHeader className="justify-center text-large m-2 border-b-2">
-          UNLIST PRODUCT
+          EXCHANGE PRODUCT
         </ModalHeader>
         <ModalBody>
           <div className="flex gap-x-1 text-sm items-center justify-center">
-            You want to unlist <div className="font-bold"> {title} </div>
+            You want to exchange token{" "}
+            <div className="font-bold"> {title} </div>
           </div>
 
           <Button
@@ -71,4 +72,4 @@ const UnlistProductModal = () => {
   );
 };
 
-export default UnlistProductModal;
+export default ExchangeModal;
