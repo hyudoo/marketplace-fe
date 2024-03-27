@@ -186,7 +186,8 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                 <Button
                   variant="bordered"
                   color="primary"
-                  isDisabled={!wallet}
+                  isLoading={isLoading}
+                  isDisabled={!wallet || isLoading}
                   onClick={handleBuyProduct}>
                   Buy Now
                 </Button>
