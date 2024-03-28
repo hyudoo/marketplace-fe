@@ -19,7 +19,13 @@ const ExchangeModal = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   // redux
   const { isOpen, onOpen, onClose, type, data } = useModal();
-  const { address, senderIds, receiverIds } = data;
+  const {
+    address,
+    senderIds,
+    receiverIds,
+    senderProductName,
+    receiverProductName,
+  } = data;
   const isModalOpen = isOpen && type === "exchange";
   const { wallet, signer } = useAppSelector((state) => state.account);
 
@@ -39,7 +45,7 @@ const ExchangeModal = () => {
         senderIds!,
         receiverIds!
       );
-      onOpen("success", { hash: tx, title: "Unlist Product" });
+      onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {
@@ -49,7 +55,7 @@ const ExchangeModal = () => {
   return (
     <Modal
       backdrop="blur"
-      isOpen={true}
+      isOpen={isModalOpen}
       onOpenChange={onOpenChange}
       placement="center"
       className="overflow-y-auto"
@@ -59,11 +65,11 @@ const ExchangeModal = () => {
           EXCHANGE PRODUCT
         </ModalHeader>
         <ModalBody>
-          <div className="flex gap-x-1 text-sm items-center justify-center">
-            You want to exchange token
-            <div className="font-bold"> {senderIds?.toString()} </div>
+          <div className="gap-x-1 text-sm items-center justify-center">
+            You want to exchange
+            <div className="font-bold"> {senderProductName?.toString()} </div>
             with
-            <div className="font-bold"> {receiverIds?.toString()} </div>
+            <div className="font-bold"> {receiverProductName?.toString()} </div>
             from address
             <div className="font-bold"> {address} </div>
           </div>

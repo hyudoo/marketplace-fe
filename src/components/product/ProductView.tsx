@@ -81,7 +81,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
       );
 
       const tx = await marketContract.buyProduct(productId);
-      onOpen("success", { hash: tx, title: "Buy Product" });
+      onOpen("success", { hash: tx, title: "BUY PRODUCT" });
     } catch (err) {
       console.log("handleBuyProduct->error", err);
     } finally {

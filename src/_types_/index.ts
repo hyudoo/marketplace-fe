@@ -37,10 +37,10 @@ export interface IProductItem {
 }
 
 export interface IExchange {
-  id: number;
-  sender: string;
-  receiver: string;
-  senderToken: number[];
-  receiverToken: number[];
-  active: boolean;
+  id?: number;
+  sender?: string;
+  receiver?: string;
+  senderToken?: number[];
+  receiverToken?: number[];
+  active?: boolean;
 }

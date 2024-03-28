@@ -30,7 +30,7 @@ const UnlistProductModal = () => {
       setIsLoading(true);
       const marketContract = new MarketPlaceContract(signer);
       const tx = await marketContract.unlistProduct(id);
-      onOpen("success", { hash: tx, title: "Unlist Product" });
+      onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
       render();
     } catch (error) {
       console.log("handleListProduct -> error", error);

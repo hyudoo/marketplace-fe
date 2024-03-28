@@ -23,14 +23,10 @@ export default function Manage() {
       const productContract = new SupplyChainContract(signer);
       const canCreate = await productContract.hasMinterRole(wallet?.address);
       setCanCreate(canCreate);
-      const inventory = await productContract.getListProduct(
-        wallet?.address as string
-      );
+      const inventory = await productContract.getListProduct(wallet?.address);
       setInventory(inventory);
       const marketContract = new MarketContract(signer);
-      const ids = await marketContract.getMyProductListed(
-        wallet?.address as string
-      );
+      const ids = await marketContract.getMyProductListed(wallet?.address);
       const listedProducts = await productContract.getProductsInfo(ids);
       setListedProducts(listedProducts);
     } catch (err) {

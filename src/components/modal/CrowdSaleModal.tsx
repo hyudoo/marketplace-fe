@@ -44,7 +44,7 @@ const CrowdSaleProviderModal = () => {
       setIsProcessing(true);
       const crowdContract = new CrowdSaleContract(signer);
       const tx = await crowdContract.buyTokenByBNB(pk.amount);
-      onOpen("success", { hash: tx, title: "Buy Market Coins" });
+      onOpen("success", { hash: tx, title: "BUY MARKET COINS" });
     } catch (error) {
       console.log("handleBuyMKC -> error", error);
     } finally {

@@ -136,7 +136,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_tokenId",
+                "name": "_tradeId",
                 "type": "uint256"
             }
         ],
@@ -149,7 +149,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "id",
+                "name": "_tradeId",
                 "type": "uint256"
             }
         ],
@@ -185,11 +185,11 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "id",
+                "name": "_tradeId",
                 "type": "uint256"
             }
         ],
-        "name": "getTrade",
+        "name": "getTradeById",
         "outputs": [
             {
                 "components": [
@@ -219,7 +219,7 @@
                         "type": "bool"
                     }
                 ],
-                "internalType": "struct ProductTransaction.Transaction",
+                "internalType": "struct ExchangeProduct.Transaction",
                 "name": "",
                 "type": "tuple"
             }
@@ -238,36 +238,9 @@
         "name": "getTradeByReceiver",
         "outputs": [
             {
-                "components": [
-                    {
-                        "internalType": "address",
-                        "name": "sender",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "receiver",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256[]",
-                        "name": "senderTokenIds",
-                        "type": "uint256[]"
-                    },
-                    {
-                        "internalType": "uint256[]",
-                        "name": "receiverTokenIds",
-                        "type": "uint256[]"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "active",
-                        "type": "bool"
-                    }
-                ],
-                "internalType": "struct ProductTransaction.Transaction[]",
+                "internalType": "uint256[]",
                 "name": "",
-                "type": "tuple[]"
+                "type": "uint256[]"
             }
         ],
         "stateMutability": "view",
@@ -284,39 +257,46 @@
         "name": "getTradeBySender",
         "outputs": [
             {
-                "components": [
-                    {
-                        "internalType": "address",
-                        "name": "sender",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "receiver",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256[]",
-                        "name": "senderTokenIds",
-                        "type": "uint256[]"
-                    },
-                    {
-                        "internalType": "uint256[]",
-                        "name": "receiverTokenIds",
-                        "type": "uint256[]"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "active",
-                        "type": "bool"
-                    }
-                ],
-                "internalType": "struct ProductTransaction.Transaction[]",
+                "internalType": "uint256[]",
                 "name": "",
-                "type": "tuple[]"
+                "type": "uint256[]"
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes",
+                "name": "",
+                "type": "bytes"
+            }
+        ],
+        "name": "onERC721Received",
+        "outputs": [
+            {
+                "internalType": "bytes4",
+                "name": "",
+                "type": "bytes4"
+            }
+        ],
+        "stateMutability": "pure",
         "type": "function"
     },
     {

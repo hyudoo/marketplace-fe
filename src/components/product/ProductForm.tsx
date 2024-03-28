@@ -50,7 +50,7 @@ export default function App() {
         cid: IpfsHash?.IpfsHash,
         type: data.type,
       });
-      onOpen("success", { hash: tx, title: "Add Product" });
+      onOpen("success", { hash: tx, title: "ADD PRODUCT" });
     } catch (error) {
       console.log("handleSubmit -> error", error);
     } finally {

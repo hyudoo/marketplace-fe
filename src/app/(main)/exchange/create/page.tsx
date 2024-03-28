@@ -14,6 +14,7 @@ import { IProductItem } from "@/_types_";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import { ethers } from "ethers";
+import { useModal } from "@/reduxs/use-modal-store";
 
 export default function Transfer() {
   const { wallet, signer } = useAppSelector((state) => state.account);
@@ -24,32 +25,14 @@ export default function Transfer() {
 
   const [senderProducts, setSenderProducts] = React.useState<number[]>([]);
   const [receiverProducts, setReceiverProducts] = React.useState<number[]>([]);
+  const [senderProductsName, setSenderProductsName] = React.useState<string[]>(
+    []
+  );
+  const [receiverProductsName, setReceiverProductsName] = React.useState<
+    string[]
+  >([]);
 
-  const handleClick = async (type: string, productId: number) => {
-    if (type === "sender") {
-      const check = senderProducts.includes(productId);
-      if (check) {
-        const id = senderProducts.indexOf(productId);
-        let newArr = senderProducts;
-        newArr.splice(id, 1);
-        setSenderProducts([...newArr]);
-      } else {
-        senderProducts.push(productId);
-        setSenderProducts([...senderProducts]);
-      }
-    } else {
-      const check = receiverProducts.includes(productId);
-      if (check) {
-        const id = receiverProducts.indexOf(productId);
-        let newArr = receiverProducts;
-        newArr.splice(id, 1);
-        setReceiverProducts([...newArr]);
-      } else {
-        receiverProducts.push(productId);
-        setReceiverProducts([...receiverProducts]);
-      }
-    }
-  };
+  const { onOpen } = useModal();
 
   const getInventory = React.useCallback(async () => {
     if (!signer || !wallet?.address) return;
@@ -97,6 +80,42 @@ export default function Transfer() {
     return isInvalidAddress(address);
   }, [address]);
 
+  const handleClick = async (
+    type: string,
+    productId: number,
+    productName: string
+  ) => {
+    if (type === "sender") {
+      const check = senderProducts.includes(productId);
+      if (check) {
+        const id = senderProducts.indexOf(productId);
+        let newArr = senderProducts;
+        newArr.splice(id, 1);
+        setSenderProductsName(senderProductsName.splice(id, 1));
+        setSenderProducts([...newArr]);
+      } else {
+        senderProducts.push(productId);
+        setSenderProducts([...senderProducts]);
+        senderProductsName.push(productName);
+        setSenderProductsName([...senderProductsName]);
+      }
+    } else {
+      const check = receiverProducts.includes(productId);
+      if (check) {
+        const id = receiverProducts.indexOf(productId);
+        let newArr = receiverProducts;
+        newArr.splice(id, 1);
+        setReceiverProducts([...newArr]);
+        setReceiverProductsName(receiverProductsName.splice(id, 1));
+      } else {
+        receiverProducts.push(productId);
+        setReceiverProducts([...receiverProducts]);
+        receiverProductsName.push(productName);
+        setReceiverProductsName([...receiverProductsName]);
+      }
+    }
+  };
+
   return (
     <div className="flex w-full flex-col gap-y-2">
       <Input
@@ -118,7 +137,9 @@ export default function Transfer() {
             <div className="gap-2 sm:grid sm:grid-cols-2">
               {otherInventory?.map((product, index) => (
                 <ProductCard
-                  onClick={() => handleClick("receiver", product.id)}
+                  onClick={() =>
+                    handleClick("receiver", product.id, product.name!)
+                  }
                   key={index}
                   productId={product.id}
                   name={product.name}
@@ -138,7 +159,9 @@ export default function Transfer() {
             <div className="gap-2 sm:grid sm:grid-cols-2">
               {inventory?.map((product, index) => (
                 <ProductCard
-                  onClick={() => handleClick("sender", product.id)}
+                  onClick={() =>
+                    handleClick("sender", product.id, product.name!)
+                  }
                   key={index}
                   name={product.name}
                   image={product.images[0]}
@@ -151,7 +174,18 @@ export default function Transfer() {
           </CardBody>
         </Card>
       </div>
-      <Button>Exchange</Button>
+      <Button
+        onClick={() =>
+          onOpen("exchange", {
+            senderIds: senderProducts,
+            receiverIds: receiverProducts,
+            senderProductName: senderProductsName,
+            receiverProductName: receiverProductsName,
+            address,
+          })
+        }>
+        Exchange
+      </Button>
     </div>
   );
 }

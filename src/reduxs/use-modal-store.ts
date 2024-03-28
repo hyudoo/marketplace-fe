@@ -16,6 +16,8 @@ interface ModalData {
   address?: string;
   senderIds?: number[];
   receiverIds?: number[];
+  senderProductName?: string[];
+  receiverProductName?: string[];
   render?: () => void;
 }
 
