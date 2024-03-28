@@ -36,7 +36,7 @@ export interface IProductItem {
   manufacturer?: string;
 }
 
-export interface ITransaction {
+export interface IExchange {
   id: number;
   sender: string;
   receiver: string;

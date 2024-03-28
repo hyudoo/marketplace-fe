@@ -12,7 +12,7 @@ import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import { useModal } from "@/reduxs/use-modal-store";
 
-const CustomEditor = dynamic(() => import("./custom-editor"), { ssr: false });
+const CustomEditor = dynamic(() => import("../custom-editor"), { ssr: false });
 
 export default function App() {
   const [isLoading, setIsLoading] = React.useState(false);

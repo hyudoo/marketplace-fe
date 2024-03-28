@@ -1,17 +1,17 @@
 import { ethers } from "ethers";
 import { Erc721 } from "./interfaces";
 import { getRPC } from "./utils/common";
-import { getProductTransactionAbi } from "./utils/getAbis";
-import { getProductTransactionAddress } from "./utils/getAddress";
-import { ITransaction } from "@/_types_";
+import { getExchangeProductAbi } from "./utils/getAbis";
+import { getExchangeProductAddress } from "./utils/getAddress";
+import { IExchange } from "@/_types_";
 
-export default class ProductTransactionContract extends Erc721 {
+export default class ExchangeProductContract extends Erc721 {
   constructor(provider?: ethers.JsonRpcSigner) {
     const rpcProvider = new ethers.JsonRpcProvider(getRPC());
     super(
       provider || rpcProvider,
-      getProductTransactionAddress(),
-      getProductTransactionAbi()
+      getExchangeProductAddress(),
+      getExchangeProductAbi()
     );
     if (!provider) {
       this._contract = new ethers.Contract(
@@ -51,14 +51,29 @@ export default class ProductTransactionContract extends Erc721 {
   };
 
   getTradeBySender = async (_sender: string) => {
-    const obj: ITransaction[] = await this._contract.getTradeBySender(_sender);
-    return obj;
+    const ids: number[] = await this._contract.getTradeBySender(_sender);
+
+    return Promise.all(
+      ids.map(async (id: number) => {
+        const obj: IExchange = await this._contract.getTradeById(id);
+        return { ...obj, id };
+      })
+    );
   };
 
   getTradeByReceiver = async (_sender: string) => {
-    const obj: ITransaction[] = await this._contract.getTradeByReceiver(
-      _sender
+    const ids: number[] = await this._contract.getTradeByReceiver(_sender);
+
+    return Promise.all(
+      ids.map(async (id: number) => {
+        const obj: IExchange = await this._contract.getTradeById(id);
+        return { ...obj, id };
+      })
     );
-    return obj;
+  };
+
+  getTradeById = async (_id: number) => {
+    const obj: IExchange = await this._contract.getTradeById(_id);
+    return { ...obj, id: _id };
   };
 }

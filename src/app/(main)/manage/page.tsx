@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Card, CardBody, CardHeader, Tooltip } from "@nextui-org/react";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 import { IProductItem } from "@/_types_";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";

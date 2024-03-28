@@ -11,9 +11,9 @@ export type ModalType =
 
 interface ModalData {
   id?: number;
-  title?: String;
-  hash?: String;
-  address?: String;
+  title?: string;
+  hash?: string;
+  address?: string;
   senderIds?: number[];
   receiverIds?: number[];
   render?: () => void;
