@@ -32,6 +32,10 @@ export const navbar: INavbar[] = [
     name: "Manage",
     url: "/manage",
   },
+  {
+    name: "Exchange",
+    url: "/exchange",
+  },
 ];
 
 export const products: IProduct[] = [

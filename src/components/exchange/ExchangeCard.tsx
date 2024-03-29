@@ -1,72 +1,129 @@
 import React from "react";
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
-import { useModal } from "@/reduxs/use-modal-store";
-interface IProductProps {
-  name?: string;
-  image: string;
-  price?: number | string;
-  productId?: number;
-  type?: "inventory" | "listed" | "unlist";
-  isCheck?: boolean;
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+} from "@nextui-org/react";
+import CardItem from "./CardItem";
+import { IProductItem } from "@/_types_";
+import SupplyChainContract from "@/contracts/SupplyChainContract";
+import AcceptExchangeModal from "../modal/AcceptExchangeModal";
+import CancelExchangeModal from "../modal/CancelExchangeModal";
+interface IExchangeProps {
+  exchangeId?: number;
+  address?: string;
+  yourTokenIds?: number[];
+  otherTokenIds?: number[];
+  type?: "exchange" | "incoming-exchange";
   render?: () => void;
-  onClick?: () => void;
 }
 
 export default function ExchangeCard({
-  name,
-  image,
-  price,
-  productId,
+  exchangeId,
+  address,
+  yourTokenIds,
+  otherTokenIds,
   type,
-  isCheck,
   render,
-  onClick,
-}: IProductProps) {
-  const router = useRouter();
-  const { onOpen } = useModal();
+}: IExchangeProps) {
+  const [yourProducts, setYourProduct] = React.useState<IProductItem[]>([]);
+  const [otherProducts, setOtherProduct] = React.useState<IProductItem[]>([]);
+  const [isOpenAcceptModal, setIsOpenAcceptModal] =
+    React.useState<boolean>(false);
+  const [isOpenDeclineModal, setIsOpenDeclineModal] =
+    React.useState<boolean>(false);
+
+  const getProduct = React.useCallback(async () => {
+    try {
+      const productContract = new SupplyChainContract();
+      const yourProducts = await productContract.getProductInfoByIds(
+        yourTokenIds!
+      );
+      setYourProduct(yourProducts);
+      const otherProducts = await productContract.getProductInfoByIds(
+        otherTokenIds!
+      );
+      setOtherProduct(otherProducts);
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    getProduct();
+  }, [getProduct]);
+
   return (
-    <div
-      onClick={onClick ? onClick : () => router.push(`/product/${productId}`)}>
-      <Card shadow="sm" className={isCheck ? "border-1 border-sky-700" : ""}>
-        <CardBody className="overflow-visible p-0">
-          <Image
-            shadow="sm"
-            radius="lg"
-            width="100%"
-            height="100%"
-            alt={name}
-            className="object-fill cursor-pointer hover:scale-110 transition translate"
-            src={image}
-          />
-        </CardBody>
-        <CardFooter className="text-small justify-between">
-          <b className="h-full w-full">{name}</b>
-          {type == "listed" && <p className="text-default-500">{price} MKC</p>}
-          {type == "inventory" && (
-            <Button
-              onClick={() =>
-                onOpen("listProduct", { id: productId, title: name, render })
-              }
-              variant="flat"
-              color="primary"
-              className="p-2 m-0">
-              List
+    <>
+      <div>
+        <div className="flex items-center justify-center">
+          Other Address: {address}
+        </div>
+        <div className="md:grid md:grid-cols-2 flex flex-col gap-s2">
+          <Card>
+            <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
+              Your Item
+            </CardHeader>
+            <CardBody>
+              <div className="gap-2 sm:grid sm:grid-cols-2">
+                {yourProducts?.map((product, index) => (
+                  <CardItem
+                    key={index}
+                    productId={product.id}
+                    image={product?.images[0]}
+                    name={product.name}
+                  />
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
+              Other Item
+            </CardHeader>
+            <CardBody>
+              <div className="gap-2 sm:grid sm:grid-cols-2">
+                {otherProducts?.map((product, index) => (
+                  <CardItem
+                    key={index}
+                    productId={product.id}
+                    image={product?.images[0]}
+                    name={product.name}
+                  />
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+        <CardFooter>
+          {type == "incoming-exchange" && (
+            <Button onClick={() => setIsOpenAcceptModal(true)} color="primary">
+              Accept
             </Button>
           )}
-          {type == "unlist" && (
-            <Button
-              onClick={() =>
-                onOpen("unlistProduct", { id: productId, title: name, render })
-              }
-              variant="flat"
-              color="primary"
-              className="p-2 m-0">
-              Unlist
+
+          {type == "exchange" && (
+            <Button onClick={() => setIsOpenDeclineModal(true)} color="primary">
+              Cancel
             </Button>
           )}
         </CardFooter>
-      </Card>
-    </div>
+      </div>
+      <AcceptExchangeModal
+        isOpen={isOpenAcceptModal}
+        id={exchangeId!}
+        render={render!}
+        onClose={() => setIsOpenAcceptModal(false)}
+      />
+      <CancelExchangeModal
+        isOpen={isOpenDeclineModal}
+        id={exchangeId!}
+        render={render!}
+        onClose={() => setIsOpenDeclineModal(false)}
+      />
+    </>
   );
 }

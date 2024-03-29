@@ -3,10 +3,6 @@
 import { useEffect, useState } from "react";
 import CrowdSaleProviderModal from "../modal/CrowdSaleModal";
 import SuccessModal from "../modal/SuccessModal";
-import ListProductModal from "../modal/ListProductModal";
-import TransitHistoryModal from "../modal/TransitHistoryModal";
-import UnlistProductModal from "../modal/UnlistProductModal";
-import TransferModal from "../modal/ExchangeModal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -22,10 +18,6 @@ export const ModalProvider = () => {
     <>
       <CrowdSaleProviderModal />
       <SuccessModal />
-      <ListProductModal />
-      <TransitHistoryModal />
-      <UnlistProductModal />
-      <TransferModal />
     </>
   );
 };

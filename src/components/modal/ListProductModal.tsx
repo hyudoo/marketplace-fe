@@ -16,13 +16,25 @@ import SupplyChainContract from "@/contracts/SupplyChainContract";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-const ListProductModal = () => {
+interface IListProductModal {
+  isOpen: boolean;
+  id: number;
+  title: string;
+  render: () => void;
+  onClose: () => void;
+}
+
+const ListProductModal: React.FC<IListProductModal> = ({
+  isOpen,
+  id,
+  title,
+  render,
+  onClose,
+}) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  // redux
-  const { isOpen, onOpen, onClose, type, data } = useModal();
-  const { id, title, render } = data;
-  const isModalOpen = isOpen && type === "listProduct";
   const { wallet, signer } = useAppSelector((state) => state.account);
+
+  const { onOpen } = useModal();
 
   const { handleSubmit, setValue, watch } = useForm<FieldValues>({
     defaultValues: {
@@ -51,7 +63,7 @@ const ListProductModal = () => {
   return (
     <Modal
       backdrop="blur"
-      isOpen={isModalOpen}
+      isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="center"
       className="overflow-y-auto"

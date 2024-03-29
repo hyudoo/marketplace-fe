@@ -6,7 +6,6 @@ import {
   ModalHeader,
   ModalBody,
   Button,
-  useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
@@ -14,23 +13,17 @@ import { useAppSelector } from "@/reduxs/hooks";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 
-interface IExchangeModalProps {
+interface IAcceptExchangeModal {
   isOpen: boolean;
-  address: string;
-  senderIds?: number[];
-  receiverIds?: number[];
-  senderProductName?: string[];
-  receiverProductName?: string[];
+  id: number;
+  render: () => void;
   onClose: () => void;
 }
 
-const ExchangeModal: React.FC<IExchangeModalProps> = ({
+const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
   isOpen,
-  address,
-  senderIds,
-  receiverIds,
-  senderProductName,
-  receiverProductName,
+  id,
+  render,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -38,23 +31,19 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
   const { onOpen } = useModal();
   const { wallet, signer } = useAppSelector((state) => state.account);
 
-  const { onOpenChange } = useDisclosure();
-
   const handleSubmit = async () => {
-    if (!signer || !wallet || !address || (!senderIds && !receiverIds)) return;
+    if (!signer || !wallet || !id || !render) return;
     try {
       setIsLoading(true);
       const productContract = new SupplyChainContract(signer);
       const exchangeContract = new ExchangeProductContract(signer);
-      for (let id of senderIds!) {
-        await productContract.approve(exchangeContract._contractAddress, id);
-      }
-      const tx = await exchangeContract.createTransaction(
-        address,
-        senderIds!,
-        receiverIds!
-      );
-      onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
+      const exchange = await exchangeContract.getTradeById(id);
+      // for (let id of exchange.receiverTokenIds!) {
+      //   await productContract.approve(exchange.sender as string, id);
+      // }
+      const tx = await exchangeContract.acceptTransaction(id);
+      onOpen("success", { hash: tx, title: "ACCEPT EXCHANGE" });
+      render();
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {
@@ -65,22 +54,16 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
     <Modal
       backdrop="blur"
       isOpen={isOpen}
-      onOpenChange={onOpenChange}
       placement="center"
       className="overflow-y-auto"
       onClose={onClose}>
       <ModalContent>
         <ModalHeader className="justify-center text-large m-2 border-b-2">
-          EXCHANGE PRODUCT
+          ACCEPT EXCHANGE
         </ModalHeader>
         <ModalBody>
-          <div className="gap-x-1 text-sm items-center justify-center">
-            You want to exchange
-            <div className="font-bold"> {senderProductName?.toString()} </div>
-            with
-            <div className="font-bold"> {receiverProductName?.toString()} </div>
-            from address
-            <div className="font-bold"> {address} </div>
+          <div className="flex gap-x-1 text-sm items-center justify-center">
+            You want to accept this exchange?
           </div>
 
           <Button
@@ -91,7 +74,7 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
             variant="flat"
             type="submit"
             className="mb-4">
-            Exchange
+            Accept
           </Button>
         </ModalBody>
       </ModalContent>
@@ -99,4 +82,4 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
   );
 };
 
-export default ExchangeModal;
+export default AcceptExchangeModal;

@@ -8,40 +8,43 @@ import {
   Button,
 } from "@nextui-org/react";
 import React from "react";
-import { useModal } from "@/reduxs/use-modal-store";
 import { useAppSelector } from "@/reduxs/hooks";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
+import MarketCoinsContract from "@/contracts/MarketCoinsContract";
+import { useModal } from "@/reduxs/use-modal-store";
 
-interface IUnlistProductModal {
+interface IBuyProductModal {
   isOpen: boolean;
-  id: number;
   title: string;
-  render: () => void;
+  productId: number;
+  productPrice: number;
   onClose: () => void;
 }
 
-const UnlistProductModal: React.FC<IUnlistProductModal> = ({
+const BuyProductModal: React.FC<IBuyProductModal> = ({
   isOpen,
-  id,
   title,
-  render,
+  productId,
+  productPrice,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   // redux
+  const { signer } = useAppSelector((state) => state.account);
   const { onOpen } = useModal();
-  const { wallet, signer } = useAppSelector((state) => state.account);
 
   const handleSubmit = async () => {
-    if (!signer || !wallet || !id || !render) return;
     try {
+      if (!signer || !productId || !productPrice) return;
       setIsLoading(true);
+      const marketCoins = new MarketCoinsContract(signer);
       const marketContract = new MarketPlaceContract(signer);
-      const tx = await marketContract.unlistProduct(id);
-      onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
-      render();
-    } catch (error) {
-      console.log("handleListProduct -> error", error);
+      await marketCoins.approve(marketContract._contractAddress, productPrice);
+
+      const tx = await marketContract.buyProduct(productId);
+      onOpen("success", { hash: tx, title: "BUY PRODUCT" });
+    } catch (err) {
+      console.log("handleBuyProduct->error", err);
     } finally {
       setIsLoading(false);
     }
@@ -55,11 +58,11 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
       onClose={onClose}>
       <ModalContent>
         <ModalHeader className="justify-center text-large m-2 border-b-2">
-          UNLIST PRODUCT
+          BUY PRODUCT
         </ModalHeader>
         <ModalBody>
           <div className="flex gap-x-1 text-sm items-center justify-center">
-            You want to unlist <div className="font-bold"> {title} </div>
+            You want to buy <div className="font-bold"> {title} </div>
           </div>
 
           <Button
@@ -70,7 +73,7 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
             variant="flat"
             type="submit"
             className="mb-4">
-            Unlist
+            Buy
           </Button>
         </ModalBody>
       </ModalContent>
@@ -78,4 +81,4 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
   );
 };
 
-export default UnlistProductModal;
+export default BuyProductModal;

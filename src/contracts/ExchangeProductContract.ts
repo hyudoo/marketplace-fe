@@ -27,55 +27,63 @@ export default class ExchangeProductContract extends Erc721 {
     _senderToken: number[],
     _receiverToken: number[]
   ) => {
-    console.log("_receiver", _receiver);
-    console.log("_senderToken", _senderToken);
     const tx = await this._contract.createTransaction(
       _receiver,
       _senderToken,
-      _receiverToken
+      _receiverToken,
+      this._option
     );
     return this._handleTransactionResponse(tx);
   };
 
   cancelTransaction = async (_transactionId: number) => {
-    const tx = await this._contract.cancelTransaction(_transactionId);
+    const tx = await this._contract.cancelTransaction(
+      _transactionId,
+      this._option
+    );
     return this._handleTransactionResponse(tx);
   };
 
   acceptTransaction = async (_transactionId: number) => {
-    const tx = await this._contract.acceptTransaction(_transactionId);
-    return this._handleTransactionResponse(tx);
-  };
-
-  rejectTransaction = async (_transactionId: number) => {
-    const tx = await this._contract.rejectTransaction(_transactionId);
+    const tx = await this._contract.acceptTransaction(
+      _transactionId,
+      this._option
+    );
+    console.log("tx", tx);
     return this._handleTransactionResponse(tx);
   };
 
   getTradeBySender = async (address: string): Promise<number[]> => {
-    const ids = await this._contract.getTradeBySender(address);
-    return ids;
+    let ids = await this._contract.getTradeBySender(address);
+    ids = ids.map((id: any) => this._toNumber(id));
+    return ids.filter((id: any) => id > 0);
   };
 
   getTradeByReceiver = async (address: string): Promise<number[]> => {
-    const ids = await this._contract.getTradeByReceiver(address);
-    return ids;
+    let ids = await this._contract.getTradeByReceiver(address);
+    ids = ids.map((id: any) => this._toNumber(id));
+    return ids.filter((id: any) => id > 0);
   };
 
   getTradeById = async (_id: number): Promise<IExchange> => {
-    const obj: IExchange = await this._contract.getTradeById(
-      this._toNumber(_id)
-    );
-    return { ...obj, id: _id };
+    const obj = await this._contract.getTradeById(_id);
+    return {
+      id: _id,
+      sender: obj.sender,
+      receiver: obj.receiver,
+      senderTokenIds: obj.senderTokenIds.map((id: any) => this._toNumber(id)),
+      receiverTokenIds: obj.receiverTokenIds.map((id: any) =>
+        this._toNumber(id)
+      ),
+    };
   };
 
   getTradeByIds = async (_ids: Array<number>) => {
-    let items = Promise.all(
+    return Promise.all(
       _ids.map(async (id) => {
         const obj: IExchange = await this.getTradeById(id);
-        return { ...obj, id };
+        return obj;
       })
     );
-    return { ...items };
   };
 }

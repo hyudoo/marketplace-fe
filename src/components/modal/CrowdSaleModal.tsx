@@ -22,9 +22,8 @@ const CrowdSaleProviderModal = () => {
   const { wallet, signer } = useAppSelector((state) => state.account);
 
   // redux
-  const { isOpen, onClose, type, data } = useModal();
+  const { isOpen, onClose, type, onOpen } = useModal();
   const isModalOpen = isOpen && type === "openCrowdSale";
-  const { onOpen } = useModal();
   const { onOpenChange } = useDisclosure();
 
   const getRate = React.useCallback(async () => {

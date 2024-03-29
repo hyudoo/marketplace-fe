@@ -6,9 +6,7 @@ import ProductCard from "@/components/product/ProductCard";
 import { IProductItem } from "@/_types_";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
-import { useRouter } from "next/navigation";
 export default function Home() {
-  const router = useRouter();
   const [listproducts, setListProducts] = React.useState<IProductItem[]>();
   const getListProduct = React.useCallback(async () => {
     try {

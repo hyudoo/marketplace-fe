@@ -11,19 +11,18 @@ import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useAppSelector } from "@/reduxs/hooks";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
+import ExchangeProductContract from "@/contracts/ExchangeProductContract";
 
-interface IUnlistProductModal {
+interface ICancelExchangeModal {
   isOpen: boolean;
   id: number;
-  title: string;
   render: () => void;
   onClose: () => void;
 }
 
-const UnlistProductModal: React.FC<IUnlistProductModal> = ({
+const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
   isOpen,
   id,
-  title,
   render,
   onClose,
 }) => {
@@ -36,9 +35,9 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
     if (!signer || !wallet || !id || !render) return;
     try {
       setIsLoading(true);
-      const marketContract = new MarketPlaceContract(signer);
-      const tx = await marketContract.unlistProduct(id);
-      onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
+      const marketContract = new ExchangeProductContract(signer);
+      const tx = await marketContract.cancelTransaction(id);
+      onOpen("success", { hash: tx, title: "CANCEL EXCHANGE" });
       render();
     } catch (error) {
       console.log("handleListProduct -> error", error);
@@ -55,11 +54,11 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
       onClose={onClose}>
       <ModalContent>
         <ModalHeader className="justify-center text-large m-2 border-b-2">
-          UNLIST PRODUCT
+          CANCEL EXCHANGE
         </ModalHeader>
         <ModalBody>
           <div className="flex gap-x-1 text-sm items-center justify-center">
-            You want to unlist <div className="font-bold"> {title} </div>
+            You want to cabncel this exchange?
           </div>
 
           <Button
@@ -78,4 +77,4 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
   );
 };
 
-export default UnlistProductModal;
+export default CancelExchangeModal;

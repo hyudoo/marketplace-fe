@@ -40,7 +40,6 @@ export interface IExchange {
   id?: number;
   sender?: string;
   receiver?: string;
-  senderToken?: number[];
-  receiverToken?: number[];
-  active?: boolean;
+  senderTokenIds?: number[];
+  receiverTokenIds?: number[];
 }

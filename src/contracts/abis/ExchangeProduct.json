@@ -140,9 +140,9 @@
                 "type": "uint256"
             }
         ],
-        "name": "acceptTrade",
+        "name": "acceptTransaction",
         "outputs": [],
-        "stateMutability": "payable",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {

@@ -9,32 +9,26 @@ import ExchangeProductContract from "@/contracts/ExchangeProductContract";
 import { useRouter } from "next/navigation";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 
-export default function Manage() {
+export default function Exchange() {
   const { wallet, signer } = useAppSelector((state) => state.account);
   const router = useRouter();
   const [isRender, setIsRender] = React.useState<boolean>(true);
-  const [canCreate, setCanCreate] = React.useState<boolean>(false);
   const [exchanges, setExchanges] = React.useState<IExchange[]>([]);
   const [incomingExchanges, setIncomingExchanges] = React.useState<IExchange[]>(
     []
   );
   const getListExchange = React.useCallback(async () => {
     if (!signer || !wallet?.address) return;
+    const exchangeContract = new ExchangeProductContract(signer);
     try {
-      const productContract = new SupplyChainContract(signer);
-      const exchangeContract = new ExchangeProductContract(signer);
-      try {
-        const exchangeIds = await exchangeContract.getTradeBySender(
-          wallet?.address
-        );
-        const exchanges = await exchangeContract.getTradeByIds(exchangeIds);
-        setExchanges(exchanges);
-      } catch (error) {}
-      try {
-        const ids = await exchangeContract.getTradeByReceiver(wallet?.address);
-        const incomingExchange = await exchangeContract.getTradeByIds(ids);
-        setIncomingExchanges(incomingExchange);
-      } catch (error) {}
+      const exchangeIds = await exchangeContract.getTradeBySender(
+        wallet?.address
+      );
+      const exchanges = await exchangeContract.getTradeByIds(exchangeIds);
+      setExchanges(exchanges);
+      const ids = await exchangeContract.getTradeByReceiver(wallet?.address);
+      const incomingExchange = await exchangeContract.getTradeByIds(ids);
+      setIncomingExchanges(incomingExchange);
     } catch (err) {
       console.log(err);
     }
@@ -46,7 +40,7 @@ export default function Manage() {
 
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <Card>
+      {/* <Card>
         <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
           Exchange
           <Tooltip
@@ -80,28 +74,28 @@ export default function Manage() {
             ))}
           </div>
         </CardBody>
-      </Card>
+      </Card> */}
 
-      {/* <Card>
+      <Card>
         <CardHeader className="items-center justify-center uppercase font-bold text-xl">
           Incoming Exchange
         </CardHeader>
         <CardBody>
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+          <div className="gap-2">
             {incomingExchanges?.map((exchange, index) => (
               <ExchangeCard
                 key={index}
-                name={exchange.name}
-                image={exchange.images[0]}
-                price={exchange.price}
+                address={exchange.sender}
                 exchangeId={exchange.id}
-                type="unlist"
+                yourTokenIds={exchange.receiverTokenIds}
+                otherTokenIds={exchange.senderTokenIds}
+                type="incoming-exchange"
                 render={() => setIsRender(!isRender)}
               />
             ))}
           </div>
         </CardBody>
-      </Card> */}
+      </Card>
     </div>
   );
 }

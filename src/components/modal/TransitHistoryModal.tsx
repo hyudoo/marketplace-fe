@@ -1,26 +1,23 @@
 "use client";
 
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Button,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import React from "react";
-import { useModal } from "@/reduxs/use-modal-store";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 
-const TransitHistoryModal = () => {
+interface ITransitHistoryModalProps {
+  isOpen: boolean;
+  id: number;
+  title: string;
+  onClose: () => void;
+}
+
+const TransitHistoryModal: React.FC<ITransitHistoryModalProps> = ({
+  isOpen,
+  id,
+  title,
+  onClose,
+}) => {
   const [history, setHistory] = React.useState<string[]>([]);
-  // redux
-  const { isOpen, onClose, type, data } = useModal();
-  const isModalOpen = isOpen && type === "transitHistory";
-  const { onOpenChange } = useDisclosure();
-
-  const { id, title } = data;
-
   const getTransitHistory = React.useCallback(async () => {
     if (!id) return;
     try {
@@ -39,8 +36,7 @@ const TransitHistoryModal = () => {
   return (
     <Modal
       backdrop="blur"
-      isOpen={isModalOpen}
-      onOpenChange={onOpenChange}
+      isOpen={isOpen}
       placement="center"
       className="overflow-y-auto"
       onClose={onClose}>

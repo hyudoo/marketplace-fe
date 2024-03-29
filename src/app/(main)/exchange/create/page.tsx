@@ -15,6 +15,7 @@ import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import { ethers } from "ethers";
 import { useModal } from "@/reduxs/use-modal-store";
+import ExchangeModal from "@/components/modal/ExchangeModal";
 
 export default function Transfer() {
   const { wallet, signer } = useAppSelector((state) => state.account);
@@ -22,6 +23,7 @@ export default function Transfer() {
   const [inventory, setInventory] = React.useState<IProductItem[]>();
   const [isRender, setIsRender] = React.useState<boolean>(true);
   const [address, setAddress] = React.useState<string>("");
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
 
   const [senderProducts, setSenderProducts] = React.useState<number[]>([]);
   const [receiverProducts, setReceiverProducts] = React.useState<number[]>([]);
@@ -117,75 +119,75 @@ export default function Transfer() {
   };
 
   return (
-    <div className="flex w-full flex-col gap-y-2">
-      <Input
-        type="text"
-        label="Other Address"
-        variant="bordered"
-        isInvalid={isInvalid}
-        onChange={(e) => setAddress(e.target.value)}
-        color={isInvalid ? "danger" : "primary"}
-        errorMessage={isInvalid && "Please enter a valid address"}
-        placeholder="Enter Other Address"
-      />
-      <div className="md:grid md:grid-cols-2 flex flex-col">
-        <Card>
-          <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
-            Other Inventory
-          </CardHeader>
-          <CardBody>
-            <div className="gap-2 sm:grid sm:grid-cols-2">
-              {otherInventory?.map((product, index) => (
-                <ProductCard
-                  onClick={() =>
-                    handleClick("receiver", product.id, product.name!)
-                  }
-                  key={index}
-                  productId={product.id}
-                  name={product.name}
-                  image={product.images[0]}
-                  isCheck={receiverProducts.includes(product.id)}
-                />
-              ))}
-            </div>
-          </CardBody>
-        </Card>
+    <>
+      <div className="flex w-full flex-col gap-y-2">
+        <Input
+          type="text"
+          label="Other Address"
+          variant="bordered"
+          isInvalid={isInvalid}
+          onChange={(e) => setAddress(e.target.value)}
+          color={isInvalid ? "danger" : "primary"}
+          errorMessage={isInvalid && "Please enter a valid address"}
+          placeholder="Enter Other Address"
+        />
+        <div className="md:grid md:grid-cols-2 flex flex-col">
+          <Card>
+            <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
+              Other Inventory
+            </CardHeader>
+            <CardBody>
+              <div className="gap-2 sm:grid sm:grid-cols-2">
+                {otherInventory?.map((product, index) => (
+                  <ProductCard
+                    onClick={() =>
+                      handleClick("receiver", product.id, product.name!)
+                    }
+                    key={index}
+                    productId={product.id}
+                    name={product.name}
+                    image={product.images[0]}
+                    isCheck={receiverProducts.includes(product.id)}
+                  />
+                ))}
+              </div>
+            </CardBody>
+          </Card>
 
-        <Card>
-          <CardHeader className="items-center justify-center uppercase font-bold text-xl">
-            Inventory
-          </CardHeader>
-          <CardBody>
-            <div className="gap-2 sm:grid sm:grid-cols-2">
-              {inventory?.map((product, index) => (
-                <ProductCard
-                  onClick={() =>
-                    handleClick("sender", product.id, product.name!)
-                  }
-                  key={index}
-                  name={product.name}
-                  image={product.images[0]}
-                  productId={product.id}
-                  render={() => setIsRender(!isRender)}
-                  isCheck={senderProducts.includes(product.id)}
-                />
-              ))}
-            </div>
-          </CardBody>
-        </Card>
+          <Card>
+            <CardHeader className="items-center justify-center uppercase font-bold text-xl">
+              Inventory
+            </CardHeader>
+            <CardBody>
+              <div className="gap-2 sm:grid sm:grid-cols-2">
+                {inventory?.map((product, index) => (
+                  <ProductCard
+                    onClick={() =>
+                      handleClick("sender", product.id, product.name!)
+                    }
+                    key={index}
+                    name={product.name}
+                    image={product.images[0]}
+                    productId={product.id}
+                    render={() => setIsRender(!isRender)}
+                    isCheck={senderProducts.includes(product.id)}
+                  />
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+        <Button onClick={() => setIsModalOpen(true)}>Exchange</Button>
       </div>
-      <Button
-        onClick={() =>
-          onOpen("exchange", {
-            senderIds: senderProducts,
-            receiverIds: receiverProducts,
-            senderProductName: senderProductsName,
-            receiverProductName: receiverProductsName,
-            address,
-          })
-        }>
-        Exchange
-      </Button>
-    </div>
+      <ExchangeModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        senderIds={senderProducts}
+        receiverIds={receiverProducts}
+        senderProductName={senderProductsName!}
+        receiverProductName={receiverProductsName!}
+        address={address}
+      />
+    </>
   );
 }

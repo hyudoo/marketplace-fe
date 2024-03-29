@@ -52,7 +52,7 @@ export default class SupplyChainContract extends Erc721 {
     );
   };
 
-  getProductInfo = async (productId: number) => {
+  getProductInfoById = async (productId: number) => {
     const productUrl = await this._contract.getProductURI(productId);
     const obj = await (await fetch(`${productUrl}`)).json();
     obj.images = obj.images.split(",");
@@ -66,10 +66,18 @@ export default class SupplyChainContract extends Erc721 {
     return product;
   };
 
+  getProductInfoByIds = async (productIds: number[]) => {
+    return Promise.all(
+      productIds.map(async (id) => {
+        return this.getProductInfoById(id);
+      })
+    );
+  };
+
   getProductsInfo = async (products: Array<any>) => {
     return Promise.all(
       products.map(async (product) => {
-        const obj = await this.getProductInfo(product?.productId);
+        const obj = await this.getProductInfoById(product?.productId);
         return {
           ...obj,
           price: product.price,
