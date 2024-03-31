@@ -38,12 +38,13 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
       const productContract = new SupplyChainContract(signer);
       const exchangeContract = new ExchangeProductContract(signer);
       const exchange = await exchangeContract.getTradeById(id);
-      // for (let id of exchange.receiverTokenIds!) {
-      //   await productContract.approve(exchange.sender as string, id);
-      // }
+      for (let id of exchange.receiverTokenIds!) {
+        await productContract.approve(exchangeContract._contractAddress, id);
+      }
       const tx = await exchangeContract.acceptTransaction(id);
       onOpen("success", { hash: tx, title: "ACCEPT EXCHANGE" });
       render();
+      onClose();
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {

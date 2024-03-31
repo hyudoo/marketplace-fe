@@ -10,7 +10,6 @@ import {
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useAppSelector } from "@/reduxs/hooks";
-import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
 
 interface ICancelExchangeModal {
@@ -39,6 +38,7 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
       const tx = await marketContract.cancelTransaction(id);
       onOpen("success", { hash: tx, title: "CANCEL EXCHANGE" });
       render();
+      onClose();
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {
@@ -69,7 +69,7 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
             variant="flat"
             type="submit"
             className="mb-4">
-            Unlist
+            Cancel
           </Button>
         </ModalBody>
       </ModalContent>

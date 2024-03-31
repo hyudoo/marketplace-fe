@@ -1,20 +1,12 @@
 "use client";
 
 import React from "react";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Input,
-  Tooltip,
-} from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import ProductCard from "@/components/product/ProductCard";
 import { IProductItem } from "@/_types_";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import { ethers } from "ethers";
-import { useModal } from "@/reduxs/use-modal-store";
 import ExchangeModal from "@/components/modal/ExchangeModal";
 
 export default function Transfer() {
@@ -34,8 +26,6 @@ export default function Transfer() {
     string[]
   >([]);
 
-  const { onOpen } = useModal();
-
   const getInventory = React.useCallback(async () => {
     if (!signer || !wallet?.address) return;
     try {
@@ -47,7 +37,7 @@ export default function Transfer() {
     } catch (err) {
       console.log(err);
     }
-  }, [wallet, signer, address]);
+  }, [wallet, signer]);
 
   React.useEffect(() => {
     getInventory();

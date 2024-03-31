@@ -340,7 +340,7 @@
                 "type": "address"
             }
         ],
-        "name": "setProductContract",
+        "name": "setProduct",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

@@ -13,6 +13,7 @@ import { useModal } from "@/reduxs/use-modal-store";
 import { useAppSelector } from "@/reduxs/hooks";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
+import { useRouter } from "next/navigation";
 
 interface IExchangeModalProps {
   isOpen: boolean;
@@ -34,6 +35,7 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const router = useRouter();
   // redux
   const { onOpen } = useModal();
   const { wallet, signer } = useAppSelector((state) => state.account);
@@ -54,7 +56,8 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
         senderIds!,
         receiverIds!
       );
-      onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
+      onOpen("success", { hash: tx, title: "EXCHANGE PRODUCT" });
+      router.push("/exchange");
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {

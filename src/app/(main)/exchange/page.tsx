@@ -7,16 +7,15 @@ import { IExchange } from "@/_types_";
 import { useAppSelector } from "@/reduxs/hooks";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
 import { useRouter } from "next/navigation";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
 
 export default function Exchange() {
   const { wallet, signer } = useAppSelector((state) => state.account);
-  const router = useRouter();
   const [isRender, setIsRender] = React.useState<boolean>(true);
   const [exchanges, setExchanges] = React.useState<IExchange[]>([]);
   const [incomingExchanges, setIncomingExchanges] = React.useState<IExchange[]>(
     []
   );
+  const router = useRouter();
   const getListExchange = React.useCallback(async () => {
     if (!signer || !wallet?.address) return;
     const exchangeContract = new ExchangeProductContract(signer);
@@ -40,8 +39,8 @@ export default function Exchange() {
 
   return (
     <div className="flex w-full flex-col gap-y-2">
-      {/* <Card>
-        <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
+      <Card>
+        <CardHeader className="items-center justify-center uppercase font-bold text-xl">
           Exchange
           <Tooltip
             color="primary"
@@ -64,17 +63,21 @@ export default function Exchange() {
           </Tooltip>
         </CardHeader>
         <CardBody>
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-            {exchanges?.map((product, index) => (
+          <div className="gap-2">
+            {exchanges?.map((exchange, index) => (
               <ExchangeCard
                 key={index}
+                address={exchange.sender}
+                exchangeId={exchange.id}
+                yourTokenIds={exchange.senderTokenIds}
+                otherTokenIds={exchange.receiverTokenIds}
+                type="exchange"
                 render={() => setIsRender(!isRender)}
-                type="inventory"
               />
             ))}
           </div>
         </CardBody>
-      </Card> */}
+      </Card>
 
       <Card>
         <CardHeader className="items-center justify-center uppercase font-bold text-xl">

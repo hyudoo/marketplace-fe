@@ -49,7 +49,7 @@ export default function ExchangeCard({
     } catch (err) {
       console.log(err);
     }
-  }, []);
+  }, [yourTokenIds, otherTokenIds]);
 
   React.useEffect(() => {
     getProduct();

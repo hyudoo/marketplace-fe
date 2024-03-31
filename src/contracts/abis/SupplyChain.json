@@ -232,12 +232,6 @@
             },
             {
                 "indexed": false,
-                "internalType": "string",
-                "name": "_productType",
-                "type": "string"
-            },
-            {
-                "indexed": false,
                 "internalType": "uint256",
                 "name": "_tokenid",
                 "type": "uint256"
@@ -712,11 +706,6 @@
                 "internalType": "string",
                 "name": "cid",
                 "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "productType",
-                "type": "string"
             }
         ],
         "name": "mint",
@@ -922,7 +911,7 @@
             },
             {
                 "internalType": "string",
-                "name": "cid",
+                "name": "_cid",
                 "type": "string"
             }
         ],
