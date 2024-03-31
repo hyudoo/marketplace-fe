@@ -55,6 +55,15 @@ export default class MarketContract extends Erc721 {
     return this._handleTransactionResponse(tx);
   };
 
+  updateListingProductPrice = async (tokenId: number, price: number) => {
+    const tx = await this._contract.updateListingProductPrice(
+      tokenId,
+      this._numberToEth(price),
+      this._option
+    );
+    return this._handleTransactionResponse(tx);
+  };
+
   getListedProductByIDs = async (id: number) => {
     const item = await this._contract.getListedProductByID(id);
     return {

@@ -12,23 +12,20 @@ import {
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useAppSelector } from "@/reduxs/hooks";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-interface IListProductModal {
+interface IUpdatePriceProductModal {
   isOpen: boolean;
   id: number;
   title: string;
-  render: () => void;
   onClose: () => void;
 }
 
-const ListProductModal: React.FC<IListProductModal> = ({
+const UpdatePriceProductModal: React.FC<IUpdatePriceProductModal> = ({
   isOpen,
   id,
   title,
-  render,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -45,15 +42,12 @@ const ListProductModal: React.FC<IListProductModal> = ({
   const { onOpenChange } = useDisclosure();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    if (data.price <= 0 || !signer || !wallet || !id || !render) return;
+    if (data.price <= 0 || !signer || !wallet || !id) return;
     try {
       setIsLoading(true);
-      const productContract = new SupplyChainContract(signer);
       const marketContract = new MarketPlaceContract(signer);
-      await productContract.approve(marketContract._contractAddress, id);
-      const tx = await marketContract.listProduct(id, data.price);
-      onOpen("success", { hash: tx, title: "LIST PRODUCT" });
-      render();
+      const tx = await marketContract.updateListingProductPrice(id, data.price);
+      onOpen("success", { hash: tx, title: "UPDATE PRICE LIST PRODUCT" });
       onClose();
     } catch (error) {
       console.log("handleListProduct -> error", error);
@@ -76,8 +70,8 @@ const ListProductModal: React.FC<IListProductModal> = ({
           </ModalHeader>
           <ModalBody>
             <div className="flex gap-x-1 text-sm items-center justify-center">
-              You want to sell <div className="font-bold"> {title} </div> at a
-              price
+              You want to update the price of
+              <div className="font-bold"> {title} </div>
             </div>
             <Input
               type="number"
@@ -100,7 +94,7 @@ const ListProductModal: React.FC<IListProductModal> = ({
               variant="flat"
               type="submit"
               className="mb-4">
-              List
+              Update Price
             </Button>
           </ModalBody>
         </ModalContent>
@@ -109,4 +103,4 @@ const ListProductModal: React.FC<IListProductModal> = ({
   );
 };
 
-export default ListProductModal;
+export default UpdatePriceProductModal;

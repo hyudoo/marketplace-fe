@@ -33,8 +33,7 @@ export default class SupplyChainContract extends Erc721 {
   addProduct = async (data: any) => {
     const tx: TransactionResponse = await this._contract.mint(
       data.address,
-      data.cid,
-      data.type
+      data.cid
     );
     return this._handleTransactionResponse(tx);
   };

@@ -40,6 +40,7 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
       const tx = await marketContract.unlistProduct(id);
       onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
       render();
+      onClose();
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {

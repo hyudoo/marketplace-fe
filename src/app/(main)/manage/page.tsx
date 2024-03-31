@@ -18,21 +18,27 @@ export default function Manage() {
   const [canCreate, setCanCreate] = React.useState<boolean>(false);
 
   const getListProduct = React.useCallback(async () => {
-    if (!signer || !wallet?.address) return;
+    if (!isRender) return;
+
+    if (!signer || !wallet || !wallet.address) {
+      router.push("/");
+    }
     try {
       const productContract = new SupplyChainContract(signer);
-      const canCreate = await productContract.hasMinterRole(wallet?.address);
+      const canCreate = await productContract.hasMinterRole(wallet?.address!);
       setCanCreate(canCreate);
-      const inventory = await productContract.getListProduct(wallet?.address);
+      const inventory = await productContract.getListProduct(wallet?.address!);
       setInventory(inventory);
       const marketContract = new MarketContract(signer);
-      const ids = await marketContract.getMyProductListed(wallet?.address);
+      const ids = await marketContract.getMyProductListed(wallet?.address!);
       const listedProducts = await productContract.getProductsInfo(ids);
       setListedProducts(listedProducts);
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsRender(false);
     }
-  }, [wallet, signer, isRender]);
+  }, [wallet, signer, isRender, router]);
 
   React.useEffect(() => {
     getListProduct();
@@ -74,7 +80,7 @@ export default function Manage() {
                 name={product.name}
                 image={product.images[0]}
                 price={product.price}
-                render={() => setIsRender(!isRender)}
+                render={() => setIsRender(true)}
                 type="inventory"
               />
             ))}
@@ -96,7 +102,7 @@ export default function Manage() {
                 price={product.price}
                 productId={product.id}
                 type="unlist"
-                render={() => setIsRender(!isRender)}
+                render={() => setIsRender(true)}
               />
             ))}
           </div>

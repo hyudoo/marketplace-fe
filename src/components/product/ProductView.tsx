@@ -8,6 +8,7 @@ import MarketContract from "@/contracts/MarketPlaceContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import TransitHistoryModal from "../modal/TransitHistoryModal";
 import BuyProductModal from "../modal/BuyProductModal";
+import UpdatePriceProductModal from "../modal/UpdatePriceProductModal";
 
 interface IProductViewProps {
   productId: number;
@@ -20,8 +21,9 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
   const [canBuy, setCanBuy] = React.useState<boolean>(false);
   const [isTransitOpen, setIsTransitOpen] = React.useState<boolean>(false);
   const [isBuyOpen, setIsBuyOpen] = React.useState<boolean>(false);
+  const [isUpdateOpen, setIsUpdateOpen] = React.useState<boolean>(false);
   const { wallet } = useAppSelector((state) => state.account);
-
+  const [canUpdatePrice, setCanUpdatePrice] = React.useState<boolean>(false);
   const getProductInfo = React.useCallback(async () => {
     try {
       const contract = new SupplyChainContract();
@@ -39,10 +41,14 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
           price: item.price,
         });
       }
+
+      if (product?.author == wallet?.address) {
+        setCanUpdatePrice(true);
+      }
     } catch (err) {
       console.log(err);
     }
-  }, [productId]);
+  }, [productId, wallet?.address]);
 
   React.useEffect(() => {
     getProductInfo();
@@ -158,13 +164,22 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
               {canBuy && (
                 <div className="justify-between flex border-t-2 border-blue-600 pt-4">
                   <p className="text-500">Price: {product?.price} MKC</p>
-                  <Button
-                    variant="bordered"
-                    color="primary"
-                    isDisabled={!wallet}
-                    onClick={() => setIsBuyOpen(true)}>
-                    Buy Now
-                  </Button>
+                  {canUpdatePrice ? (
+                    <Button
+                      variant="bordered"
+                      color="primary"
+                      onClick={() => setIsUpdateOpen(true)}>
+                      Update Price
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="bordered"
+                      color="primary"
+                      isDisabled={!wallet}
+                      onClick={() => setIsBuyOpen(true)}>
+                      Buy Now
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
@@ -186,6 +201,13 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
         id={productId}
         title={product?.name!}
         onClose={() => setIsTransitOpen(false)}
+      />
+
+      <UpdatePriceProductModal
+        isOpen={isUpdateOpen}
+        title={product?.name!}
+        id={productId}
+        onClose={() => setIsUpdateOpen(false)}
       />
 
       <BuyProductModal

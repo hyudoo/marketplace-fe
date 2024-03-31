@@ -40,14 +40,6 @@ export const navbar: INavbar[] = [
 
 export const products: IProduct[] = [
   {
-    label: "Men's Fashion",
-    value: "Men's Fashion",
-  },
-  {
-    label: "Women's Fashion",
-    value: "Women's Fashion",
-  },
-  {
     label: "Phones & Accessories",
     value: "Phones & Accessories",
   },
@@ -56,27 +48,11 @@ export const products: IProduct[] = [
     value: "Computers & Laptops",
   },
   {
-    label: "Women's Accessories & Jewelry",
-    value: "Women's Accessories & Jewelry",
+    label: "Watches",
+    value: "Watches",
   },
   {
-    label: "Women's purse",
-    value: "Women's purse",
-  },
-  {
-    label: "Men's Shoes",
-    value: "Men's Shoes",
-  },
-  {
-    label: "Women's Shoes",
-    value: "Women's Shoes",
-  },
-  {
-    label: "Health",
-    value: "Health",
-  },
-  {
-    label: "Clock",
-    value: "Clock",
+    label: "Camera Camcorder",
+    value: "Camera Camcorder",
   },
 ];

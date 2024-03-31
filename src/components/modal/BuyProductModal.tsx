@@ -43,6 +43,7 @@ const BuyProductModal: React.FC<IBuyProductModal> = ({
 
       const tx = await marketContract.buyProduct(productId);
       onOpen("success", { hash: tx, title: "BUY PRODUCT" });
+      onClose();
     } catch (err) {
       console.log("handleBuyProduct->error", err);
     } finally {

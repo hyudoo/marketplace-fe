@@ -17,21 +17,26 @@ export default function Exchange() {
   );
   const router = useRouter();
   const getListExchange = React.useCallback(async () => {
-    if (!signer || !wallet?.address) return;
+    if (!isRender) return;
+    if (!signer || !wallet || !wallet.address) {
+      router.push("/");
+    }
     const exchangeContract = new ExchangeProductContract(signer);
     try {
       const exchangeIds = await exchangeContract.getTradeBySender(
-        wallet?.address
+        wallet?.address!
       );
       const exchanges = await exchangeContract.getTradeByIds(exchangeIds);
       setExchanges(exchanges);
-      const ids = await exchangeContract.getTradeByReceiver(wallet?.address);
+      const ids = await exchangeContract.getTradeByReceiver(wallet?.address!);
       const incomingExchange = await exchangeContract.getTradeByIds(ids);
       setIncomingExchanges(incomingExchange);
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsRender(false);
     }
-  }, [wallet, signer, isRender]);
+  }, [wallet, signer, isRender, router]);
 
   React.useEffect(() => {
     getListExchange();
@@ -72,7 +77,7 @@ export default function Exchange() {
                 yourTokenIds={exchange.senderTokenIds}
                 otherTokenIds={exchange.receiverTokenIds}
                 type="exchange"
-                render={() => setIsRender(!isRender)}
+                render={() => setIsRender(true)}
               />
             ))}
           </div>
@@ -93,7 +98,7 @@ export default function Exchange() {
                 yourTokenIds={exchange.receiverTokenIds}
                 otherTokenIds={exchange.senderTokenIds}
                 type="incoming-exchange"
-                render={() => setIsRender(!isRender)}
+                render={() => setIsRender(true)}
               />
             ))}
           </div>
