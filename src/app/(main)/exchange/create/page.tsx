@@ -83,7 +83,9 @@ export default function Transfer() {
         const id = senderProducts.indexOf(productId);
         let newArr = senderProducts;
         newArr.splice(id, 1);
-        setSenderProductsName(senderProductsName.splice(id, 1));
+        let arr = senderProductsName;
+        arr.splice(id, 1);
+        setSenderProductsName([...arr]);
         setSenderProducts([...newArr]);
       } else {
         senderProducts.push(productId);
@@ -98,7 +100,9 @@ export default function Transfer() {
         let newArr = receiverProducts;
         newArr.splice(id, 1);
         setReceiverProducts([...newArr]);
-        setReceiverProductsName(receiverProductsName.splice(id, 1));
+        let arr = receiverProductsName;
+        arr.splice(id, 1);
+        setReceiverProductsName([...arr]);
       } else {
         receiverProducts.push(productId);
         setReceiverProducts([...receiverProducts]);
