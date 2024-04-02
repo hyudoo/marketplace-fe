@@ -85,10 +85,12 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
             alt="NextUI Image with fallback"
           />
           <div className="relative py-2">
-            <div className="absolute z-20 inset-y-2 left-0">
+            <div className="absolute z-20 inset-y-2 -left-7">
               <Button
                 isIconOnly
                 aria-label="previos"
+                color="primary"
+                variant="light"
                 className="h-full"
                 onClick={handlePreviousImage}>
                 <svg
@@ -115,10 +117,12 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                 />
               ))}
             </div>
-            <div className="absolute z-10 inset-y-2 right-0">
+            <div className="absolute z-10 inset-y-2 -right-7">
               <Button
                 isIconOnly
                 aria-label="next"
+                color="primary"
+                variant="light"
                 className="h-full"
                 onClick={handleNextImage}>
                 <svg
