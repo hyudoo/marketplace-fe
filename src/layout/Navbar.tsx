@@ -8,7 +8,6 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  Link,
   Button,
   Chip,
   Dropdown,
@@ -16,7 +15,6 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
-import { navbar } from "@/constants";
 import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import {
   setWalletInfo,
@@ -57,19 +55,12 @@ export default function NavigationLayout() {
   };
   return (
     <Navbar isBordered maxWidth="full">
-      <NavbarBrand>
+      <NavbarBrand
+        onClick={() => router.push("/")}
+        className="hover:cursor-pointer">
         <Avatar src="/logo.png" size="sm" alt="Blocket" className="mr-2" />
         <p className="font-bold text-inherit">Blocket</p>
       </NavbarBrand>
-      <NavbarContent className="sm:flex gap-4" justify="center">
-        {navbar.map((item, index) => (
-          <NavbarItem key={index}>
-            <Link color="foreground" onClick={() => router.push(item.url)}>
-              {item.name}
-            </Link>
-          </NavbarItem>
-        ))}
-      </NavbarContent>
       <NavbarContent as="div" className="items-center" justify="end">
         <Chip
           variant="flat"
@@ -121,6 +112,19 @@ export default function NavigationLayout() {
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem
+                key="profile"
+                color="default"
+                onClick={() => router.push("/inventory")}>
+                Inventory
+              </DropdownItem>
+              <DropdownItem
+                key="exchange"
+                color="default"
+                onClick={() => router.push("/exchange")}>
+                Exchange
+              </DropdownItem>
+
+              <DropdownItem
                 key="logout"
                 color="danger"
                 endContent={
@@ -148,11 +152,7 @@ export default function NavigationLayout() {
           </Dropdown>
         ) : (
           <NavbarItem>
-            <Button
-              as={Link}
-              color="primary"
-              variant="flat"
-              onClick={onConnectMetamask}>
+            <Button color="primary" variant="flat" onClick={onConnectMetamask}>
               Connect Wallet
             </Button>
           </NavbarItem>
