@@ -26,10 +26,10 @@ export default function Exchange() {
   );
   const router = useRouter();
   const getListExchange = React.useCallback(async () => {
-    if (!isRender) return;
     if (!signer || !wallet || !wallet.address) {
       router.push("/");
     }
+    if (!isRender) return;
     const exchangeContract = new ExchangeProductContract(signer);
     try {
       const exchangeIds = await exchangeContract.getTradeBySender(

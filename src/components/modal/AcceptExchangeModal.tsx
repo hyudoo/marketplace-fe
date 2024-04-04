@@ -34,6 +34,8 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
   const handleSubmit = async () => {
     if (!signer || !wallet || !id || !render) return;
     try {
+      console.log("id", id);
+
       setIsLoading(true);
       const productContract = new SupplyChainContract(signer);
       const exchangeContract = new ExchangeProductContract(signer);

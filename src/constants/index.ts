@@ -23,21 +23,6 @@ export const packages: IPackage[] = [
   },
 ];
 
-export const navbar: INavbar[] = [
-  {
-    name: "Market",
-    url: "/",
-  },
-  {
-    name: "Manage",
-    url: "/manage",
-  },
-  {
-    name: "Exchange",
-    url: "/exchange",
-  },
-];
-
 export const products: IProduct[] = [
   {
     label: "Phones & Accessories",

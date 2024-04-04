@@ -17,7 +17,7 @@ import { useAppSelector } from "@/reduxs/hooks";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import { useRouter } from "next/navigation";
 
-export default function Manage() {
+export default function Inventory() {
   const [selected, setSelected] = React.useState("inventory");
   const { wallet, signer } = useAppSelector((state) => state.account);
   const router = useRouter();
@@ -27,11 +27,10 @@ export default function Manage() {
   const [canCreate, setCanCreate] = React.useState<boolean>(false);
 
   const getListProduct = React.useCallback(async () => {
-    if (!isRender) return;
-
     if (!signer || !wallet || !wallet.address) {
       router.push("/");
     }
+    if (!isRender) return;
     try {
       const productContract = new SupplyChainContract(signer);
       const canCreate = await productContract.hasMinterRole(wallet?.address!);
@@ -100,7 +99,7 @@ export default function Manage() {
                   content={"Create new Product"}
                   className="capitalize">
                   <svg
-                    onClick={() => router.push("/manage/createProduct")}
+                    onClick={() => router.push("/inventory/createProduct")}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
