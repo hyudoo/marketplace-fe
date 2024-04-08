@@ -20,6 +20,7 @@ import {
   setWalletInfo,
   setSigner,
   clearState,
+  setUpdate,
 } from "@/reduxs/accounts/account.slices";
 import { ethers } from "ethers";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
@@ -30,7 +31,8 @@ export default function NavigationLayout() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { onOpen } = useModal();
-  const { wallet } = useAppSelector((state) => state.account);
+  const { wallet, isUpdate } = useAppSelector((state) => state.account);
+
   const onConnectMetamask = async () => {
     if (window.ethereum) {
       const provider = new ethers.BrowserProvider(window.ethereum);
@@ -47,6 +49,26 @@ export default function NavigationLayout() {
       dispatch(setSigner(signer));
     }
   };
+
+  const updateWallet = React.useCallback(async () => {
+    if (window.ethereum && isUpdate) {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+      const bigBalance = await provider.getBalance(address);
+      const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
+      const marketCoins = new MarketCoinsContract(signer);
+      const mkcBigBalance = await marketCoins.getBalance(address);
+      const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
+
+      dispatch(setWalletInfo({ address, bnb: bnbBalance, mkc: mkcBalance }));
+      dispatch(setUpdate(false));
+    }
+  }, [isUpdate, dispatch]);
+
+  React.useEffect(() => {
+    updateWallet();
+  }, [updateWallet]);
 
   const disconnectMetamask = async () => {
     if (window.ethereum) {
@@ -65,7 +87,22 @@ export default function NavigationLayout() {
         <Chip
           variant="flat"
           avatar={<Avatar src="/logo.png" />}
-          onClick={() => onOpen("openCrowdSale")}>
+          onClick={() => onOpen("openCrowdSale")}
+          endContent={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+          }>
           <p className="font-bold text-inherit text-tiny">
             {formatAccountBalance(wallet?.mkc || 0)} MKC
           </p>

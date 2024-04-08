@@ -81,6 +81,124 @@
             {
                 "indexed": true,
                 "internalType": "address",
+                "name": "author",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "_productId",
+                "type": "uint256"
+            }
+        ],
+        "name": "AuctionCanceled",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "author",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "_productId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "initialPrice",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "startTime",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "endTime",
+                "type": "uint256"
+            }
+        ],
+        "name": "AuctionCreated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "author",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "_productId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "lastBid",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "lastBidder",
+                "type": "address"
+            }
+        ],
+        "name": "AuctionFinished",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "author",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "_productId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "lastBid",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "lastBidder",
+                "type": "address"
+            }
+        ],
+        "name": "AuctionJoined",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
                 "name": "previousOwner",
                 "type": "address"
             },
@@ -150,7 +268,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_auctionId",
+                "name": "_productId",
                 "type": "uint256"
             }
         ],
@@ -191,7 +309,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_auctionId",
+                "name": "_productId",
                 "type": "uint256"
             }
         ],
@@ -204,7 +322,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_auctionId",
+                "name": "_productId",
                 "type": "uint256"
             }
         ],
@@ -219,18 +337,13 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "_productId",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
                         "name": "initialPrice",
                         "type": "uint256"
                     },
                     {
-                        "internalType": "address",
-                        "name": "previousBidder",
-                        "type": "address"
+                        "internalType": "uint256",
+                        "name": "productId",
+                        "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
@@ -250,16 +363,6 @@
                     {
                         "internalType": "uint256",
                         "name": "endTime",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "completed",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "auctionId",
                         "type": "uint256"
                     }
                 ],
@@ -272,14 +375,8 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "bool",
-                "name": "_isCompleted",
-                "type": "bool"
-            }
-        ],
-        "name": "getAuctionByStatus",
+        "inputs": [],
+        "name": "getListedProducts",
         "outputs": [
             {
                 "components": [
@@ -290,18 +387,13 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "_productId",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
                         "name": "initialPrice",
                         "type": "uint256"
                     },
                     {
-                        "internalType": "address",
-                        "name": "previousBidder",
-                        "type": "address"
+                        "internalType": "uint256",
+                        "name": "productId",
+                        "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
@@ -321,16 +413,6 @@
                     {
                         "internalType": "uint256",
                         "name": "endTime",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "completed",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "auctionId",
                         "type": "uint256"
                     }
                 ],
@@ -346,7 +428,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_auctionId",
+                "name": "_productId",
                 "type": "uint256"
             },
             {
@@ -449,6 +531,33 @@
             }
         ],
         "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "withdrawErc20",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "withdrawToken",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

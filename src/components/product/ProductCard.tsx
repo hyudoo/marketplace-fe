@@ -5,12 +5,14 @@ import ListProductModal from "../modal/ListProductModal";
 import UnlistProductModal from "../modal/UnlistProductModal";
 import CreateAuctionModal from "../modal/CreateAuctionModal";
 import CancelAuctionModal from "../modal/CancelAuctionModal";
+import FinishAuctionModal from "../modal/FinishAuctionModal";
+import BuyProductModal from "../modal/BuyProductModal";
 interface IProductProps {
   name?: string;
   image: string;
   price?: number | string;
   productId?: number;
-  auctionId?: number;
+  isDone?: boolean;
   type?: "inventory" | "listed" | "unlist" | "auction";
   isCheck?: boolean;
   render?: () => void;
@@ -22,8 +24,8 @@ export default function ProductCard({
   image,
   price,
   productId,
-  auctionId,
   type,
+  isDone,
   isCheck,
   render,
   onClick,
@@ -33,7 +35,8 @@ export default function ProductCard({
   const [isCreateAuction, setIsCreateAuction] = React.useState<boolean>(false);
   const [isUnlistOpen, setIsUnlistOpen] = React.useState<boolean>(false);
   const [isCancelAuction, setIsCancelAuction] = React.useState<boolean>(false);
-
+  const [isFinishAuction, setIsFinishAuction] = React.useState<boolean>(false);
+  const [isBuyOpen, setIsBuyOpen] = React.useState<boolean>(false);
   return (
     <>
       <div
@@ -56,49 +59,20 @@ export default function ProductCard({
           <CardFooter className="text-small block">
             <div className="w-full">{name}</div>
 
-            {type == "inventory" ? (
-              <div className="justify-between lg:justify-end flex gap-2">
-                <Button
-                  onClick={() => setIsCreateAuction(true)}
-                  variant="flat"
-                  color="primary"
-                  className="p-2 m-0">
-                  Auction
-                </Button>
-                <Button
-                  onClick={() => setIsListOpen(true)}
-                  variant="flat"
-                  color="primary"
-                  className="p-2 m-0">
-                  List
-                </Button>
-              </div>
-            ) : (
-              <div className="justify-between flex">
+            {type == "auction" ? (
+              <div>
                 <p className="text-default-500 flex items-center">
                   Price: {price} MKC
                 </p>
-                {type == "listed" && (
+                <div className="justify-between lg:justify-end flex gap-2">
                   <Button
+                    onClick={() => setIsFinishAuction(true)}
                     variant="flat"
-                    color="primary"
-                    className="p-2 m-0"
-                    onClick={() => router.push(`/product/${productId}`)}>
-                    Buy
-                  </Button>
-                )}
-
-                {type == "unlist" && (
-                  <Button
-                    onClick={() => setIsUnlistOpen(true)}
-                    variant="flat"
-                    color="primary"
+                    color="success"
+                    disabled={!isDone}
                     className="p-2 m-0">
-                    Unlist
+                    Finnish
                   </Button>
-                )}
-
-                {type == "auction" && (
                   <Button
                     onClick={() => setIsCancelAuction(true)}
                     variant="flat"
@@ -106,8 +80,54 @@ export default function ProductCard({
                     className="p-2 m-0">
                     Cancel
                   </Button>
-                )}
+                </div>
               </div>
+            ) : (
+              <>
+                {type == "inventory" ? (
+                  <div className="justify-between lg:justify-end flex gap-2">
+                    <Button
+                      onClick={() => setIsCreateAuction(true)}
+                      variant="flat"
+                      color="primary"
+                      className="p-2 m-0">
+                      Auction
+                    </Button>
+                    <Button
+                      onClick={() => setIsListOpen(true)}
+                      variant="flat"
+                      color="primary"
+                      className="p-2 m-0">
+                      List
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="justify-between flex">
+                    <p className="text-default-500 flex items-center">
+                      Price: {price} MKC
+                    </p>
+                    {type == "listed" && (
+                      <Button
+                        variant="flat"
+                        color="primary"
+                        className="p-2 m-0"
+                        onClick={() => setIsBuyOpen(true)}>
+                        Buy
+                      </Button>
+                    )}
+
+                    {type == "unlist" && (
+                      <Button
+                        onClick={() => setIsUnlistOpen(true)}
+                        variant="flat"
+                        color="primary"
+                        className="p-2 m-0">
+                        Unlist
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </>
             )}
           </CardFooter>
         </Card>
@@ -139,9 +159,25 @@ export default function ProductCard({
 
       <CancelAuctionModal
         isOpen={isCancelAuction}
-        id={auctionId!}
+        id={productId!}
         render={render!}
         onClose={() => setIsCancelAuction(false)}
+      />
+
+      <BuyProductModal
+        isOpen={isBuyOpen}
+        title={name!}
+        productId={productId!}
+        render={render!}
+        productPrice={price as number}
+        onClose={() => setIsBuyOpen(false)}
+      />
+
+      <FinishAuctionModal
+        isOpen={isFinishAuction}
+        id={productId!}
+        render={render!}
+        onClose={() => setIsFinishAuction(false)}
       />
     </>
   );

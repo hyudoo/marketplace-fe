@@ -9,8 +9,9 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppSelector } from "@/reduxs/hooks";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import AuctionContract from "@/contracts/AuctionContract";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 
 interface ICancelAuctionModal {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const CancelAuctionModal: React.FC<ICancelAuctionModal> = ({
   // redux
   const { onOpen } = useModal();
   const { wallet, signer } = useAppSelector((state) => state.account);
-
+  const dispatch = useAppDispatch();
   const handleSubmit = async () => {
     if (!signer || !wallet || !id || !render) return;
     try {
@@ -37,6 +38,7 @@ const CancelAuctionModal: React.FC<ICancelAuctionModal> = ({
       const auctioncontract = new AuctionContract(signer);
       const tx = await auctioncontract.cancelAuction(id);
       onOpen("success", { hash: tx, title: "CANCEL AUCTION" });
+      dispatch(setUpdate(true));
       render();
       onClose();
     } catch (error) {

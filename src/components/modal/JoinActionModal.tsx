@@ -11,17 +11,17 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppSelector } from "@/reduxs/hooks";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
-import MarketPlaceContract from "@/contracts/MarketPlaceContract";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import AuctionContract from "@/contracts/AuctionContract";
+import MarketCoinsContract from "@/contracts/MarketCoinsContract";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 
 interface IJoinActionModal {
   isOpen: boolean;
   id: number;
   title: string;
-  render: () => void;
+  render?: () => void;
   onClose: () => void;
 }
 
@@ -34,10 +34,10 @@ const JoinActionModal: React.FC<IJoinActionModal> = ({
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const { wallet, signer } = useAppSelector((state) => state.account);
-
+  const dispatch = useAppDispatch();
   const { onOpen } = useModal();
 
-  const { handleSubmit, setValue, watch } = useForm<FieldValues>({
+  const { handleSubmit, setValue } = useForm<FieldValues>({
     defaultValues: {
       price: 0,
     },
@@ -47,17 +47,22 @@ const JoinActionModal: React.FC<IJoinActionModal> = ({
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     if (data.price <= 0 || !signer || !wallet || !id || !render) return;
+
     try {
       setIsLoading(true);
-      const productContract = new SupplyChainContract(signer);
+      const marketCoins = new MarketCoinsContract(signer);
       const auctionContract = new AuctionContract(signer);
-      await productContract.approve(auctionContract._contractAddress, id);
+      await marketCoins.approve(auctionContract._contractAddress, data.price);
       const tx = await auctionContract.joinAuction(id, data.price);
-      onOpen("success", { hash: tx, title: "LIST PRODUCT" });
-      render();
+      onOpen("success", { hash: tx, title: "JOIN AUCTION" });
+      dispatch(setUpdate(true));
+      if (render) {
+        render();
+      }
       onClose();
     } catch (error) {
       console.log("handleListProduct -> error", error);
+      // console.log("handleListProduct -> error message", error?.message);
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +88,7 @@ const JoinActionModal: React.FC<IJoinActionModal> = ({
             <Input
               type="number"
               variant={"bordered"}
-              label="Prices"
+              label="Price"
               isRequired
               placeholder="Enter your price"
               onChange={(e) => setValue("price", e.target.value)}

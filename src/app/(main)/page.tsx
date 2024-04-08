@@ -41,7 +41,7 @@ export default function Home() {
       }
     }, 1500);
     return () => clearTimeout(timeOut);
-  }, [search]);
+  }, [search, listproducts]);
 
   return (
     <div className="flex w-full flex-col">

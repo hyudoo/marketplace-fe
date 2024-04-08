@@ -11,16 +11,14 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppSelector } from "@/reduxs/hooks";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import AuctionContract from "@/contracts/AuctionContract";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { Dayjs } from "dayjs";
-
+import dayjs, { Dayjs } from "dayjs";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 interface ICreateAuctionModal {
   isOpen: boolean;
   id: number;
@@ -41,7 +39,7 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
   const [startDate, setStartDate] = React.useState<Dayjs>();
   const [endDate, setEndDate] = React.useState<Dayjs>();
   const { onOpen } = useModal();
-
+  const dispatch = useAppDispatch();
   const { handleSubmit, setValue } = useForm<FieldValues>({
     defaultValues: {
       price: 0,
@@ -52,16 +50,17 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     if (!signer || !wallet || !id || !render) return;
-    console.log("start date", Math.round(startDate / 1000));
     if (data.price <= 0) {
       alert("Please enter a valid price!");
     }
-    const now = new Date();
+    const now = dayjs();
     if (!startDate || startDate < now) {
       alert("Please select a valid start date.");
+      return;
     }
     if (!endDate || startDate >= endDate) {
       alert("Please select a valid end date.");
+      return;
     }
     try {
       setIsLoading(true);
@@ -71,10 +70,11 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
       const tx = await auctionContract.createAuction(
         id,
         data.price,
-        Math.round(startDate / 1000),
-        Math.round(endDate / 1000)
+        Math.round(startDate.valueOf() / 1000),
+        Math.round(endDate.valueOf() / 1000)
       );
       onOpen("success", { hash: tx, title: "CREATE AUCTION SUCCESS" });
+      dispatch(setUpdate(true));
       render();
       onClose();
     } catch (error) {
@@ -105,7 +105,7 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
             <Input
               type="number"
               variant={"bordered"}
-              label="Prices"
+              label="Price"
               isRequired
               placeholder="Enter your product initial price"
               onChange={(e) => setValue("price", e.target.value)}
@@ -117,13 +117,23 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
             />
             <DatePicker
               value={startDate}
+              format="DD-MM-YYYY"
               label="Start Time"
               onChange={(date) => setStartDate(date as Dayjs)}
+              formatDensity="spacious"
+              enableAccessibleFieldDOMStructure
+              selectedSections="all"
+              onSelectedSectionsChange={undefined}
             />
             <DatePicker
               value={endDate}
+              format="DD-MM-YYYY"
               onChange={(date) => setEndDate(date as Dayjs)}
               label="End Time"
+              formatDensity="spacious"
+              enableAccessibleFieldDOMStructure
+              selectedSections="all"
+              onSelectedSectionsChange={undefined}
             />
             <Button
               fullWidth

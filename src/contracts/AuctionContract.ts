@@ -18,47 +18,18 @@ export default class AuctionContract extends Erc721 {
     }
   }
 
-  getAuctionByStatus = async () => {
-    const rs = await this._contract.getAuctionByStatus(false);
-    const results = [];
-    for (let i = 0; i < rs.length; i++) {
-      const o = rs[i];
-      const item = {
-        author: o[0],
-        productId: this._toNumber(o[1]) as number,
-        initialPrice: this._toEther(o[2]),
-        previousBidder: o[3],
-        lastBid: this._toEther(o[4]),
-        lastBidder: o[5],
-        startTime: (this._toNumber(o[6]) as number) * 1000,
-        endTime: (this._toNumber(o[7]) as number) * 1000,
-        completed: o[8],
-        auctionId: this._toNumber(o[9]) as number,
-      };
-      results.push(item);
-    }
-    return results;
-  };
-
-  getAuctionByAddress = async (address: string) => {
-    const rs = await this._contract.getAuctionByStatus(false);
-    const results = [];
-    for (let i = 0; i < rs.length; i++) {
-      const o = rs[i];
-      if (o[0] == address) {
-        const item = {
-          productId: this._toNumber(o[1]) as number,
-          price: this._toEther(o[2]),
-          lastBid: this._toEther(o[4]),
-          lastBidder: o[5],
-          startTime: this._toNumber(o[6]) as number,
-          endTime: this._toNumber(o[7]) as number,
-          auctionId: this._toNumber(o[9]) as number,
-        };
-        results.push(item);
-      }
-    }
-    return results;
+  getAuction = async (_productId: number) => {
+    const rs = await this._contract.getAuction(_productId);
+    const item = {
+      author: rs[0],
+      initialPrice: this._toEther(rs[1]),
+      productId: this._toNumber(rs[2]),
+      lastBid: this._toEther(rs[3]),
+      lastBidder: rs[4],
+      startTime: (this._toNumber(rs[5]) as number) * 1000,
+      endTime: (this._toNumber(rs[6]) as number) * 1000,
+    };
+    return item;
   };
 
   createAuction = async (
@@ -77,18 +48,49 @@ export default class AuctionContract extends Erc721 {
     return this._handleTransactionResponse(tx);
   };
 
-  cancelAuction = async (auctionId: number) => {
-    const tx = await this._contract.cancelAuction(auctionId, this._option);
+  cancelAuction = async (_productId: number) => {
+    const tx = await this._contract.cancelAuction(_productId, this._option);
     return this._handleTransactionResponse(tx);
   };
 
-  joinAuction = async (auctionId: number, bid: number) => {
-    console.log({ auctionId, bid });
+  joinAuction = async (_productId: number, bid: number) => {
+    console.log({ _productId, bid });
     const tx = await this._contract.joinAuction(
-      auctionId,
+      _productId,
       this._numberToEth(bid),
       this._option
     );
     return this._handleTransactionResponse(tx);
+  };
+
+  finishAuction = async (_productId: number) => {
+    const tx = await this._contract.finishAuction(_productId, this._option);
+    return this._handleTransactionResponse(tx);
+  };
+
+  getProductListedOnAuction = async () => {
+    const rs = await this._contract.getListedProducts();
+    const results = [];
+    for (let i = 0; i < rs.length; i++) {
+      const o = rs[i];
+      const item = {
+        author: o[0],
+        initialPrice: this._toEther(o[1]),
+        productId: this._toNumber(o[2]),
+        lastBid: this._toEther(o[3]),
+        lastBidder: o[4],
+        startTime: (this._toNumber(o[5]) as number) * 1000,
+        endTime: (this._toNumber(o[6]) as number) * 1000,
+      };
+      results.push(item);
+    }
+    console.log("results", results);
+
+    return results;
+  };
+
+  getMyProductListed = async (address: string) => {
+    const products = await this.getProductListedOnAuction();
+    return products.filter((p: any) => p.author === address);
   };
 }

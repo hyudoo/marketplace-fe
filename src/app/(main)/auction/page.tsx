@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Card, CardBody, CardHeader, Input } from "@nextui-org/react";
-import { IProductItem } from "@/_types_";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import AuctionContract from "@/contracts/AuctionContract";
 import AuctionCard from "@/components/auction/AuctionCard";
@@ -10,13 +9,13 @@ export default function Home() {
   const [listproducts, setListProducts] = React.useState<Array<any>>();
   const [filteredList, setFilteredList] = React.useState<Array<any>>();
   const [search, setSearch] = React.useState<string>("");
+  const [isRender, setIsRender] = React.useState<boolean>(false);
   const getListProduct = React.useCallback(async () => {
     try {
       const productContract = new SupplyChainContract();
       const auctionContract = new AuctionContract();
-      const ids = await auctionContract.getAuctionByStatus();
+      const ids = await auctionContract.getProductListedOnAuction();
       const listproducts = await productContract.getProductsInfo(ids);
-      console.log("listproducts", listproducts);
       setListProducts(listproducts);
       setFilteredList(listproducts);
     } catch (err) {
@@ -26,7 +25,7 @@ export default function Home() {
 
   React.useEffect(() => {
     getListProduct();
-  }, [getListProduct]);
+  }, [getListProduct, isRender]);
 
   React.useEffect(() => {
     if (!listproducts) return;
@@ -42,7 +41,7 @@ export default function Home() {
       }
     }, 1500);
     return () => clearTimeout(timeOut);
-  }, [search]);
+  }, [search, listproducts]);
 
   return (
     <div className="flex w-full flex-col">
@@ -87,12 +86,12 @@ export default function Home() {
                 lastBid={product.lastBid}
                 lastBidder={product.lastBidder}
                 key={index}
-                auctionId={product.id}
+                productId={product.productId}
                 name={product.name}
                 image={product.images[0]}
-                price={product.initialPrice}
                 startTime={product.startTime}
                 endTime={product.endTime}
+                onRender={() => setIsRender(!isRender)}
               />
             ))}
           </div>

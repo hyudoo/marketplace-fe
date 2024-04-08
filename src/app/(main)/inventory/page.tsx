@@ -44,7 +44,7 @@ export default function Inventory() {
       const listedProducts = await productContract.getProductsInfo(ids);
       setListedProducts(listedProducts);
       const auctionContract = new AuctionContract(signer);
-      const auctionIds = await auctionContract.getAuctionByAddress(
+      const auctionIds = await auctionContract.getMyProductListed(
         wallet?.address!
       );
       const auctionProducts = await productContract.getProductsInfo(auctionIds);
@@ -220,13 +220,10 @@ export default function Inventory() {
                     key={index}
                     name={product.name}
                     image={product.images[0]}
-                    price={product.price}
+                    price={product.initialPrice}
+                    isDone={product.endTime < Date.now()}
                     productId={product.id}
-                    auctionId={product?.auctionId}
                     type="auction"
-                    onClick={() =>
-                      router.push(`/auctions/${product.auctionId}`)
-                    }
                     render={() => setIsRender(true)}
                   />
                 ))}

@@ -12,15 +12,13 @@ import moment from "moment";
 import JoinActionModal from "../modal/JoinActionModal";
 import { useAppSelector } from "@/reduxs/hooks";
 import { showSortAddress } from "@/utils";
-import { FooterAuction } from "./FooterAution";
 interface IProductProps {
   author?: string;
   lastBid?: number;
   lastBidder?: string;
   name?: string;
   image: string;
-  price?: number | string;
-  auctionId?: number;
+  productId?: number;
   startTime: number;
   endTime: number;
   render?: () => void;
@@ -35,8 +33,7 @@ export default function AuctionCard({
   image,
   startTime,
   endTime,
-  price,
-  auctionId,
+  productId,
   onRender,
 }: IProductProps) {
   const router = useRouter();
@@ -50,21 +47,22 @@ export default function AuctionCard({
     const startDateTime = moment(startTime);
     const endDateTime = moment(endTime);
     const updateCountdown = () => {
-      const currentDateTime = moment(); // Thời gian hiện tại
+      const currentDateTime = moment();
       if (currentDateTime < startDateTime) {
         const remainingTime = moment.duration(
           startDateTime.diff(currentDateTime)
         );
-        setCountdown(remainingTime.humanize());
+        setCountdown(`Upcoming ${remainingTime.humanize()}`);
         setText("Upcoming");
       } else if (currentDateTime < endDateTime) {
         const remainingTime = moment.duration(
           endDateTime.diff(currentDateTime)
         );
-        setCountdown(remainingTime.humanize());
+        setCountdown(`Finishes in ${remainingTime.humanize()}`);
         setText("In progress");
       } else {
-        setCountdown("Finnished");
+        setCountdown(`This auction has been finished`);
+        setCountdown("Finished");
       }
     };
     const interval = setInterval(updateCountdown, 1000);
@@ -72,18 +70,18 @@ export default function AuctionCard({
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  });
 
   return (
     <>
-      <div>
+      <div onClick={() => router.push(`product/${productId}`)}>
         <Card shadow="sm">
           <Chip
             className="z-50 hover:cursor-pointer absolute right-1 text-center p-2"
-            startContent={<div>{text}</div>}
             color="primary"
-            variant="flat"
-          />
+            variant="flat">
+            {text}
+          </Chip>
           <CardBody className="overflow-visible p-0 flex flex-col">
             <Image
               shadow="sm"
@@ -94,30 +92,39 @@ export default function AuctionCard({
               src={image}
             />
           </CardBody>
-          <CardFooter className="text-small block">
-            <div className="w-full">{name}</div>
-            <div className="text-small">Last bid: {lastBid} MKC</div>
-            <div className="text-small">
-              Last bidder: {showSortAddress(lastBidder)}
+          <CardFooter className="text-small block space-y-1">
+            <div className="w-full flex justify-center">
+              <Chip variant="flat" color="primary">
+                {countdown}
+              </Chip>
             </div>
-            <FooterAuction startTime={startTime} endTime={endTime} />
-            <Button
-              onClick={() => setIsJoinAuction(true)}
-              variant="flat"
-              color="primary"
-              disabled={
-                author == wallet?.address || lastBidder == wallet?.address
-              }
-              className="p-2 m-0">
-              Join
-            </Button>
+            <div className="w-full">{name}</div>
+            <div className="lg:grid sm:grid-cols-2">
+              <div className="text-small">Last bid: {lastBid} MKC</div>
+              <div className="text-small">
+                Last bidder: {showSortAddress(lastBidder)}
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                onClick={() => setIsJoinAuction(true)}
+                variant="flat"
+                color="primary"
+                type="submit"
+                disabled={
+                  author == wallet?.address || lastBidder == wallet?.address
+                }
+                className="w-full md:w-3 md:flex">
+                Join
+              </Button>
+            </div>
           </CardFooter>
         </Card>
       </div>
       <JoinActionModal
         isOpen={isJoinAuction}
         onClose={() => setIsJoinAuction(false)}
-        id={auctionId!}
+        id={productId!}
         title={name!}
         render={onRender!}
       />

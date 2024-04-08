@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ethers } from "ethers";
 
 export interface AccountState {
+  isUpdate?: boolean;
   wallet?: IWalletInfo;
   signer?: ethers.JsonRpcSigner;
 }
@@ -13,6 +14,9 @@ export const accountSlice = createSlice({
   name: "account",
   initialState,
   reducers: {
+    setUpdate: (state, action: PayloadAction<boolean>) => {
+      state.isUpdate = action.payload;
+    },
     setSigner: (state, action: PayloadAction<ethers.JsonRpcSigner>) => {
       state.signer = action.payload;
     },
@@ -26,5 +30,6 @@ export const accountSlice = createSlice({
   },
 });
 
-export const { setWalletInfo, setSigner, clearState } = accountSlice.actions;
+export const { setWalletInfo, setSigner, clearState, setUpdate } =
+  accountSlice.actions;
 export default accountSlice.reducer;

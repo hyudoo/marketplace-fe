@@ -10,10 +10,11 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppSelector } from "@/reduxs/hooks";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useRouter } from "next/navigation";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 
 interface IExchangeModalProps {
   isOpen: boolean;
@@ -39,7 +40,7 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
   // redux
   const { onOpen } = useModal();
   const { wallet, signer } = useAppSelector((state) => state.account);
-
+  const dispatch = useAppDispatch();
   const { onOpenChange } = useDisclosure();
 
   const handleSubmit = async () => {
@@ -57,6 +58,7 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
         receiverIds!
       );
       onOpen("success", { hash: tx, title: "EXCHANGE PRODUCT" });
+      dispatch(setUpdate(true));
       router.push("/exchange");
     } catch (error) {
       console.log("handleListProduct -> error", error);
