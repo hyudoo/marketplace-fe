@@ -79,7 +79,7 @@ export default class SupplyChainContract extends Erc721 {
         const obj = await this.getProductInfoById(product?.productId);
         return {
           ...obj,
-          price: product.price,
+          ...product,
         };
       })
     );

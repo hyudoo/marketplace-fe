@@ -44,3 +44,16 @@ export interface IExchange {
   receiverTokenIds?: number[];
   active?: boolean;
 }
+
+export interface IAuctionInfo extends IProductItem {
+  auctionId: number;
+  author: string;
+  productId: number;
+  initialPrice: number;
+  previousBidder: string;
+  lastBid: number;
+  lastBidder: string;
+  startTime: number;
+  endTime: number;
+  completed: boolean;
+}

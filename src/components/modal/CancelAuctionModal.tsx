@@ -10,16 +10,16 @@ import {
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useAppSelector } from "@/reduxs/hooks";
-import ExchangeProductContract from "@/contracts/ExchangeProductContract";
+import AuctionContract from "@/contracts/AuctionContract";
 
-interface ICancelExchangeModal {
+interface ICancelAuctionModal {
   isOpen: boolean;
   id: number;
   render: () => void;
   onClose: () => void;
 }
 
-const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
+const CancelAuctionModal: React.FC<ICancelAuctionModal> = ({
   isOpen,
   id,
   render,
@@ -34,9 +34,9 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
     if (!signer || !wallet || !id || !render) return;
     try {
       setIsLoading(true);
-      const marketContract = new ExchangeProductContract(signer);
-      const tx = await marketContract.cancelTransaction(id);
-      onOpen("success", { hash: tx, title: "CANCEL EXCHANGE" });
+      const auctioncontract = new AuctionContract(signer);
+      const tx = await auctioncontract.cancelAuction(id);
+      onOpen("success", { hash: tx, title: "CANCEL AUCTION" });
       render();
       onClose();
     } catch (error) {
@@ -54,11 +54,11 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
       onClose={onClose}>
       <ModalContent>
         <ModalHeader className="justify-center text-large m-2 border-b-2">
-          CANCEL EXCHANGE
+          CANCEL AUCTION
         </ModalHeader>
         <ModalBody>
           <div className="flex gap-x-1 text-sm items-center justify-center">
-            You want to cancel this exchange?
+            You want to cancel this auction?
           </div>
 
           <Button
@@ -77,4 +77,4 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
   );
 };
 
-export default CancelExchangeModal;
+export default CancelAuctionModal;

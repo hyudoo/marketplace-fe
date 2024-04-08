@@ -16,12 +16,14 @@ import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import { useRouter } from "next/navigation";
+import AuctionContract from "@/contracts/AuctionContract";
 
 export default function Inventory() {
   const [selected, setSelected] = React.useState("inventory");
   const { wallet, signer } = useAppSelector((state) => state.account);
   const router = useRouter();
   const [listedproducts, setListedProducts] = React.useState<IProductItem[]>();
+  const [auctiondproducts, setAuctiondProducts] = React.useState<Array<any>>();
   const [inventory, setInventory] = React.useState<IProductItem[]>();
   const [isRender, setIsRender] = React.useState<boolean>(true);
   const [canCreate, setCanCreate] = React.useState<boolean>(false);
@@ -41,6 +43,12 @@ export default function Inventory() {
       const ids = await marketContract.getMyProductListed(wallet?.address!);
       const listedProducts = await productContract.getProductsInfo(ids);
       setListedProducts(listedProducts);
+      const auctionContract = new AuctionContract(signer);
+      const auctionIds = await auctionContract.getAuctionByAddress(
+        wallet?.address!
+      );
+      const auctionProducts = await productContract.getProductsInfo(auctionIds);
+      setAuctiondProducts(auctionProducts);
     } catch (err) {
       console.log(err);
     } finally {
@@ -86,7 +94,7 @@ export default function Inventory() {
               </svg>
               <span>Inventory</span>
               <Chip size="sm" variant="faded">
-                {inventory?.length}
+                {inventory?.length || 0}
               </Chip>
             </div>
           }>
@@ -151,7 +159,7 @@ export default function Inventory() {
               </svg>
               <span>Listed</span>
               <Chip size="sm" variant="faded">
-                {listedproducts?.length}
+                {listedproducts?.length || 0}
               </Chip>
             </div>
           }>
@@ -169,6 +177,56 @@ export default function Inventory() {
                     price={product.price}
                     productId={product.id}
                     type="unlist"
+                    render={() => setIsRender(true)}
+                  />
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+        </Tab>
+
+        <Tab
+          key="auctions"
+          title={
+            <div className="flex items-center space-x-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0 0 12 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 0 1-2.031.352 5.988 5.988 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971Zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 0 1-2.031.352 5.989 5.989 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971Z"
+                />
+              </svg>
+
+              <span>Auctions</span>
+              <Chip size="sm" variant="faded">
+                {auctiondproducts?.length || 0}
+              </Chip>
+            </div>
+          }>
+          <Card>
+            <CardHeader className="items-center justify-center uppercase font-bold text-xl">
+              Your Auctions Products
+            </CardHeader>
+            <CardBody>
+              <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+                {auctiondproducts?.map((product, index) => (
+                  <ProductCard
+                    key={index}
+                    name={product.name}
+                    image={product.images[0]}
+                    price={product.price}
+                    productId={product.id}
+                    auctionId={product?.auctionId}
+                    type="auction"
+                    onClick={() =>
+                      router.push(`/auctions/${product.auctionId}`)
+                    }
                     render={() => setIsRender(true)}
                   />
                 ))}

@@ -61,7 +61,7 @@ export default function ExchangeCard({
         <div className="flex items-center justify-center">
           Other Address: {address}
         </div>
-        <div className="md:grid md:grid-cols-2 flex flex-col gap-s2">
+        <div className="md:grid md:grid-cols-2 flex flex-col gap-2">
           <Card>
             <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
               Your Item
@@ -105,11 +105,9 @@ export default function ExchangeCard({
             </Button>
           )}
 
-          {type == "exchange" && (
-            <Button onClick={() => setIsOpenDeclineModal(true)} color="primary">
-              Cancel
-            </Button>
-          )}
+          <Button onClick={() => setIsOpenDeclineModal(true)} color="primary">
+            Cancel
+          </Button>
         </CardFooter>
       </div>
       <AcceptExchangeModal
