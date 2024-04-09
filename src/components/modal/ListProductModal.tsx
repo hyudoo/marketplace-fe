@@ -11,10 +11,11 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppSelector } from "@/reduxs/hooks";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 
 interface IListProductModal {
   isOpen: boolean;
@@ -33,7 +34,7 @@ const ListProductModal: React.FC<IListProductModal> = ({
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const { wallet, signer } = useAppSelector((state) => state.account);
-
+  const dispatch = useAppDispatch();
   const { onOpen } = useModal();
 
   const { handleSubmit, setValue, watch } = useForm<FieldValues>({
@@ -53,6 +54,7 @@ const ListProductModal: React.FC<IListProductModal> = ({
       await productContract.approve(marketContract._contractAddress, id);
       const tx = await marketContract.listProduct(id, data.price);
       onOpen("success", { hash: tx, title: "LIST PRODUCT" });
+      dispatch(setUpdate(true));
       render();
       onClose();
     } catch (error) {
@@ -82,7 +84,7 @@ const ListProductModal: React.FC<IListProductModal> = ({
             <Input
               type="number"
               variant={"bordered"}
-              label="Prices"
+              label="Price"
               isRequired
               placeholder="Enter your product price"
               onChange={(e) => setValue("price", e.target.value)}

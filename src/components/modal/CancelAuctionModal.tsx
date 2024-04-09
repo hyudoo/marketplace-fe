@@ -10,18 +10,17 @@ import {
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
-import ExchangeProductContract from "@/contracts/ExchangeProductContract";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
+import AuctionContract from "@/contracts/AuctionContract";
 import { setUpdate } from "@/reduxs/accounts/account.slices";
 
-interface IAcceptExchangeModal {
+interface ICancelAuctionModal {
   isOpen: boolean;
   id: number;
   render: () => void;
   onClose: () => void;
 }
 
-const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
+const CancelAuctionModal: React.FC<ICancelAuctionModal> = ({
   isOpen,
   id,
   render,
@@ -36,14 +35,9 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
     if (!signer || !wallet || !id || !render) return;
     try {
       setIsLoading(true);
-      const productContract = new SupplyChainContract(signer);
-      const exchangeContract = new ExchangeProductContract(signer);
-      const exchange = await exchangeContract.getTradeById(id);
-      for (let id of exchange.receiverTokenIds!) {
-        await productContract.approve(exchangeContract._contractAddress, id);
-      }
-      const tx = await exchangeContract.acceptTransaction(id);
-      onOpen("success", { hash: tx, title: "ACCEPT EXCHANGE" });
+      const auctioncontract = new AuctionContract(signer);
+      const tx = await auctioncontract.cancelAuction(id);
+      onOpen("success", { hash: tx, title: "CANCEL AUCTION" });
       dispatch(setUpdate(true));
       render();
       onClose();
@@ -62,11 +56,11 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
       onClose={onClose}>
       <ModalContent>
         <ModalHeader className="justify-center text-large m-2 border-b-2">
-          ACCEPT EXCHANGE
+          CANCEL AUCTION
         </ModalHeader>
         <ModalBody>
           <div className="flex gap-x-1 text-sm items-center justify-center">
-            You want to accept this exchange?
+            You want to cancel this auction?
           </div>
 
           <Button
@@ -77,7 +71,7 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
             variant="flat"
             type="submit"
             className="mb-4">
-            Accept
+            Submit
           </Button>
         </ModalBody>
       </ModalContent>
@@ -85,4 +79,4 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
   );
 };
 
-export default AcceptExchangeModal;
+export default CancelAuctionModal;

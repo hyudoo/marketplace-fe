@@ -10,7 +10,7 @@ export const showSortAddress = (address?: string): string => {
 
 export const formatAccountBalance = (balance: number) => {
   const suffixes = ["", "k", "m", "b", "t"];
-  const suffixNum = Math.floor(("" + balance).length / 3);
+  const suffixNum = Math.floor(balance.toString().length / 3) - 1;
   let shortBalance = parseFloat(
     (suffixNum !== 0
       ? balance / Math.pow(1000, suffixNum)

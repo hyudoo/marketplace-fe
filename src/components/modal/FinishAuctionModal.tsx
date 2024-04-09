@@ -10,18 +10,17 @@ import {
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
-import ExchangeProductContract from "@/contracts/ExchangeProductContract";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
+import AuctionContract from "@/contracts/AuctionContract";
 import { setUpdate } from "@/reduxs/accounts/account.slices";
 
-interface IAcceptExchangeModal {
+interface IFinishAuctionModal {
   isOpen: boolean;
   id: number;
   render: () => void;
   onClose: () => void;
 }
 
-const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
+const FinishAuctionModal: React.FC<IFinishAuctionModal> = ({
   isOpen,
   id,
   render,
@@ -32,20 +31,16 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
   const { onOpen } = useModal();
   const { wallet, signer } = useAppSelector((state) => state.account);
   const dispatch = useAppDispatch();
+
   const handleSubmit = async () => {
     if (!signer || !wallet || !id || !render) return;
     try {
       setIsLoading(true);
-      const productContract = new SupplyChainContract(signer);
-      const exchangeContract = new ExchangeProductContract(signer);
-      const exchange = await exchangeContract.getTradeById(id);
-      for (let id of exchange.receiverTokenIds!) {
-        await productContract.approve(exchangeContract._contractAddress, id);
-      }
-      const tx = await exchangeContract.acceptTransaction(id);
+      const auctionContract = new AuctionContract(signer);
+      const tx = await auctionContract.finishAuction(id);
       onOpen("success", { hash: tx, title: "ACCEPT EXCHANGE" });
-      dispatch(setUpdate(true));
       render();
+      dispatch(setUpdate(true));
       onClose();
     } catch (error) {
       console.log("handleListProduct -> error", error);
@@ -62,11 +57,11 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
       onClose={onClose}>
       <ModalContent>
         <ModalHeader className="justify-center text-large m-2 border-b-2">
-          ACCEPT EXCHANGE
+          FINISH AUCTION
         </ModalHeader>
         <ModalBody>
           <div className="flex gap-x-1 text-sm items-center justify-center">
-            You want to accept this exchange?
+            You want to finish this auction?
           </div>
 
           <Button
@@ -77,7 +72,7 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
             variant="flat"
             type="submit"
             className="mb-4">
-            Accept
+            Finish
           </Button>
         </ModalBody>
       </ModalContent>
@@ -85,4 +80,4 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
   );
 };
 
-export default AcceptExchangeModal;
+export default FinishAuctionModal;

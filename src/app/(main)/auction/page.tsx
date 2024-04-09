@@ -2,23 +2,22 @@
 
 import React from "react";
 import { Card, CardBody, CardHeader, Input } from "@nextui-org/react";
-import ProductCard from "@/components/product/ProductCard";
-import { IProductItem } from "@/_types_";
-import MarketContract from "@/contracts/MarketPlaceContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
+import AuctionContract from "@/contracts/AuctionContract";
+import AuctionCard from "@/components/auction/AuctionCard";
 export default function Home() {
-  const [listproducts, setListProducts] = React.useState<IProductItem[]>();
-  const [filteredList, setFilteredList] = React.useState<IProductItem[]>();
+  const [listproducts, setListProducts] = React.useState<Array<any>>();
+  const [filteredList, setFilteredList] = React.useState<Array<any>>();
   const [search, setSearch] = React.useState<string>("");
-
+  const [isRender, setIsRender] = React.useState<boolean>(false);
   const getListProduct = React.useCallback(async () => {
     try {
       const productContract = new SupplyChainContract();
-      const marketContract = new MarketContract();
-      const ids = await marketContract.getProductListedOnMarketPlace();
-      const listproduct = await productContract.getProductsInfo(ids);
-      setFilteredList(listproduct);
-      setListProducts(listproduct);
+      const auctionContract = new AuctionContract();
+      const ids = await auctionContract.getProductListedOnAuction();
+      const listproducts = await productContract.getProductsInfo(ids);
+      setListProducts(listproducts);
+      setFilteredList(listproducts);
     } catch (err) {
       console.log(err);
     }
@@ -26,12 +25,13 @@ export default function Home() {
 
   React.useEffect(() => {
     getListProduct();
-  }, [getListProduct]);
+  }, [getListProduct, isRender]);
 
   React.useEffect(() => {
     if (!listproducts) return;
     const timeOut = setTimeout(() => {
-      if (search?.length > 0) {
+      if (search?.length) {
+        if (!listproducts) return;
         const filteredList = listproducts?.filter((product) =>
           product?.name?.toLowerCase().includes(search.toLowerCase())
         );
@@ -81,13 +81,17 @@ export default function Home() {
         <CardBody>
           <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
             {filteredList?.map((product, index) => (
-              <ProductCard
+              <AuctionCard
+                author={product.author}
+                lastBid={product.lastBid}
+                lastBidder={product.lastBidder}
                 key={index}
-                productId={product.id}
+                productId={product.productId}
                 name={product.name}
                 image={product.images[0]}
-                price={product.price}
-                type="listed"
+                startTime={product.startTime}
+                endTime={product.endTime}
+                onRender={() => setIsRender(!isRender)}
               />
             ))}
           </div>

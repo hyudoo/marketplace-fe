@@ -4,7 +4,7 @@ import { IPackage, IRate } from "../../_types_";
 import { useModal } from "@/reduxs/use-modal-store";
 import InvestCard from "@/components/InvestCard";
 import CrowdSaleContract from "../../contracts/CrowdSaleContract";
-import { useAppSelector } from "@/reduxs/hooks";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import { packages } from "../../constants";
 
 import {
@@ -15,6 +15,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 const CrowdSaleProviderModal = () => {
   const [pak, setPak] = React.useState<IPackage>();
   const [rate, setRate] = React.useState<IRate>({ bnbRate: 0 });
@@ -25,6 +26,7 @@ const CrowdSaleProviderModal = () => {
   const { isOpen, onClose, type, onOpen } = useModal();
   const isModalOpen = isOpen && type === "openCrowdSale";
   const { onOpenChange } = useDisclosure();
+  const dispatch = useAppDispatch();
 
   const getRate = React.useCallback(async () => {
     const crowdContract = new CrowdSaleContract();
@@ -43,6 +45,7 @@ const CrowdSaleProviderModal = () => {
       setIsProcessing(true);
       const crowdContract = new CrowdSaleContract(signer);
       const tx = await crowdContract.buyTokenByBNB(pk.amount);
+      dispatch(setUpdate(true));
       onOpen("success", { hash: tx, title: "BUY MARKET COINS" });
     } catch (error) {
       console.log("handleBuyMKC -> error", error);

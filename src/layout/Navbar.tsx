@@ -20,6 +20,7 @@ import {
   setWalletInfo,
   setSigner,
   clearState,
+  setUpdate,
 } from "@/reduxs/accounts/account.slices";
 import { ethers } from "ethers";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
@@ -30,7 +31,8 @@ export default function NavigationLayout() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { onOpen } = useModal();
-  const { wallet } = useAppSelector((state) => state.account);
+  const { wallet, isUpdate } = useAppSelector((state) => state.account);
+
   const onConnectMetamask = async () => {
     if (window.ethereum) {
       const provider = new ethers.BrowserProvider(window.ethereum);
@@ -47,6 +49,26 @@ export default function NavigationLayout() {
       dispatch(setSigner(signer));
     }
   };
+
+  const updateWallet = React.useCallback(async () => {
+    if (window.ethereum && isUpdate) {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+      const bigBalance = await provider.getBalance(address);
+      const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
+      const marketCoins = new MarketCoinsContract(signer);
+      const mkcBigBalance = await marketCoins.getBalance(address);
+      const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
+
+      dispatch(setWalletInfo({ address, bnb: bnbBalance, mkc: mkcBalance }));
+      dispatch(setUpdate(false));
+    }
+  }, [isUpdate, dispatch]);
+
+  React.useEffect(() => {
+    updateWallet();
+  }, [updateWallet]);
 
   const disconnectMetamask = async () => {
     if (window.ethereum) {
@@ -116,6 +138,12 @@ export default function NavigationLayout() {
                 color="default"
                 onClick={() => router.push("/inventory")}>
                 Inventory
+              </DropdownItem>
+              <DropdownItem
+                key="auctions"
+                color="default"
+                onClick={() => router.push("/auction")}>
+                Auction
               </DropdownItem>
               <DropdownItem
                 key="exchange"

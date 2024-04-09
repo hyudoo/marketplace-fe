@@ -9,8 +9,9 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppSelector } from "@/reduxs/hooks";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 
 interface ICancelExchangeModal {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
   // redux
   const { onOpen } = useModal();
   const { wallet, signer } = useAppSelector((state) => state.account);
-
+  const dispatch = useAppDispatch();
   const handleSubmit = async () => {
     if (!signer || !wallet || !id || !render) return;
     try {
@@ -37,6 +38,7 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
       const marketContract = new ExchangeProductContract(signer);
       const tx = await marketContract.cancelTransaction(id);
       onOpen("success", { hash: tx, title: "CANCEL EXCHANGE" });
+      dispatch(setUpdate(true));
       render();
       onClose();
     } catch (error) {
@@ -58,7 +60,7 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
         </ModalHeader>
         <ModalBody>
           <div className="flex gap-x-1 text-sm items-center justify-center">
-            You want to cabncel this exchange?
+            You want to cancel this exchange?
           </div>
 
           <Button
@@ -69,7 +71,7 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
             variant="flat"
             type="submit"
             className="mb-4">
-            Cancel
+            Submit
           </Button>
         </ModalBody>
       </ModalContent>

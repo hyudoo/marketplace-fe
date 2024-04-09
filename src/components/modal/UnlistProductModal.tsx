@@ -9,8 +9,9 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppSelector } from "@/reduxs/hooks";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 
 interface IUnlistProductModal {
   isOpen: boolean;
@@ -31,7 +32,7 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
   // redux
   const { onOpen } = useModal();
   const { wallet, signer } = useAppSelector((state) => state.account);
-
+  const dispatch = useAppDispatch();
   const handleSubmit = async () => {
     if (!signer || !wallet || !id || !render) return;
     try {
@@ -39,6 +40,7 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
       const marketContract = new MarketPlaceContract(signer);
       const tx = await marketContract.unlistProduct(id);
       onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
+      dispatch(setUpdate(true));
       render();
       onClose();
     } catch (error) {

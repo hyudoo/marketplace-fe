@@ -8,15 +8,17 @@ import {
   Button,
 } from "@nextui-org/react";
 import React from "react";
-import { useAppSelector } from "@/reduxs/hooks";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 import { useModal } from "@/reduxs/use-modal-store";
+import { setUpdate } from "@/reduxs/accounts/account.slices";
 
 interface IBuyProductModal {
   isOpen: boolean;
   title: string;
   productId: number;
+  render?: () => void;
   productPrice: number;
   onClose: () => void;
 }
@@ -24,6 +26,7 @@ interface IBuyProductModal {
 const BuyProductModal: React.FC<IBuyProductModal> = ({
   isOpen,
   title,
+  render,
   productId,
   productPrice,
   onClose,
@@ -32,7 +35,7 @@ const BuyProductModal: React.FC<IBuyProductModal> = ({
   // redux
   const { signer } = useAppSelector((state) => state.account);
   const { onOpen } = useModal();
-
+  const dispatch = useAppDispatch();
   const handleSubmit = async () => {
     try {
       if (!signer || !productId || !productPrice) return;
@@ -43,6 +46,10 @@ const BuyProductModal: React.FC<IBuyProductModal> = ({
 
       const tx = await marketContract.buyProduct(productId);
       onOpen("success", { hash: tx, title: "BUY PRODUCT" });
+      dispatch(setUpdate(true));
+      if (render) {
+        render();
+      }
       onClose();
     } catch (err) {
       console.log("handleBuyProduct->error", err);
