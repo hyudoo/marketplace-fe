@@ -83,6 +83,7 @@ export default function Home() {
             {filteredList?.map((product, index) => (
               <ProductCard
                 key={index}
+                author={product.author}
                 productId={product.id}
                 name={product.name}
                 image={product.images[0]}

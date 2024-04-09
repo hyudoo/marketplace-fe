@@ -7,8 +7,10 @@ import CreateAuctionModal from "../modal/CreateAuctionModal";
 import CancelAuctionModal from "../modal/CancelAuctionModal";
 import FinishAuctionModal from "../modal/FinishAuctionModal";
 import BuyProductModal from "../modal/BuyProductModal";
+import { useAppSelector } from "@/reduxs/hooks";
 interface IProductProps {
   name?: string;
+  author?: string;
   image: string;
   price?: number | string;
   productId?: number;
@@ -21,6 +23,7 @@ interface IProductProps {
 
 export default function ProductCard({
   name,
+  author,
   image,
   price,
   productId,
@@ -37,6 +40,8 @@ export default function ProductCard({
   const [isCancelAuction, setIsCancelAuction] = React.useState<boolean>(false);
   const [isFinishAuction, setIsFinishAuction] = React.useState<boolean>(false);
   const [isBuyOpen, setIsBuyOpen] = React.useState<boolean>(false);
+  const { wallet } = useAppSelector((state) => state.account);
+
   return (
     <>
       <div
@@ -111,6 +116,7 @@ export default function ProductCard({
                         variant="flat"
                         color="primary"
                         className="p-2 m-0"
+                        disabled={!wallet || author == wallet?.address}
                         onClick={() => setIsBuyOpen(true)}>
                         Buy
                       </Button>

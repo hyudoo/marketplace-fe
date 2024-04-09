@@ -99,11 +99,11 @@ export default function AuctionCard({
               </Chip>
             </div>
             <div className="w-full">{name}</div>
-            <div className="lg:grid sm:grid-cols-2">
-              <div className="text-small">Last bid: {lastBid} MKC</div>
+            <div className="lg:justify-between lg:flex">
               <div className="text-small">
                 Last bidder: {showSortAddress(lastBidder)}
               </div>
+              <div className="text-small">Last bid: {lastBid} MKC</div>
             </div>
             <div className="flex justify-center">
               <Button
@@ -112,7 +112,9 @@ export default function AuctionCard({
                 color="primary"
                 type="submit"
                 disabled={
-                  author == wallet?.address || lastBidder == wallet?.address
+                  !wallet ||
+                  author == wallet?.address ||
+                  lastBidder == wallet?.address
                 }
                 className="w-full md:w-3 md:flex">
                 Join

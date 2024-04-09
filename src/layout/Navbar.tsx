@@ -104,7 +104,7 @@ export default function NavigationLayout() {
             </svg>
           }>
           <p className="font-bold text-inherit text-tiny">
-            {formatAccountBalance(wallet?.mkc || 0)} MKC
+            {formatAccountBalance(wallet?.mkc || 0) || 0} MKC
           </p>
         </Chip>
         <Chip variant="flat" avatar={<Avatar src="/bnb.png" />}>

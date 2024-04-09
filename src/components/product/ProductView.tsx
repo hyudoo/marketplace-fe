@@ -242,7 +242,11 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                     color="primary"
                     radius="full"
                     size="sm"
-                    isDisabled={!wallet}
+                    isDisabled={
+                      !wallet ||
+                      auctionInfo?.lastBidder == wallet?.address ||
+                      auctionInfo?.author == wallet?.address
+                    }
                     onClick={() => setIsAuctionOpen(true)}>
                     Join Auction
                   </Button>
