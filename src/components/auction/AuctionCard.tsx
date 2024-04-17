@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Avatar,
   Button,
   Card,
   CardBody,
@@ -11,7 +12,8 @@ import { useRouter } from "next/navigation";
 import moment from "moment";
 import JoinActionModal from "../modal/JoinActionModal";
 import { useAppSelector } from "@/reduxs/hooks";
-import { showSortAddress } from "@/utils";
+import { IProfileInfo } from "@/_types_";
+import ProfileContract from "@/contracts/ProfileContract";
 interface IProductProps {
   author?: string;
   lastBid?: number;
@@ -38,10 +40,25 @@ export default function AuctionCard({
 }: IProductProps) {
   const router = useRouter();
   const [isJoinAuction, setIsJoinAuction] = React.useState<boolean>(false);
-  const { wallet, signer } = useAppSelector((state) => state.account);
+  const { wallet } = useAppSelector((state) => state.account);
 
   const [text, setText] = useState<string>("");
   const [countdown, setCountdown] = useState<string>("");
+  const [lastBidderProfile, setLastBidderProfile] =
+    React.useState<IProfileInfo>();
+
+  React.useEffect(() => {
+    const interval = setInterval(async () => {
+      if (!lastBidder) return;
+      const profileContract = new ProfileContract();
+      const bidder = await profileContract.getProfileByAddress(lastBidder);
+      setLastBidderProfile(bidder);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [lastBidder]);
 
   useEffect(() => {
     const startDateTime = moment(startTime);
@@ -76,12 +93,14 @@ export default function AuctionCard({
     <>
       <div onClick={() => router.push(`product/${productId}`)}>
         <Card shadow="sm">
-          <Chip
-            className="z-50 hover:cursor-pointer absolute right-1 text-center p-2"
-            color="primary"
-            variant="flat">
-            {text}
-          </Chip>
+          {text && (
+            <Chip
+              className="z-50 hover:cursor-pointer absolute right-1 text-center p-2"
+              color="primary"
+              variant="flat">
+              {text}
+            </Chip>
+          )}
           <CardBody className="overflow-visible p-0 flex flex-col">
             <Image
               shadow="sm"
@@ -100,8 +119,23 @@ export default function AuctionCard({
             </div>
             <div className="w-full">{name}</div>
             <div className="lg:justify-between lg:flex">
-              <div className="text-small">
-                Last bidder: {showSortAddress(lastBidder)}
+              <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+                <div className="text-gray-600">Last Bidder:</div>
+                <div
+                  className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
+                  onClick={() => router.push(`/profile/${lastBidder}`)}>
+                  <Avatar
+                    className="mr-3"
+                    isFocusable
+                    size="sm"
+                    isBordered
+                    alt="NextUI Fruit Image with Zoom"
+                    src={lastBidderProfile?.avatar}
+                  />
+                  <div className="hover:border-b-1 items-center border-cyan-800">
+                    {lastBidderProfile?.name}
+                  </div>
+                </div>
               </div>
               <div className="text-small">Last bid: {lastBid} MKC</div>
             </div>

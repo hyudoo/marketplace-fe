@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
-import { IProductItem } from "@/_types_";
+import { IAuctionInfo, IProductItem, IProfileInfo } from "@/_types_";
 import {
   getAuctionAddress,
   getMarketPlaceAddress,
@@ -19,10 +19,12 @@ import {
   Button,
   Image,
   Divider,
+  Avatar,
 } from "@nextui-org/react";
 import AuctionContract from "@/contracts/AuctionContract";
-import { showSortAddress } from "@/utils";
 import JoinActionModal from "../modal/JoinActionModal";
+import ProfileContract from "@/contracts/ProfileContract";
+import { useRouter } from "next/navigation";
 interface IProductViewProps {
   productId: number;
 }
@@ -39,7 +41,15 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
   const { wallet } = useAppSelector((state) => state.account);
   const [canUpdatePrice, setCanUpdatePrice] = React.useState<boolean>(false);
   const [isAuction, setIsAuction] = React.useState<boolean>(false);
-  const [auctionInfo, setAuctionInfo] = React.useState<any>();
+  const [auctionInfo, setAuctionInfo] = React.useState<IAuctionInfo>();
+  const [manufacturerProfile, setManufacturerProfile] =
+    React.useState<IProfileInfo>();
+  const [authorProfile, setAuthorProfile] = React.useState<IProfileInfo>();
+  const [lastBidderProfile, setLastBidderProfile] =
+    React.useState<IProfileInfo>();
+
+  const router = useRouter();
+
   const getProductInfo = React.useCallback(async () => {
     try {
       const contract = new SupplyChainContract();
@@ -60,6 +70,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
         setIsAuction(true);
         const auctionContract = new AuctionContract();
         const info = await auctionContract.getAuction(productId);
+        console.log("info", info);
         setAuctionInfo(info);
       }
 
@@ -96,6 +107,41 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
       setSlideImage(product?.images?.slice(i, i + 4));
     }
   };
+
+  React.useEffect(() => {
+    const interval = setInterval(async () => {
+      if (!product) return;
+      const profileContract = new ProfileContract();
+      const manufacturer = await profileContract.getProfileByAddress(
+        product?.manufacturer as string
+      );
+      const author = await profileContract.getProfileByAddress(
+        product?.author as string
+      );
+
+      setAuthorProfile(author);
+      setManufacturerProfile(manufacturer);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [product]);
+
+  React.useEffect(() => {
+    const interval = setInterval(async () => {
+      if (!isAuction || !auctionInfo) return;
+      const profileContract = new ProfileContract();
+      const lastBidder = await profileContract.getProfileByAddress(
+        auctionInfo?.lastBidder as string
+      );
+      setLastBidderProfile(lastBidder);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [auctionInfo, isAuction]);
 
   return (
     <>
@@ -186,16 +232,47 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
             </CardHeader>
             <Divider />
             <CardBody className="px-3 py-0 text-small text-default-400">
-              <div className="text-xs md:text-sm">
+              <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
                 <div className="text-gray-600 font-semibold">Manufacturer:</div>
-                <div className="text-gray-600/75">{product?.manufacturer}</div>
-              </div>
-              <div className="text-xs md:text-sm">
-                <div className="text-gray-600 font-semibold">Author:</div>
-                <div className="text-sm text-gray-600/75">
-                  {product?.author || product?.manufacturer}
+                <div
+                  className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
+                  onClick={() =>
+                    router.push(`/profile/${product?.manufacturer}`)
+                  }>
+                  <Avatar
+                    className="mr-3"
+                    size="sm"
+                    isFocusable
+                    isBordered
+                    alt="NextUI Fruit Image with Zoom"
+                    src={manufacturerProfile?.avatar}
+                  />
+                  <div className="items-center hover:border-b-1 border-cyan-800">
+                    {manufacturerProfile?.name}
+                  </div>
                 </div>
               </div>
+              <Divider />
+
+              <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+                <div className="text-gray-600 font-semibold">Author:</div>
+                <div
+                  className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
+                  onClick={() => router.push(`/profile/${product?.author}`)}>
+                  <Avatar
+                    className="mr-3"
+                    isFocusable
+                    size="sm"
+                    isBordered
+                    alt="NextUI Fruit Image with Zoom"
+                    src={authorProfile?.avatar}
+                  />
+                  <div className="hover:border-b-1 items-center border-cyan-800">
+                    {authorProfile?.name}
+                  </div>
+                </div>
+              </div>
+
               <Divider />
               {canBuy && (
                 <div className="justify-between flex w-full py-2">
@@ -224,32 +301,48 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
               )}
 
               {isAuction && (
-                <div className="justify-between flex w-full py-2">
-                  <div>
-                    <div className="text-xs md:text-sm">
-                      <div className="text-gray-600 font-semibold">
-                        Last Bidder:
-                      </div>
-                      <div className="text-gray-600/75">
-                        {showSortAddress(auctionInfo?.lastBidder)}
+                <div>
+                  <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+                    <div className="text-gray-600 font-semibold">
+                      Last Bidder:
+                    </div>
+                    <div
+                      className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
+                      onClick={() =>
+                        router.push(`/profile/${auctionInfo?.lastBidder}`)
+                      }>
+                      <Avatar
+                        className="mr-3"
+                        isFocusable
+                        size="sm"
+                        isBordered
+                        alt="NextUI Fruit Image with Zoom"
+                        src={lastBidderProfile?.avatar}
+                      />
+                      <div className="hover:border-b-1 items-center border-cyan-800">
+                        {lastBidderProfile?.name}
                       </div>
                     </div>
+                  </div>
+                  <Divider />
+                  <div className="flex justify-between py-2">
                     <p className="text-xs md:text-sm text-gray-600 font-semibold items-center flex">
                       Bid: {auctionInfo?.lastBid} MKC
                     </p>
+                    <Button
+                      className="items-center flex justify-center"
+                      color="primary"
+                      radius="full"
+                      size="sm"
+                      isDisabled={
+                        !wallet ||
+                        auctionInfo?.lastBidder == wallet?.address ||
+                        auctionInfo?.author == wallet?.address
+                      }
+                      onClick={() => setIsAuctionOpen(true)}>
+                      Join Auction
+                    </Button>
                   </div>
-                  <Button
-                    color="primary"
-                    radius="full"
-                    size="sm"
-                    isDisabled={
-                      !wallet ||
-                      auctionInfo?.lastBidder == wallet?.address ||
-                      auctionInfo?.author == wallet?.address
-                    }
-                    onClick={() => setIsAuctionOpen(true)}>
-                    Join Auction
-                  </Button>
                 </div>
               )}
             </CardBody>

@@ -6,6 +6,9 @@ export const ourFileRouter = {
   imageUploader: f({
     image: { maxFileSize: "8MB", maxFileCount: 10 },
   }).onUploadComplete(() => {}),
+  avatarUploader: f({
+    image: { maxFileSize: "8MB", maxFileCount: 1 },
+  }).onUploadComplete(() => {}),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

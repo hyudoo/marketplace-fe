@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ModalType = "openCrowdSale" | "success";
+export type ModalType = "openCrowdSale" | "success" | "openCreateProfile";
 
 interface ModalData {
   title?: string;

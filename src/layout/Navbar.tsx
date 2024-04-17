@@ -21,29 +21,41 @@ import {
   setSigner,
   clearState,
   setUpdate,
+  setProfile,
 } from "@/reduxs/accounts/account.slices";
 import { ethers } from "ethers";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useRouter } from "next/navigation";
+import ProfileContract from "@/contracts/ProfileContract";
 
 export default function NavigationLayout() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { onOpen } = useModal();
-  const { wallet, isUpdate } = useAppSelector((state) => state.account);
+  const { wallet, isUpdate, profile } = useAppSelector(
+    (state) => state.account
+  );
 
   const onConnectMetamask = async () => {
     if (window.ethereum) {
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
+      console.log("signer", signer);
       const address = await signer.getAddress();
       const bigBalance = await provider.getBalance(address);
       const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
       const marketCoins = new MarketCoinsContract(signer);
       const mkcBigBalance = await marketCoins.getBalance(address);
       const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
+      const profileContract = new ProfileContract(signer);
+      const profile = await profileContract.getProfileByAddress(address);
+      if (profile.name === "") {
+        onOpen("openCreateProfile");
+      } else {
+        dispatch(setProfile(profile));
+      }
 
       dispatch(setWalletInfo({ address, bnb: bnbBalance, mkc: mkcBalance }));
       dispatch(setSigner(signer));
@@ -54,6 +66,7 @@ export default function NavigationLayout() {
     if (window.ethereum && isUpdate) {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
+      console.log("signer", signer);
       const address = await signer.getAddress();
       const bigBalance = await provider.getBalance(address);
       const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
@@ -115,24 +128,23 @@ export default function NavigationLayout() {
         {wallet ? (
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
-              <Button color="primary" variant="flat">
-                {showSortAddress(wallet?.address)}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-4 h-4">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                  />
-                </svg>
-              </Button>
+              <Avatar
+                isBordered
+                as="button"
+                className="transition-transform"
+                color="primary"
+                name={profile?.name}
+                size="sm"
+                src={profile?.avatar}
+              />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
+              <DropdownItem
+                key="profile"
+                color="default"
+                onClick={() => router.push("/profile")}>
+                Profile
+              </DropdownItem>
               <DropdownItem
                 key="profile"
                 color="default"

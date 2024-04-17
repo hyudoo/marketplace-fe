@@ -30,3 +30,11 @@ export const showTransactionHash = (tranHash: String) => {
   ${"".padStart(5, "*")}
   ${tranHash?.substring(tranHash.length - 10, tranHash.length)}`;
 };
+
+export const showShorterString = (str: string, maxLength: number) => {
+  if (str.length <= maxLength) {
+    return str;
+  } else {
+    return str.slice(0, maxLength) + "...";
+  }
+};

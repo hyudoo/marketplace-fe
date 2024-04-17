@@ -12,6 +12,7 @@ import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useRouter } from "next/navigation";
+import { notification } from "antd";
 
 const CustomEditor = dynamic(() => import("../custom-editor"), { ssr: false });
 
@@ -33,12 +34,18 @@ export default function App() {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     if (data.images.length == 0) {
-      alert("Please upload at least one image");
+      notification.error({
+        message: "Form Error",
+        description: "Please upload at least one image",
+      });
       return;
     }
 
     if (data.description.length == 0) {
-      alert("Please write a description");
+      notification.error({
+        message: "Form Error",
+        description: "Please write a description",
+      });
       return;
     }
 
@@ -135,7 +142,10 @@ export default function App() {
             setValue("images", images);
           }}
           onUploadError={(error: Error) => {
-            alert(`ERROR! ${error.message}`);
+            notification.error({
+              message: "Upload image error!",
+              description: `${error.message}`,
+            });
           }}
           appearance={{
             button: "text-blue-600 text-sm font-medium",

@@ -2,10 +2,10 @@
 
 import React from "react";
 import { Card, CardBody, CardHeader, Input } from "@nextui-org/react";
-import ProductCard from "@/components/product/ProductCard";
 import { IProductItem } from "@/_types_";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
+import MarketItem from "@/components/market/MarketItem";
 export default function Home() {
   const [listproducts, setListProducts] = React.useState<IProductItem[]>();
   const [filteredList, setFilteredList] = React.useState<IProductItem[]>();
@@ -81,14 +81,13 @@ export default function Home() {
         <CardBody>
           <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
             {filteredList?.map((product, index) => (
-              <ProductCard
+              <MarketItem
                 key={index}
                 author={product.author}
-                productId={product.id}
                 name={product.name}
                 image={product.images[0]}
                 price={product.price}
-                type="listed"
+                productId={product.id}
               />
             ))}
           </div>

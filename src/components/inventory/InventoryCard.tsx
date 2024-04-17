@@ -6,7 +6,6 @@ import UnlistProductModal from "../modal/UnlistProductModal";
 import CreateAuctionModal from "../modal/CreateAuctionModal";
 import CancelAuctionModal from "../modal/CancelAuctionModal";
 import FinishAuctionModal from "../modal/FinishAuctionModal";
-import BuyProductModal from "../modal/BuyProductModal";
 import { useAppSelector } from "@/reduxs/hooks";
 interface IProductProps {
   name?: string;
@@ -15,23 +14,19 @@ interface IProductProps {
   price?: number | string;
   productId?: number;
   isDone?: boolean;
-  type?: "inventory" | "listed" | "unlist" | "auction";
-  isCheck?: boolean;
+  type?: "inventory" | "unlist" | "auction" | "view";
   render?: () => void;
   onClick?: () => void;
 }
 
 export default function ProductCard({
   name,
-  author,
   image,
   price,
   productId,
   type,
   isDone,
-  isCheck,
   render,
-  onClick,
 }: IProductProps) {
   const router = useRouter();
   const [isListOpen, setIsListOpen] = React.useState<boolean>(false);
@@ -39,18 +34,11 @@ export default function ProductCard({
   const [isUnlistOpen, setIsUnlistOpen] = React.useState<boolean>(false);
   const [isCancelAuction, setIsCancelAuction] = React.useState<boolean>(false);
   const [isFinishAuction, setIsFinishAuction] = React.useState<boolean>(false);
-  const [isBuyOpen, setIsBuyOpen] = React.useState<boolean>(false);
-  const { wallet } = useAppSelector((state) => state.account);
 
   return (
     <>
-      <div
-        onClick={
-          onClick ? onClick : () => router.push(`/product/${productId}`)
-        }>
-        <Card
-          shadow="sm"
-          className={isCheck ? "border-1 border-sky-700 h-full" : "h-full"}>
+      <div onClick={() => router.push(`/product/${productId}`)}>
+        <Card shadow="sm" className="h-full">
           <CardBody className="overflow-visible p-0 flex flex-col">
             <Image
               shadow="sm"
@@ -111,26 +99,14 @@ export default function ProductCard({
                     <p className="text-default-500 flex items-center">
                       Price: {price} MKC
                     </p>
-                    {type == "listed" && (
-                      <Button
-                        variant="flat"
-                        color="primary"
-                        className="p-2 m-0"
-                        disabled={!wallet || author == wallet?.address}
-                        onClick={() => setIsBuyOpen(true)}>
-                        Buy
-                      </Button>
-                    )}
 
-                    {type == "unlist" && (
-                      <Button
-                        onClick={() => setIsUnlistOpen(true)}
-                        variant="flat"
-                        color="primary"
-                        className="p-2 m-0">
-                        Unlist
-                      </Button>
-                    )}
+                    <Button
+                      onClick={() => setIsUnlistOpen(true)}
+                      variant="flat"
+                      color="primary"
+                      className="p-2 m-0">
+                      Unlist
+                    </Button>
                   </div>
                 )}
               </>
@@ -168,15 +144,6 @@ export default function ProductCard({
         id={productId!}
         render={render!}
         onClose={() => setIsCancelAuction(false)}
-      />
-
-      <BuyProductModal
-        isOpen={isBuyOpen}
-        title={name!}
-        productId={productId!}
-        render={render!}
-        productPrice={price as number}
-        onClose={() => setIsBuyOpen(false)}
       />
 
       <FinishAuctionModal

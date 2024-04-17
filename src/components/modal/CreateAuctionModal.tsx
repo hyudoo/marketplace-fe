@@ -15,9 +15,11 @@ import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import AuctionContract from "@/contracts/AuctionContract";
+import type { DatePickerProps } from "antd";
+import { DatePicker, notification } from "antd";
+import dayjs from "dayjs";
+import type { Dayjs } from "dayjs";
 
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs, { Dayjs } from "dayjs";
 import { setUpdate } from "@/reduxs/accounts/account.slices";
 interface ICreateAuctionModal {
   isOpen: boolean;
@@ -51,15 +53,21 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     if (!signer || !wallet || !id || !render) return;
     if (data.price <= 0) {
-      alert("Please enter a valid price!");
+      notification.error({
+        message: "Please enter a valid price!",
+      });
     }
     const now = dayjs();
     if (!startDate || startDate < now) {
-      alert("Please select a valid start date.");
+      notification.error({
+        message: "Please select a valid start date.",
+      });
       return;
     }
     if (!endDate || startDate >= endDate) {
-      alert("Please select a valid end date.");
+      notification.error({
+        message: "Please select a valid end date.",
+      });
       return;
     }
     try {
@@ -117,23 +125,21 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
             />
             <DatePicker
               value={startDate}
-              format="DD-MM-YYYY"
-              label="Start Time"
               onChange={(date) => setStartDate(date as Dayjs)}
-              formatDensity="spacious"
-              enableAccessibleFieldDOMStructure
-              selectedSections="all"
-              onSelectedSectionsChange={undefined}
+              placeholder="Start Date"
+              format="YYYY-MM-DD HH:mm"
+              maxTagCount="responsive"
+              showTime
+              size="large"
             />
             <DatePicker
               value={endDate}
-              format="DD-MM-YYYY"
+              showTime
+              placeholder="End Date"
+              format="YYYY-MM-DD HH:mm"
               onChange={(date) => setEndDate(date as Dayjs)}
-              label="End Time"
-              formatDensity="spacious"
-              enableAccessibleFieldDOMStructure
-              selectedSections="all"
-              onSelectedSectionsChange={undefined}
+              maxTagCount="responsive"
+              size="large"
             />
             <Button
               fullWidth

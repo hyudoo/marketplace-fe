@@ -37,7 +37,7 @@ const ListProductModal: React.FC<IListProductModal> = ({
   const dispatch = useAppDispatch();
   const { onOpen } = useModal();
 
-  const { handleSubmit, setValue, watch } = useForm<FieldValues>({
+  const { handleSubmit, setValue } = useForm<FieldValues>({
     defaultValues: {
       price: 0,
     },

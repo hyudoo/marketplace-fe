@@ -45,15 +45,20 @@ export interface IExchange {
   active?: boolean;
 }
 
-export interface IAuctionInfo extends IProductItem {
-  auctionId: number;
+export interface IProfileInfo {
+  address?: string;
+  name: string;
+  bio: string;
+  avatar: string;
+  isPublic: boolean;
+}
+
+export interface IAuctionInfo {
   author: string;
-  productId: number;
+  productId: number | string;
   initialPrice: number;
-  previousBidder: string;
   lastBid: number;
   lastBidder: string;
   startTime: number;
   endTime: number;
-  completed: boolean;
 }
