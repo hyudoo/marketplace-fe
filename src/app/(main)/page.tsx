@@ -12,16 +12,12 @@ export default function Home() {
   const [search, setSearch] = React.useState<string>("");
 
   const getListProduct = React.useCallback(async () => {
-    try {
-      const productContract = new SupplyChainContract();
-      const marketContract = new MarketContract();
-      const ids = await marketContract.getProductListedOnMarketPlace();
-      const listproduct = await productContract.getProductsInfo(ids);
-      setFilteredList(listproduct);
-      setListProducts(listproduct);
-    } catch (err) {
-      console.log(err);
-    }
+    const productContract = new SupplyChainContract();
+    const marketContract = new MarketContract();
+    const ids = await marketContract.getProductListedOnMarketPlace();
+    const listproduct = await productContract.getProductsInfo(ids);
+    setFilteredList(listproduct);
+    setListProducts(listproduct);
   }, []);
 
   React.useEffect(() => {

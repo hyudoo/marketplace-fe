@@ -40,23 +40,19 @@ export default function ExchangeCard({
   const [profile, setProfile] = React.useState<IProfileInfo>();
   const router = useRouter();
   const getExchangeInfo = React.useCallback(async () => {
-    try {
-      const productContract = new SupplyChainContract();
-      const yourProducts = await productContract.getProductInfoByIds(
-        yourTokenIds!
-      );
-      setYourProduct(yourProducts);
-      const otherProducts = await productContract.getProductInfoByIds(
-        otherTokenIds!
-      );
-      setOtherProduct(otherProducts);
+    const productContract = new SupplyChainContract();
+    const yourProducts = await productContract.getProductInfoByIds(
+      yourTokenIds!
+    );
+    setYourProduct(yourProducts);
+    const otherProducts = await productContract.getProductInfoByIds(
+      otherTokenIds!
+    );
+    setOtherProduct(otherProducts);
 
-      const profileContract = new ProfileContract();
-      const profile = await profileContract.getProfileByAddress(address!);
-      setProfile(profile);
-    } catch (err) {
-      console.log(err);
-    }
+    const profileContract = new ProfileContract();
+    const profile = await profileContract.getProfileByAddress(address!);
+    setProfile(profile);
   }, [yourTokenIds, otherTokenIds, address]);
 
   React.useEffect(() => {

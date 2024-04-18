@@ -1,4 +1,4 @@
-import { IPackage, IProduct, INavbar } from "../_types_";
+import { IPackage, IProduct } from "../_types_";
 
 export const packages: IPackage[] = [
   {

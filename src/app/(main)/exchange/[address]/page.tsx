@@ -41,31 +41,25 @@ export default function Exchange({ params }: { params: IParams }) {
       });
       router.push("/");
     }
-    try {
-      const profileContract = new ProfileContract(signer);
-      const profile = await profileContract.getProfileByAddress(
-        params?.address
-      );
-      setProfile(profile);
-      if (!profile?.isPublic) {
-        notification.error({
-          message: "This profile is private",
-          description: "Can't create new exchange with private profile",
-        });
-        router.push("/");
-      }
-      const productContract = new SupplyChainContract(signer);
-      const inventory = await productContract.getListProduct(
-        wallet?.address as string
-      );
-      setInventory(inventory);
-      const otherInventory = await productContract.getListProduct(
-        params?.address
-      );
-      setOtherInventory(otherInventory);
-    } catch (err) {
-      console.log(err);
+    const profileContract = new ProfileContract(signer);
+    const profile = await profileContract.getProfileByAddress(params?.address);
+    setProfile(profile);
+    if (!profile?.isPublic) {
+      notification.error({
+        message: "This profile is private",
+        description: "Can't create new exchange with private profile",
+      });
+      router.push("/");
     }
+    const productContract = new SupplyChainContract(signer);
+    const inventory = await productContract.getListProduct(
+      wallet?.address as string
+    );
+    setInventory(inventory);
+    const otherInventory = await productContract.getListProduct(
+      params?.address
+    );
+    setOtherInventory(otherInventory);
   }, [wallet, signer, router, params?.address]);
 
   React.useEffect(() => {

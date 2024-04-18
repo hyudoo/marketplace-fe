@@ -33,20 +33,15 @@ export default function Exchange() {
     }
     if (!isRender) return;
     const exchangeContract = new ExchangeProductContract(signer);
-    try {
-      const exchangeIds = await exchangeContract.getTradeBySender(
-        wallet?.address!
-      );
-      const exchanges = await exchangeContract.getTradeByIds(exchangeIds);
-      setExchanges(exchanges);
-      const ids = await exchangeContract.getTradeByReceiver(wallet?.address!);
-      const incomingExchange = await exchangeContract.getTradeByIds(ids);
-      setIncomingExchanges(incomingExchange);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsRender(false);
-    }
+    const exchangeIds = await exchangeContract.getTradeBySender(
+      wallet?.address!
+    );
+    const exchanges = await exchangeContract.getTradeByIds(exchangeIds);
+    setExchanges(exchanges);
+    const ids = await exchangeContract.getTradeByReceiver(wallet?.address!);
+    const incomingExchange = await exchangeContract.getTradeByIds(ids);
+    setIncomingExchanges(incomingExchange);
+    setIsRender(false);
   }, [wallet, signer, isRender, router]);
 
   React.useEffect(() => {

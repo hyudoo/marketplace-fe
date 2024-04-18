@@ -11,16 +11,12 @@ export default function Home() {
   const [search, setSearch] = React.useState<string>("");
   const [isRender, setIsRender] = React.useState<boolean>(false);
   const getListProduct = React.useCallback(async () => {
-    try {
-      const productContract = new SupplyChainContract();
-      const auctionContract = new AuctionContract();
-      const ids = await auctionContract.getProductListedOnAuction();
-      const listproducts = await productContract.getProductsInfo(ids);
-      setListProducts(listproducts);
-      setFilteredList(listproducts);
-    } catch (err) {
-      console.log(err);
-    }
+    const productContract = new SupplyChainContract();
+    const auctionContract = new AuctionContract();
+    const ids = await auctionContract.getProductListedOnAuction();
+    const listproducts = await productContract.getProductsInfo(ids);
+    setListProducts(listproducts);
+    setFilteredList(listproducts);
   }, []);
 
   React.useEffect(() => {

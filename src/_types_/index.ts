@@ -19,11 +19,6 @@ export interface IProduct {
   value: string;
 }
 
-export interface INavbar {
-  name: string;
-  url: string;
-}
-
 export interface IProductItem {
   id: number;
   name?: string;

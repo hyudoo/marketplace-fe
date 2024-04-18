@@ -38,23 +38,18 @@ const InventoryView: React.FC<IInventory> = ({ address, canCreate, type }) => {
       router.push("/");
     }
     if (!isRender) return;
-    try {
-      const productContract = new SupplyChainContract(signer);
-      const inventory = await productContract.getListProduct(address);
-      setInventory(inventory);
-      const marketContract = new MarketContract(signer);
-      const ids = await marketContract.getMyProductListed(address);
-      const listedProducts = await productContract.getProductsInfo(ids);
-      setListedProducts(listedProducts);
-      const auctionContract = new AuctionContract(signer);
-      const auctionIds = await auctionContract.getMyProductListed(address);
-      const auctionProducts = await productContract.getProductsInfo(auctionIds);
-      setAuctiondProducts(auctionProducts);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsRender(false);
-    }
+    const productContract = new SupplyChainContract(signer);
+    const inventory = await productContract.getListProduct(address);
+    setInventory(inventory);
+    const marketContract = new MarketContract(signer);
+    const ids = await marketContract.getMyProductListed(address);
+    const listedProducts = await productContract.getProductsInfo(ids);
+    setListedProducts(listedProducts);
+    const auctionContract = new AuctionContract(signer);
+    const auctionIds = await auctionContract.getMyProductListed(address);
+    const auctionProducts = await productContract.getProductsInfo(auctionIds);
+    setAuctiondProducts(auctionProducts);
+    setIsRender(false);
   }, [signer, isRender, address, router]);
 
   React.useEffect(() => {

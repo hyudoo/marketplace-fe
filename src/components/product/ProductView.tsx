@@ -51,34 +51,30 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
   const router = useRouter();
 
   const getProductInfo = React.useCallback(async () => {
-    try {
-      const contract = new SupplyChainContract();
-      const product = await contract.getProductInfoById(productId);
-      setProduct(product);
-      setMainImage(product?.images[0]);
-      setSlideImage(product?.images.slice(0, 4));
-      const res = await contract.ownerOf(productId);
-      if (res === getMarketPlaceAddress()) {
-        setCanBuy(true);
-        const marketContract = new MarketContract();
-        const item = await marketContract.getListedProductByID(productId);
-        setProduct({
-          ...product,
-          price: item.price,
-        });
-      } else if (res === getAuctionAddress()) {
-        setIsAuction(true);
-        const auctionContract = new AuctionContract();
-        const info = await auctionContract.getAuction(productId);
-        console.log("info", info);
-        setAuctionInfo(info);
-      }
+    const contract = new SupplyChainContract();
+    const product = await contract.getProductInfoById(productId);
+    setProduct(product);
+    setMainImage(product?.images[0]);
+    setSlideImage(product?.images.slice(0, 4));
+    const res = await contract.ownerOf(productId);
+    if (res === getMarketPlaceAddress()) {
+      setCanBuy(true);
+      const marketContract = new MarketContract();
+      const item = await marketContract.getListedProductByID(productId);
+      setProduct({
+        ...product,
+        price: item.price,
+      });
+    } else if (res === getAuctionAddress()) {
+      setIsAuction(true);
+      const auctionContract = new AuctionContract();
+      const info = await auctionContract.getAuction(productId);
+      console.log("info", info);
+      setAuctionInfo(info);
+    }
 
-      if (product?.author == wallet?.address) {
-        setCanUpdatePrice(true);
-      }
-    } catch (err) {
-      console.log(err);
+    if (product?.author == wallet?.address) {
+      setCanUpdatePrice(true);
     }
   }, [productId, wallet?.address]);
 

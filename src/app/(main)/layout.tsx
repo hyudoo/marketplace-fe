@@ -1,9 +1,8 @@
 "use client";
 import ReduxProvider from "@/reduxs/ReduxProvider";
 import { NextUIProvider } from "@nextui-org/react";
-import { MainLayout } from "@/layout/MainLayout";
 import { ModalProvider } from "@/components/provider/ModalProvider";
-
+import Navbar from "@/layout/Navbar";
 export default function RootLayout({
   children,
 }: {
@@ -13,7 +12,8 @@ export default function RootLayout({
     <ReduxProvider>
       <NextUIProvider>
         <ModalProvider />
-        <MainLayout>{children}</MainLayout>
+        <Navbar />
+        {children}
       </NextUIProvider>
     </ReduxProvider>
   );
