@@ -7,8 +7,8 @@ import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import { useModal } from "@/reduxs/use-modal-store";
 import { UploadButton } from "@/utils/uploadthing";
 import { Avatar, Button, cn, Input, Switch } from "@nextui-org/react";
-import { notification } from "antd";
 import React from "react";
+import toast from "react-hot-toast";
 
 export default function UserProfile() {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -118,10 +118,7 @@ export default function UserProfile() {
             setYourProfile({ ...yourProfile, avatar: res?.[0].url });
           }}
           onUploadError={(error: Error) => {
-            notification.error({
-              message: "Upload image error!",
-              description: `${error.message}`,
-            });
+            toast.error("Upload image error!");
           }}
           appearance={{
             button: "text-blue-600 text-sm font-medium",

@@ -8,6 +8,7 @@ import {
   Button,
   useDisclosure,
   Input,
+  DatePicker,
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
@@ -15,12 +16,14 @@ import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import AuctionContract from "@/contracts/AuctionContract";
-import type { DatePickerProps } from "antd";
-import { DatePicker, notification } from "antd";
+import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
-
+import { parseDate, getLocalTimeZone } from "@internationalized/date";
 import { setUpdate } from "@/reduxs/accounts/account.slices";
+import { useDateFormatter } from "@react-aria/i18n";
+
+import { CalendarDate } from "@nextui-org/react";
 interface ICreateAuctionModal {
   isOpen: boolean;
   id: number;
@@ -38,36 +41,34 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const { wallet, signer } = useAppSelector((state) => state.account);
-  const [startDate, setStartDate] = React.useState<Dayjs>();
-  const [endDate, setEndDate] = React.useState<Dayjs>();
+  const [startDate, setStartDate] = React.useState<Date>();
+  const [endDate, setEndDate] = React.useState<Date>();
   const { onOpen } = useModal();
   const dispatch = useAppDispatch();
+
   const { handleSubmit, setValue } = useForm<FieldValues>({
     defaultValues: {
       price: 0,
     },
   });
+  let formatter = useDateFormatter({ dateStyle: "full" });
 
   const { onOpenChange } = useDisclosure();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     if (!signer || !wallet || !id || !render) return;
     if (data.price <= 0) {
-      notification.error({
-        message: "Please enter a valid price!",
-      });
+      toast.error("Please enter a valid price!");
     }
-    const now = dayjs();
-    if (!startDate || startDate < now) {
-      notification.error({
-        message: "Please select a valid start date.",
-      });
+    const start = new Date(startDate!);
+    const end = new Date(endDate!);
+    const now = new Date();
+    if (start < now) {
+      toast.error("Please select a valid start date.");
       return;
     }
-    if (!endDate || startDate >= endDate) {
-      notification.error({
-        message: "Please select a valid end date.",
-      });
+    if (start >= end) {
+      toast.error("Please select a valid end date.");
       return;
     }
     try {
@@ -78,8 +79,8 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
       const tx = await auctionContract.createAuction(
         id,
         data.price,
-        Math.round(startDate.valueOf() / 1000),
-        Math.round(endDate.valueOf() / 1000)
+        Math.round(start.getTime() / 1000),
+        Math.round(end.getTime() / 1000)
       );
       onOpen("success", { hash: tx, title: "CREATE AUCTION SUCCESS" });
       dispatch(setUpdate(true));
@@ -96,7 +97,6 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
       backdrop="blur"
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      isDismissable={false}
       placement="center"
       className="overflow-y-auto"
       onClose={onClose}>
@@ -124,22 +124,24 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
               }
             />
             <DatePicker
-              value={startDate}
-              onChange={(date) => setStartDate(date as Dayjs)}
-              placeholder="Start Date"
-              format="YYYY-MM-DD HH:mm"
-              maxTagCount="responsive"
-              showTime
-              size="large"
+              label="Start Date"
+              variant="bordered"
+              onChange={(date) => {
+                setStartDate(date);
+              }}
+              granularity="second"
+              hourCycle={24}
+              isRequired
             />
             <DatePicker
-              value={endDate}
-              showTime
-              placeholder="End Date"
-              format="YYYY-MM-DD HH:mm"
-              onChange={(date) => setEndDate(date as Dayjs)}
-              maxTagCount="responsive"
-              size="large"
+              label="End Date"
+              variant="bordered"
+              onChange={(date) => {
+                setEndDate(date);
+              }}
+              hourCycle={24}
+              granularity="second"
+              isRequired
             />
             <Button
               fullWidth

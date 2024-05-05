@@ -1,6 +1,7 @@
 "use client";
 declare var window: any;
 import { numberFormat, showSortAddress, formatAccountBalance } from "@/utils";
+import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import {
   Avatar,
@@ -36,6 +37,7 @@ export default function NavigationLayout() {
   const { wallet, isUpdate, profile } = useAppSelector(
     (state) => state.account
   );
+  const { data: session } = useSession();
 
   const onConnectMetamask = async () => {
     if (window.ethereum) {
@@ -125,7 +127,7 @@ export default function NavigationLayout() {
             {numberFormat(wallet?.bnb || 0)} BNB
           </p>
         </Chip>
-        {wallet ? (
+        {session?.user ? (
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <Avatar
@@ -185,15 +187,18 @@ export default function NavigationLayout() {
                     />
                   </svg>
                 }
-                onClick={disconnectMetamask}>
-                Logout
+                onClick={() => signOut()}>
+                Sign out
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         ) : (
           <NavbarItem>
-            <Button color="primary" variant="flat" onClick={onConnectMetamask}>
-              Connect Wallet
+            <Button
+              color="primary"
+              variant="flat"
+              onClick={() => router.push("/auth/login")}>
+              Sign In
             </Button>
           </NavbarItem>
         )}

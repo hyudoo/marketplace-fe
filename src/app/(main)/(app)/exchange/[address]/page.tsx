@@ -5,13 +5,12 @@ import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import { IProductItem, IProfileInfo } from "@/_types_";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
-import { notification } from "antd";
 import ExchangeModal from "@/components/modal/ExchangeModal";
 import ExchangeItem from "@/components/exchange/ExchangeItem";
 import ProfileContract from "@/contracts/ProfileContract";
 import { useRouter } from "next/navigation";
 import MiniProfile from "@/components/profile/MiniProfile";
-
+import { toast } from "react-hot-toast";
 interface IParams {
   address: string;
 }
@@ -36,19 +35,14 @@ export default function Exchange({ params }: { params: IParams }) {
   const getInventory = React.useCallback(async () => {
     if (!signer || !wallet?.address) return;
     if (wallet?.address === params?.address) {
-      notification.error({
-        message: "Can't create exchange with yourself",
-      });
+      toast.error("Can't create exchange with yourself");
       router.push("/");
     }
     const profileContract = new ProfileContract(signer);
     const profile = await profileContract.getProfileByAddress(params?.address);
     setProfile(profile);
     if (!profile?.isPublic) {
-      notification.error({
-        message: "This profile is private",
-        description: "Can't create new exchange with private profile",
-      });
+      toast.error("Can't create new exchange with private profile");
       router.push("/");
     }
     const productContract = new SupplyChainContract(signer);

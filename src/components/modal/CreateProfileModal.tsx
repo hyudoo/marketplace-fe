@@ -18,7 +18,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { setProfile, setUpdate } from "@/reduxs/accounts/account.slices";
 import ProfileContract from "@/contracts/ProfileContract";
-import { notification } from "antd";
+import toast from "react-hot-toast";
 
 const CreateProfileModal = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -118,10 +118,7 @@ const CreateProfileModal = () => {
                   setAvatar(res?.[0].url);
                 }}
                 onUploadError={(error: Error) => {
-                  notification.error({
-                    message: "Upload image error!",
-                    description: `${error.message}`,
-                  });
+                  toast.error("Upload image error!");
                 }}
                 appearance={{
                   button: "text-blue-600 text-sm font-medium",

@@ -12,7 +12,7 @@ import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useRouter } from "next/navigation";
-import { notification } from "antd";
+import { toast } from "react-hot-toast";
 
 const CustomEditor = dynamic(() => import("../custom-editor"), { ssr: false });
 
@@ -34,18 +34,12 @@ export default function App() {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     if (data.images.length == 0) {
-      notification.error({
-        message: "Form Error",
-        description: "Please upload at least one image",
-      });
+      toast.error("Please upload at least one image");
       return;
     }
 
     if (data.description.length == 0) {
-      notification.error({
-        message: "Form Error",
-        description: "Please write a description",
-      });
+      toast.error("Please write a description");
       return;
     }
 
@@ -142,10 +136,7 @@ export default function App() {
             setValue("images", images);
           }}
           onUploadError={(error: Error) => {
-            notification.error({
-              message: "Upload image error!",
-              description: `${error.message}`,
-            });
+            toast.error("Upload image error!");
           }}
           appearance={{
             button: "text-blue-600 text-sm font-medium",
