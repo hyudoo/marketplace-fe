@@ -37,23 +37,27 @@ export const authOptions: AuthOptions = {
             }),
           })
         ).json();
-        console.log("response", response);
 
-        if (!response?.user) {
-          throw new Error("Invalid credentials");
+        if (response?.error) {
+          throw new Error(response?.error);
         }
-        return response?.user;
+        return response;
       },
     }),
   ],
+
+  debug: process.env.NODE_ENV === "development",
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+
   callbacks: {
-    async jwt({ token, user, account }) {
-      console.log("account", account);
+    async jwt({ token, user }) {
       return { ...token, ...user };
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       session.user = token as any;
-
       return session;
     },
   },

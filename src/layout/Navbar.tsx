@@ -39,31 +39,6 @@ export default function NavigationLayout() {
   );
   const { data: session } = useSession();
 
-  const onConnectMetamask = async () => {
-    if (window.ethereum) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
-      console.log("signer", signer);
-      const address = await signer.getAddress();
-      const bigBalance = await provider.getBalance(address);
-      const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
-      const marketCoins = new MarketCoinsContract(signer);
-      const mkcBigBalance = await marketCoins.getBalance(address);
-      const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
-      const profileContract = new ProfileContract(signer);
-      const profile = await profileContract.getProfileByAddress(address);
-      if (profile.name === "") {
-        onOpen("openCreateProfile");
-      } else {
-        dispatch(setProfile(profile));
-      }
-
-      dispatch(setWalletInfo({ address, bnb: bnbBalance, mkc: mkcBalance }));
-      dispatch(setSigner(signer));
-    }
-  };
-
   const updateWallet = React.useCallback(async () => {
     if (window.ethereum && isUpdate) {
       const provider = new ethers.BrowserProvider(window.ethereum);

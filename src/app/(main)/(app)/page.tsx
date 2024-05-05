@@ -6,11 +6,12 @@ import { IProductItem } from "@/_types_";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import MarketItem from "@/components/market/MarketItem";
+import { useSession } from "next-auth/react";
+
 export default function Home() {
   const [listproducts, setListProducts] = React.useState<IProductItem[]>();
   const [filteredList, setFilteredList] = React.useState<IProductItem[]>();
   const [search, setSearch] = React.useState<string>("");
-
   const getListProduct = React.useCallback(async () => {
     const productContract = new SupplyChainContract();
     const marketContract = new MarketContract();
@@ -19,6 +20,11 @@ export default function Home() {
     setFilteredList(listproduct);
     setListProducts(listproduct);
   }, []);
+
+  const session = useSession();
+  React.useEffect(() => {
+    console.log("session", session);
+  }, [session]);
 
   React.useEffect(() => {
     getListProduct();

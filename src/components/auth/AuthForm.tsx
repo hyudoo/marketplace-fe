@@ -28,17 +28,14 @@ const AuthForm = () => {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log("data", data);
     setIsLoading(true);
     signIn("credentials", {
       ...data,
       redirect: false,
     })
       .then((callback) => {
-        console.log("callback", callback);
-
         if (callback?.error) {
-          toast.error("Something went wrong!");
+          toast.error(callback?.error);
         }
 
         if (callback?.ok && !callback?.error) {
@@ -47,7 +44,6 @@ const AuthForm = () => {
         }
       })
       .finally(() => setIsLoading(false));
-    console.log("session", session);
   };
 
   const socialAction = (action: string) => {
@@ -55,7 +51,7 @@ const AuthForm = () => {
     signIn(action, { redirect: false })
       .then((callback) => {
         if (callback?.error) {
-          toast.error("Something went wrong!");
+          toast.error(callback?.error);
         }
 
         if (callback?.ok) {
