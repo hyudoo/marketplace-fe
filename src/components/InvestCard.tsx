@@ -43,7 +43,7 @@ export default function InvestCard({
           src="/bnb-bg.jpeg"
         />
       </CardBody>
-      <CardFooter className="object-cover py-2 justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_18px)] shadow-small ml-2 z-10">
+      <CardFooter className="object-cover py-2 justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden absolute before:rounded-xl rounded-large bottom-1 shadow-small z-10">
         <p className="text-tiny text-white/80">
           {numberFormat(pak.amount / rate)} BNB
         </p>

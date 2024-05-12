@@ -7,14 +7,14 @@ declare module "next-auth" {
   interface Session {
     user: {
       /** The user's postal address. */
-      id: number;
+      id: string;
       name: string;
       email: string;
-      image: string;
+      wallet: string;
       avatar: string;
-      address: string;
-      active: number;
       role: number;
+      status: number;
+      isPublic: boolean;
       accessToken: string;
       refreshToken: string;
     };

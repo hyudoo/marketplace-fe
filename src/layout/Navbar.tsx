@@ -29,6 +29,7 @@ import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useRouter } from "next/navigation";
 import ProfileContract from "@/contracts/ProfileContract";
+import { items } from "@/constants";
 
 export default function NavigationLayout() {
   const router = useRouter();
@@ -39,19 +40,26 @@ export default function NavigationLayout() {
   );
   const { data: session } = useSession();
 
+  const onConnectMetamask = async () => {
+    if (window.ethereum) {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+    }
+  };
+
   const updateWallet = React.useCallback(async () => {
     if (window.ethereum && isUpdate) {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       console.log("signer", signer);
       const address = await signer.getAddress();
-      const bigBalance = await provider.getBalance(address);
-      const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
       const marketCoins = new MarketCoinsContract(signer);
       const mkcBigBalance = await marketCoins.getBalance(address);
       const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
 
-      dispatch(setWalletInfo({ address, bnb: bnbBalance, mkc: mkcBalance }));
+      dispatch(setWalletInfo({ address, mkc: mkcBalance }));
       dispatch(setUpdate(false));
     }
   }, [isUpdate, dispatch]);
@@ -97,11 +105,6 @@ export default function NavigationLayout() {
             {formatAccountBalance(wallet?.mkc || 0) || 0} MKC
           </p>
         </Chip>
-        <Chip variant="flat" avatar={<Avatar src="/bnb.png" />}>
-          <p className="font-bold text-inherit text-tiny">
-            {numberFormat(wallet?.bnb || 0)} BNB
-          </p>
-        </Chip>
         {session?.user ? (
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
@@ -123,7 +126,7 @@ export default function NavigationLayout() {
                 Profile
               </DropdownItem>
               <DropdownItem
-                key="profile"
+                key="inventory"
                 color="default"
                 onClick={() => router.push("/inventory")}>
                 Inventory
@@ -139,6 +142,12 @@ export default function NavigationLayout() {
                 color="default"
                 onClick={() => router.push("/exchange")}>
                 Exchange
+              </DropdownItem>
+              <DropdownItem
+                key="exchange"
+                color="default"
+                onClick={() => router.push("/setting")}>
+                Setting
               </DropdownItem>
 
               <DropdownItem
@@ -169,11 +178,8 @@ export default function NavigationLayout() {
           </Dropdown>
         ) : (
           <NavbarItem>
-            <Button
-              color="primary"
-              variant="flat"
-              onClick={() => router.push("/auth/login")}>
-              Sign In
+            <Button color="primary" variant="flat" onClick={onConnectMetamask}>
+              Connect wallet
             </Button>
           </NavbarItem>
         )}

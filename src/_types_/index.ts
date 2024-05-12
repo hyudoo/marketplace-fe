@@ -1,6 +1,5 @@
 export interface IWalletInfo {
   address: string;
-  bnb: number;
   mkc: number;
 }
 
@@ -56,4 +55,15 @@ export interface IAuctionInfo {
   lastBidder: string;
   startTime: number;
   endTime: number;
+}
+
+export interface IUserInfo {
+  id?: string;
+  name?: string;
+  email?: string;
+  wallet?: string;
+  avatar?: string;
+  role?: number;
+  status?: number;
+  isPublic?: boolean;
 }

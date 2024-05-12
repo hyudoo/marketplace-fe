@@ -1,13 +1,7 @@
+const BACKEND_URL = "http://localhost:3001";
 import axios from "axios";
-export default axios.create({
-  baseURL: process.env.ENDPOINT_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-});
 
-export const axiosAuth = axios.create({
-  baseURL: process.env.ENDPOINT_URL,
+export default axios.create({
+  baseURL: BACKEND_URL,
   headers: { "Content-Type": "application/json" },
 });

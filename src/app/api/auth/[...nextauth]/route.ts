@@ -41,7 +41,12 @@ export const authOptions: AuthOptions = {
         if (response?.error) {
           throw new Error(response?.error);
         }
-        return response;
+        const { user, accessToken, refreshToken } = response;
+        return {
+          ...user,
+          accessToken,
+          refreshToken,
+        };
       },
     }),
   ],

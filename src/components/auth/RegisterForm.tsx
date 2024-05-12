@@ -26,7 +26,6 @@ const AuthForm = () => {
       name: "",
       email: "",
       password: "",
-      wallet: "",
     },
   });
 
@@ -61,7 +60,7 @@ const AuthForm = () => {
     }
 
     await axios
-      .post("/api/register", data)
+      .post("/api/register", { ...data, wallet })
       .then(() =>
         signIn("credentials", {
           ...data,
@@ -88,22 +87,6 @@ const AuthForm = () => {
       const address = await signer.getAddress();
       setValue("wallet", address);
       setWallet(address);
-      console.log("address", address);
-      // const bigBalance = await provider.getBalance(address);
-      // const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
-      // const marketCoins = new MarketCoinsContract(signer);
-      // const mkcBigBalance = await marketCoins.getBalance(address);
-      // const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
-      // const profileContract = new ProfileContract(signer);
-      // const profile = await profileContract.getProfileByAddress(address);
-      // if (profile.name === "") {
-      //   onOpen("openCreateProfile");
-      // } else {
-      //   dispatch(setProfile(profile));
-      // }
-
-      // dispatch(setWalletInfo({ address, bnb: bnbBalance, mkc: mkcBalance }));
-      // dispatch(setSigner(signer));
     }
   };
 
@@ -135,12 +118,21 @@ const AuthForm = () => {
             variant="bordered"
             value={wallet}
             endContent={
-              <Button
-                color="primary"
-                variant="flat"
-                onClick={onConnectMetamask}>
-                Add Wallet
-              </Button>
+              wallet ? (
+                <Button
+                  color="danger"
+                  variant="flat"
+                  onClick={() => setWallet("")}>
+                  Remove
+                </Button>
+              ) : (
+                <Button
+                  color="primary"
+                  variant="flat"
+                  onClick={onConnectMetamask}>
+                  Add Wallet
+                </Button>
+              )
             }
             label="Wallet"
             type="text"
