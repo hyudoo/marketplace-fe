@@ -1,43 +1,50 @@
 "use client";
 
-import { IUserInfo } from "@/_types_";
-import getCurrentUser from "@/lib/hooks/getCurrentUser";
-import axios from "@/lib/axios";
+import { IProfileInfo } from "@/_types_";
+import ProfileContract from "@/contracts/ProfileContract";
+import { setProfile, setUpdate } from "@/reduxs/accounts/account.slices";
+import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import { useModal } from "@/reduxs/use-modal-store";
 import { UploadButton } from "@/utils/uploadthing";
 import { Avatar, Button, cn, Input, Switch } from "@nextui-org/react";
-import { getSession, useSession } from "next-auth/react";
 import React from "react";
 import toast from "react-hot-toast";
 
 export default function UserProfile() {
   const [isLoading, setIsLoading] = React.useState(false);
+  const { wallet, signer, profile } = useAppSelector((state) => state.account);
   const { onOpen } = useModal();
-  const [yourProfile, setYourProfile] = React.useState<IUserInfo>();
-  const session = useSession();
-  const getUserInfo = React.useCallback(async () => {
-    const user = await getCurrentUser();
-    setYourProfile(user);
-  }, []);
+  const dispatch = useAppDispatch();
 
-  React.useEffect(() => {
-    getUserInfo();
-  }, [getUserInfo]);
+  const [yourProfile, setYourProfile] = React.useState<IProfileInfo>(profile!);
 
   const onSubmit = async () => {
-    const res = await axios.patch(
-      "/user/update",
-      {
-        name: yourProfile?.name,
-        avatar: yourProfile?.avatar,
-        isPublic: yourProfile?.isPublic ? true : false,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${session?.data?.user.accessToken}`,
-        },
-      }
-    );
+    if (!signer || !wallet) return;
+    try {
+      setIsLoading(true);
+      const profileContract = new ProfileContract(signer);
+      const tx = await profileContract.updateProfile(
+        yourProfile?.name,
+        yourProfile?.bio,
+        yourProfile?.avatar,
+        yourProfile?.isPublic
+      );
+
+      onOpen("success", { hash: tx, title: "UPDATE PROFILE SUCCESS" });
+      dispatch(
+        setProfile({
+          name: yourProfile?.name,
+          bio: yourProfile?.bio,
+          avatar: yourProfile?.avatar,
+          isPublic: yourProfile?.isPublic,
+        })
+      );
+      dispatch(setUpdate(true));
+    } catch (error) {
+      console.log("handleListProduct -> error", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -126,7 +133,7 @@ export default function UserProfile() {
         type="text"
         variant={"bordered"}
         label="Name"
-        value={yourProfile?.name}
+        defaultValue={profile?.name}
         isRequired
         placeholder="Enter your Name"
         onChange={(e) =>
@@ -135,24 +142,14 @@ export default function UserProfile() {
       />
 
       <Input
-        type="email"
-        variant={"bordered"}
-        label="Email"
-        value={yourProfile?.email}
-        isRequired
-        onChange={(e) =>
-          setYourProfile({ ...yourProfile, email: e.target.value })
-        }
-      />
-
-      <Input
         type="text"
         variant={"bordered"}
-        label="Wallet"
-        value={yourProfile?.wallet}
+        label="Bio"
+        defaultValue={profile?.bio}
         isRequired
+        placeholder="Enter your Bio"
         onChange={(e) =>
-          setYourProfile({ ...yourProfile, email: e.target.value })
+          setYourProfile({ ...yourProfile, bio: e.target.value })
         }
       />
 

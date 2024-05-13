@@ -60,10 +60,11 @@ export interface IAuctionInfo {
 export interface IUserInfo {
   id?: string;
   name?: string;
-  email?: string;
   wallet?: string;
+  banner?: string;
   avatar?: string;
   role?: number;
+  createdAt?: Date;
   status?: number;
   isPublic?: boolean;
 }

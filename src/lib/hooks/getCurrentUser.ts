@@ -7,11 +7,11 @@ const getCurrentUser = async () => {
     const user: IUserInfo = {
       id: session?.user?.id!,
       name: session?.user?.name!,
-      email: session?.user?.email!,
       wallet: session?.user?.wallet!,
       avatar: session?.user?.avatar!,
       role: session?.user?.role!,
       status: session?.user?.status!,
+      createdAt: session?.user?.createdAt!,
       isPublic: session?.user?.isPublic!,
     };
     return user;

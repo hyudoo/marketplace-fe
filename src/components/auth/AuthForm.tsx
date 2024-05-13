@@ -29,21 +29,6 @@ const AuthForm = () => {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
-    signIn("credentials", {
-      ...data,
-      redirect: false,
-    })
-      .then((callback) => {
-        if (callback?.error) {
-          toast.error(callback?.error);
-        }
-
-        if (callback?.ok && !callback?.error) {
-          toast.success("Login successfully!");
-          router.push("/");
-        }
-      })
-      .finally(() => setIsLoading(false));
   };
 
   const socialAction = (action: string) => {

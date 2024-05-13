@@ -1,7 +1,7 @@
 "use client";
 declare var window: any;
-import { numberFormat, showSortAddress, formatAccountBalance } from "@/utils";
-import { signOut, useSession } from "next-auth/react";
+import { formatAccountBalance } from "@/utils";
+import { signIn, signOut, useSession } from "next-auth/react";
 import React from "react";
 import {
   Avatar,
@@ -19,25 +19,19 @@ import {
 import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import {
   setWalletInfo,
-  setSigner,
   clearState,
   setUpdate,
-  setProfile,
 } from "@/reduxs/accounts/account.slices";
 import { ethers } from "ethers";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useRouter } from "next/navigation";
-import ProfileContract from "@/contracts/ProfileContract";
-import { items } from "@/constants";
-
+import { toast } from "react-hot-toast";
 export default function NavigationLayout() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { onOpen } = useModal();
-  const { wallet, isUpdate, profile } = useAppSelector(
-    (state) => state.account
-  );
+  const { wallet, profile } = useAppSelector((state) => state.account);
   const { data: session } = useSession();
 
   const onConnectMetamask = async () => {
@@ -46,27 +40,22 @@ export default function NavigationLayout() {
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
+
+      signIn("credentials", {
+        wallet: address,
+        redirect: false,
+      }).then((callback: any) => {
+        if (callback?.error) {
+          toast.error(callback?.error);
+        }
+
+        if (callback?.ok && !callback?.error) {
+          toast.success("Connect wallet successfully!");
+          router.refresh();
+        }
+      });
     }
   };
-
-  const updateWallet = React.useCallback(async () => {
-    if (window.ethereum && isUpdate) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      console.log("signer", signer);
-      const address = await signer.getAddress();
-      const marketCoins = new MarketCoinsContract(signer);
-      const mkcBigBalance = await marketCoins.getBalance(address);
-      const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
-
-      dispatch(setWalletInfo({ address, mkc: mkcBalance }));
-      dispatch(setUpdate(false));
-    }
-  }, [isUpdate, dispatch]);
-
-  React.useEffect(() => {
-    updateWallet();
-  }, [updateWallet]);
 
   const disconnectMetamask = async () => {
     if (window.ethereum) {
@@ -122,7 +111,7 @@ export default function NavigationLayout() {
               <DropdownItem
                 key="profile"
                 color="default"
-                onClick={() => router.push("/profile")}>
+                onClick={() => router.push("/account")}>
                 Profile
               </DropdownItem>
               <DropdownItem
@@ -142,12 +131,6 @@ export default function NavigationLayout() {
                 color="default"
                 onClick={() => router.push("/exchange")}>
                 Exchange
-              </DropdownItem>
-              <DropdownItem
-                key="exchange"
-                color="default"
-                onClick={() => router.push("/setting")}>
-                Setting
               </DropdownItem>
 
               <DropdownItem
