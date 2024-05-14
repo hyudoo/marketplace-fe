@@ -1,4 +1,4 @@
-import { IPackage, IProduct, INavbar } from "../_types_";
+import { IPackage, IProduct } from "../_types_";
 
 export const packages: IPackage[] = [
   {
@@ -41,3 +41,14 @@ export const products: IProduct[] = [
     value: "Camera Camcorder",
   },
 ];
+
+export const items = [
+  { label: "Profile", path: "/profile" },
+  { label: "Inventory", path: "/inventory" },
+  { label: "Auction", path: "/auction" },
+  { label: "Exchange", path: "/exchange" },
+  { label: "setting", path: "/setting" },
+];
+
+export const ACCESS_TOKEN = "accessToken";
+export const REFRESH_TOKEN = "refreshToken";

@@ -10,7 +10,7 @@ import {
   Tabs,
   Tooltip,
 } from "@nextui-org/react";
-import ProductCard from "@/components/product/ProductCard";
+import InventoryCard from "@/components/inventory/InventoryCard";
 import { IProductItem } from "@/_types_";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
 import { useAppSelector } from "@/reduxs/hooks";
@@ -18,43 +18,39 @@ import MarketContract from "@/contracts/MarketPlaceContract";
 import { useRouter } from "next/navigation";
 import AuctionContract from "@/contracts/AuctionContract";
 
-export default function Inventory() {
+interface IInventory {
+  address: string;
+  canCreate: boolean;
+  type?: "view";
+}
+
+const InventoryView: React.FC<IInventory> = ({ address, canCreate, type }) => {
   const [selected, setSelected] = React.useState("inventory");
-  const { wallet, signer } = useAppSelector((state) => state.account);
+  const { signer } = useAppSelector((state) => state.account);
   const router = useRouter();
   const [listedproducts, setListedProducts] = React.useState<IProductItem[]>();
   const [auctiondproducts, setAuctiondProducts] = React.useState<Array<any>>();
   const [inventory, setInventory] = React.useState<IProductItem[]>();
   const [isRender, setIsRender] = React.useState<boolean>(true);
-  const [canCreate, setCanCreate] = React.useState<boolean>(false);
 
   const getListProduct = React.useCallback(async () => {
-    if (!signer || !wallet || !wallet.address) {
+    if (!signer) {
       router.push("/");
     }
     if (!isRender) return;
-    try {
-      const productContract = new SupplyChainContract(signer);
-      const canCreate = await productContract.hasMinterRole(wallet?.address!);
-      setCanCreate(canCreate);
-      const inventory = await productContract.getListProduct(wallet?.address!);
-      setInventory(inventory);
-      const marketContract = new MarketContract(signer);
-      const ids = await marketContract.getMyProductListed(wallet?.address!);
-      const listedProducts = await productContract.getProductsInfo(ids);
-      setListedProducts(listedProducts);
-      const auctionContract = new AuctionContract(signer);
-      const auctionIds = await auctionContract.getMyProductListed(
-        wallet?.address!
-      );
-      const auctionProducts = await productContract.getProductsInfo(auctionIds);
-      setAuctiondProducts(auctionProducts);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsRender(false);
-    }
-  }, [wallet, signer, isRender, router]);
+    const productContract = new SupplyChainContract(signer);
+    const inventory = await productContract.getListProduct(address);
+    setInventory(inventory);
+    const marketContract = new MarketContract(signer);
+    const ids = await marketContract.getMyProductListed(address);
+    const listedProducts = await productContract.getProductsInfo(ids);
+    setListedProducts(listedProducts);
+    const auctionContract = new AuctionContract(signer);
+    const auctionIds = await auctionContract.getMyProductListed(address);
+    const auctionProducts = await productContract.getProductsInfo(auctionIds);
+    setAuctiondProducts(auctionProducts);
+    setIsRender(false);
+  }, [signer, isRender, address, router]);
 
   React.useEffect(() => {
     getListProduct();
@@ -126,14 +122,14 @@ export default function Inventory() {
             <CardBody>
               <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
                 {inventory?.map((product, index) => (
-                  <ProductCard
+                  <InventoryCard
                     key={index}
                     productId={product.id}
                     name={product.name}
                     image={product.images[0]}
                     price={product.price}
                     render={() => setIsRender(true)}
-                    type="inventory"
+                    type={type ? type : "inventory"}
                   />
                 ))}
               </div>
@@ -170,13 +166,13 @@ export default function Inventory() {
             <CardBody>
               <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
                 {listedproducts?.map((product, index) => (
-                  <ProductCard
+                  <InventoryCard
                     key={index}
                     name={product.name}
                     image={product.images[0]}
                     price={product.price}
                     productId={product.id}
-                    type="unlist"
+                    type={type ? type : "unlist"}
                     render={() => setIsRender(true)}
                   />
                 ))}
@@ -216,14 +212,14 @@ export default function Inventory() {
             <CardBody>
               <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
                 {auctiondproducts?.map((product, index) => (
-                  <ProductCard
+                  <InventoryCard
                     key={index}
                     name={product.name}
                     image={product.images[0]}
                     price={product.initialPrice}
                     isDone={product.endTime < Date.now()}
                     productId={product.id}
-                    type="auction"
+                    type={type ? type : "auction"}
                     render={() => setIsRender(true)}
                   />
                 ))}
@@ -234,4 +230,6 @@ export default function Inventory() {
       </Tabs>
     </div>
   );
-}
+};
+
+export default InventoryView;

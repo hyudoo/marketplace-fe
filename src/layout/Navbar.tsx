@@ -1,6 +1,7 @@
 "use client";
 declare var window: any;
-import { numberFormat, showSortAddress, formatAccountBalance } from "@/utils";
+import { formatAccountBalance } from "@/utils";
+import { signIn, signOut, useSession } from "next-auth/react";
 import React from "react";
 import {
   Avatar,
@@ -18,7 +19,6 @@ import {
 import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import {
   setWalletInfo,
-  setSigner,
   clearState,
   setUpdate,
 } from "@/reduxs/accounts/account.slices";
@@ -26,12 +26,13 @@ import { ethers } from "ethers";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useRouter } from "next/navigation";
-
+import { toast } from "react-hot-toast";
 export default function NavigationLayout() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { onOpen } = useModal();
-  const { wallet, isUpdate } = useAppSelector((state) => state.account);
+  const { wallet, profile } = useAppSelector((state) => state.account);
+  const { data: session } = useSession();
 
   const onConnectMetamask = async () => {
     if (window.ethereum) {
@@ -39,36 +40,22 @@ export default function NavigationLayout() {
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
-      const bigBalance = await provider.getBalance(address);
-      const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
-      const marketCoins = new MarketCoinsContract(signer);
-      const mkcBigBalance = await marketCoins.getBalance(address);
-      const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
 
-      dispatch(setWalletInfo({ address, bnb: bnbBalance, mkc: mkcBalance }));
-      dispatch(setSigner(signer));
+      signIn("credentials", {
+        wallet: address,
+        redirect: false,
+      }).then((callback: any) => {
+        if (callback?.error) {
+          toast.error(callback?.error);
+        }
+
+        if (callback?.ok && !callback?.error) {
+          toast.success("Connect wallet successfully!");
+          router.refresh();
+        }
+      });
     }
   };
-
-  const updateWallet = React.useCallback(async () => {
-    if (window.ethereum && isUpdate) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
-      const bigBalance = await provider.getBalance(address);
-      const bnbBalance = Number.parseFloat(ethers.formatEther(bigBalance));
-      const marketCoins = new MarketCoinsContract(signer);
-      const mkcBigBalance = await marketCoins.getBalance(address);
-      const mkcBalance = Number.parseFloat(ethers.formatEther(mkcBigBalance));
-
-      dispatch(setWalletInfo({ address, bnb: bnbBalance, mkc: mkcBalance }));
-      dispatch(setUpdate(false));
-    }
-  }, [isUpdate, dispatch]);
-
-  React.useEffect(() => {
-    updateWallet();
-  }, [updateWallet]);
 
   const disconnectMetamask = async () => {
     if (window.ethereum) {
@@ -104,37 +91,31 @@ export default function NavigationLayout() {
             </svg>
           }>
           <p className="font-bold text-inherit text-tiny">
-            {formatAccountBalance(wallet?.mkc || 0)} MKC
+            {formatAccountBalance(wallet?.mkc || 0) || 0} MKC
           </p>
         </Chip>
-        <Chip variant="flat" avatar={<Avatar src="/bnb.png" />}>
-          <p className="font-bold text-inherit text-tiny">
-            {numberFormat(wallet?.bnb || 0)} BNB
-          </p>
-        </Chip>
-        {wallet ? (
+        {session?.user ? (
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
-              <Button color="primary" variant="flat">
-                {showSortAddress(wallet?.address)}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-4 h-4">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                  />
-                </svg>
-              </Button>
+              <Avatar
+                isBordered
+                as="button"
+                className="transition-transform"
+                color="primary"
+                name={profile?.name}
+                size="sm"
+                src={profile?.avatar}
+              />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem
                 key="profile"
+                color="default"
+                onClick={() => router.push("/account")}>
+                Profile
+              </DropdownItem>
+              <DropdownItem
+                key="inventory"
                 color="default"
                 onClick={() => router.push("/inventory")}>
                 Inventory
@@ -173,15 +154,15 @@ export default function NavigationLayout() {
                     />
                   </svg>
                 }
-                onClick={disconnectMetamask}>
-                Logout
+                onClick={() => signOut()}>
+                Sign out
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         ) : (
           <NavbarItem>
             <Button color="primary" variant="flat" onClick={onConnectMetamask}>
-              Connect Wallet
+              Connect wallet
             </Button>
           </NavbarItem>
         )}

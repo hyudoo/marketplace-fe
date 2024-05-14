@@ -1,11 +1,8 @@
 "use client";
 import ReduxProvider from "@/reduxs/ReduxProvider";
 import { NextUIProvider } from "@nextui-org/react";
-import { MainLayout } from "@/layout/MainLayout";
-import { ModalProvider } from "@/components/provider/ModalProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-
+import AuthProvider from "@/components/provider/AuthProvider";
+import ToasterProvider from "@/components/provider/ToasterProvider";
 export default function RootLayout({
   children,
 }: {
@@ -13,12 +10,12 @@ export default function RootLayout({
 }) {
   return (
     <ReduxProvider>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <AuthProvider>
         <NextUIProvider>
-          <ModalProvider />
-          <MainLayout>{children}</MainLayout>
+          <ToasterProvider />
+          {children}
         </NextUIProvider>
-      </LocalizationProvider>
+      </AuthProvider>
     </ReduxProvider>
   );
 }

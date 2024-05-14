@@ -1,6 +1,5 @@
 export interface IWalletInfo {
   address: string;
-  bnb: number;
   mkc: number;
 }
 
@@ -17,11 +16,6 @@ export interface IPackage {
 export interface IProduct {
   label: string;
   value: string;
-}
-
-export interface INavbar {
-  name: string;
-  url: string;
 }
 
 export interface IProductItem {
@@ -45,15 +39,32 @@ export interface IExchange {
   active?: boolean;
 }
 
-export interface IAuctionInfo extends IProductItem {
-  auctionId: number;
+export interface IProfileInfo {
+  address?: string;
+  name: string;
+  bio: string;
+  avatar: string;
+  isPublic: boolean;
+}
+
+export interface IAuctionInfo {
   author: string;
-  productId: number;
+  productId: number | string;
   initialPrice: number;
-  previousBidder: string;
   lastBid: number;
   lastBidder: string;
   startTime: number;
   endTime: number;
-  completed: boolean;
+}
+
+export interface IUserInfo {
+  id?: string;
+  name?: string;
+  wallet?: string;
+  banner?: string;
+  avatar?: string;
+  role?: number;
+  createdAt?: Date;
+  status?: number;
+  isPublic?: boolean;
 }

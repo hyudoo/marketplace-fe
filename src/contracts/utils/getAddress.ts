@@ -19,3 +19,5 @@ export const getExchangeProductAddress = () =>
   getAddress(SMART_ADDRESS.ExchangeProduct);
 
 export const getAuctionAddress = () => getAddress(SMART_ADDRESS.Auction);
+
+export const getProfileAddress = () => getAddress(SMART_ADDRESS.Profile);

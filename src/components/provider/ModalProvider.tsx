@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import CrowdSaleProviderModal from "../modal/CrowdSaleModal";
 import SuccessModal from "../modal/SuccessModal";
+import CreateProfileModal from "../modal/CreateProfileModal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -18,6 +19,7 @@ export const ModalProvider = () => {
     <>
       <CrowdSaleProviderModal />
       <SuccessModal />
+      <CreateProfileModal />
     </>
   );
 };

@@ -20,7 +20,7 @@ export default class AuctionContract extends Erc721 {
 
   getAuction = async (_productId: number) => {
     const rs = await this._contract.getAuction(_productId);
-    const item = {
+    const item: IAuctionInfo = {
       author: rs[0],
       initialPrice: this._toEther(rs[1]),
       productId: this._toNumber(rs[2]),
@@ -54,7 +54,6 @@ export default class AuctionContract extends Erc721 {
   };
 
   joinAuction = async (_productId: number, bid: number) => {
-    console.log({ _productId, bid });
     const tx = await this._contract.joinAuction(
       _productId,
       this._numberToEth(bid),
@@ -70,10 +69,10 @@ export default class AuctionContract extends Erc721 {
 
   getProductListedOnAuction = async () => {
     const rs = await this._contract.getListedProducts();
-    const results = [];
+    const results: IAuctionInfo[] = [];
     for (let i = 0; i < rs.length; i++) {
       const o = rs[i];
-      const item = {
+      const item: IAuctionInfo = {
         author: o[0],
         initialPrice: this._toEther(o[1]),
         productId: this._toNumber(o[2]),
@@ -84,7 +83,6 @@ export default class AuctionContract extends Erc721 {
       };
       results.push(item);
     }
-    console.log("results", results);
 
     return results;
   };

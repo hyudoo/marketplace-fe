@@ -8,6 +8,28 @@ export const showSortAddress = (address?: string): string => {
   )}`;
 };
 
+export const formatDate = (date: Date): string => {
+  const createdDate = new Date(date);
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const day = createdDate?.getUTCDate();
+  const monthIndex = createdDate?.getMonth();
+  const year = createdDate?.getFullYear();
+  return `${day} ${monthNames[monthIndex]} ${year}`;
+};
+
 export const formatAccountBalance = (balance: number) => {
   const suffixes = ["", "k", "m", "b", "t"];
   const suffixNum = Math.floor(balance.toString().length / 3) - 1;
@@ -29,4 +51,12 @@ export const showTransactionHash = (tranHash: String) => {
   return `${tranHash?.substring(0, 10)}
   ${"".padStart(5, "*")}
   ${tranHash?.substring(tranHash.length - 10, tranHash.length)}`;
+};
+
+export const showShorterString = (str: string, maxLength: number) => {
+  if (str.length <= maxLength) {
+    return str;
+  } else {
+    return str.slice(0, maxLength) + "...";
+  }
 };

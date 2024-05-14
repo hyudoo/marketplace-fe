@@ -2,27 +2,29 @@
 
 import React from "react";
 import { Card, CardBody, CardHeader, Input } from "@nextui-org/react";
-import ProductCard from "@/components/product/ProductCard";
 import { IProductItem } from "@/_types_";
 import MarketContract from "@/contracts/MarketPlaceContract";
 import SupplyChainContract from "@/contracts/SupplyChainContract";
+import MarketItem from "@/components/market/MarketItem";
+import { useSession } from "next-auth/react";
+
 export default function Home() {
   const [listproducts, setListProducts] = React.useState<IProductItem[]>();
   const [filteredList, setFilteredList] = React.useState<IProductItem[]>();
   const [search, setSearch] = React.useState<string>("");
-
   const getListProduct = React.useCallback(async () => {
-    try {
-      const productContract = new SupplyChainContract();
-      const marketContract = new MarketContract();
-      const ids = await marketContract.getProductListedOnMarketPlace();
-      const listproduct = await productContract.getProductsInfo(ids);
-      setFilteredList(listproduct);
-      setListProducts(listproduct);
-    } catch (err) {
-      console.log(err);
-    }
+    const productContract = new SupplyChainContract();
+    const marketContract = new MarketContract();
+    const ids = await marketContract.getProductListedOnMarketPlace();
+    const listproduct = await productContract.getProductsInfo(ids);
+    setFilteredList(listproduct);
+    setListProducts(listproduct);
   }, []);
+
+  const session = useSession();
+  React.useEffect(() => {
+    console.log("session", session);
+  }, [session]);
 
   React.useEffect(() => {
     getListProduct();
@@ -81,13 +83,13 @@ export default function Home() {
         <CardBody>
           <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
             {filteredList?.map((product, index) => (
-              <ProductCard
+              <MarketItem
                 key={index}
-                productId={product.id}
+                author={product.author}
                 name={product.name}
                 image={product.images[0]}
                 price={product.price}
-                type="listed"
+                productId={product.id}
               />
             ))}
           </div>
