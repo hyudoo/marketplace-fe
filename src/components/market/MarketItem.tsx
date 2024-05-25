@@ -9,12 +9,12 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import BuyProductModal from "../modal/BuyProductModal";
-import { useAppSelector } from "@/reduxs/hooks";
-import ProfileContract from "@/contracts/ProfileContract";
-import { IProfileInfo } from "@/_types_";
+import { useSession } from "next-auth/react";
 interface IProductProps {
   name?: string;
-  author?: string;
+  authorId?: string;
+  authorName?: string;
+  authorImage?: string;
   image: string;
   price?: number | string;
   productId?: number;
@@ -23,7 +23,9 @@ interface IProductProps {
 
 export default function MarketItem({
   name,
-  author,
+  authorId,
+  authorName,
+  authorImage,
   image,
   price,
   productId,
@@ -31,27 +33,13 @@ export default function MarketItem({
 }: IProductProps) {
   const router = useRouter();
   const [isBuyOpen, setIsBuyOpen] = React.useState<boolean>(false);
-  const { wallet } = useAppSelector((state) => state.account);
-  const [authorProfile, setAuthorProfile] = React.useState<IProfileInfo>();
-  React.useEffect(() => {
-    const interval = setInterval(async () => {
-      if (!author) return;
-      const profileContract = new ProfileContract();
-      const authorProfile = await profileContract.getProfileByAddress(author);
-
-      setAuthorProfile(authorProfile);
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [author]);
+  const session = useSession();
 
   return (
     <>
       <div onClick={() => router.push(`/product/${productId}`)}>
         <Card shadow="sm" className="h-full">
-          <CardBody className="overflow-visible p-0 flex flex-col">
+          <CardBody className="overflow-visible flex flex-col">
             <Image
               shadow="sm"
               radius="lg"
@@ -63,31 +51,31 @@ export default function MarketItem({
           </CardBody>
           <CardFooter className="text-small block">
             <div className="w-full">{name}</div>
-            <div className="text-xs md:text-sm grid grid-cols-3 items-center py-1">
+            <div className="text-xs md:text-sm lg:flex lg:justify-between py-3">
               <div className="text-gray-600">Author:</div>
-              <div className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer">
+              <div
+                className="flex text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
+                onClick={() => router.push(`/account/${authorId}`)}>
                 <Avatar
                   isFocusable
-                  className="w-6 h-6 mr-3 text-tiny"
+                  className="mr-2 w-5 h-5"
                   isBordered
                   alt="NextUI Fruit Image with Zoom"
-                  src={authorProfile?.avatar}
+                  src={authorImage}
                 />
-                <div className="hover:border-b-1 items-center border-cyan-800">
-                  {authorProfile?.name}
+                <div className="hover:border-b-1 border-cyan-800">
+                  {authorName}
                 </div>
               </div>
             </div>
 
-            <div className="justify-between flex">
-              <p className="text-default-500 flex items-center">
-                Price: {price} MKC
-              </p>
+            <div className="md:justify-between md:flex md:items-center">
+              <p className="text-default-500">Price: {price} MKC</p>
               <Button
                 variant="flat"
                 color="primary"
-                className="p-2 m-0"
-                disabled={!wallet || author == wallet?.address}
+                className="w-full md:w-20"
+                disabled={!session?.data}
                 onClick={() => setIsBuyOpen(true)}>
                 Buy
               </Button>

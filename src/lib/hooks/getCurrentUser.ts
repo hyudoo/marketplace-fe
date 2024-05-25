@@ -1,19 +1,9 @@
-import { IUserInfo } from "@/_types_";
-import { getSession } from "next-auth/react";
+import getSession from "./getSession";
 
 const getCurrentUser = async () => {
   try {
     const session = await getSession();
-    const user: IUserInfo = {
-      id: session?.user?.id!,
-      name: session?.user?.name!,
-      wallet: session?.user?.wallet!,
-      avatar: session?.user?.avatar!,
-      role: session?.user?.role!,
-      status: session?.user?.status!,
-      createdAt: session?.user?.createdAt!,
-      isPublic: session?.user?.isPublic!,
-    };
+    const user = session?.user;
     return user;
   } catch (error) {
     console.log(error);

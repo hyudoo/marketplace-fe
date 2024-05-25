@@ -6,16 +6,18 @@ declare module "next-auth" {
    */
   interface Session {
     /** The user's postal address. */
-    id: string;
-    name: string;
-    wallet: string;
-    avatar: string;
-    banner: string;
-    role: number;
-    status: number;
-    isPublic: boolean;
-    createdAt: Date;
-    accessToken: string;
-    refreshToken: string;
+    user: {
+      id: string;
+      name: string;
+      wallet: string;
+      avatar: string;
+      banner: string;
+      role: number;
+      status: number;
+      isPublic: boolean;
+      createdAt: Date;
+      mkc: number;
+      accessToken: string;
+    };
   }
 }

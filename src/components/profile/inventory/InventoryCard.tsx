@@ -1,12 +1,11 @@
 import React from "react";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import ListProductModal from "../modal/ListProductModal";
-import UnlistProductModal from "../modal/UnlistProductModal";
-import CreateAuctionModal from "../modal/CreateAuctionModal";
-import CancelAuctionModal from "../modal/CancelAuctionModal";
-import FinishAuctionModal from "../modal/FinishAuctionModal";
-import { useAppSelector } from "@/reduxs/hooks";
+import ListProductModal from "@/components/modal/ListProductModal";
+import UnlistProductModal from "@/components/modal/UnlistProductModal";
+import CreateAuctionModal from "@/components/modal/CreateAuctionModal";
+import CancelAuctionModal from "@/components/modal/CancelAuctionModal";
+import FinishAuctionModal from "@/components/modal/FinishAuctionModal";
 interface IProductProps {
   name?: string;
   author?: string;
@@ -14,7 +13,7 @@ interface IProductProps {
   price?: number | string;
   productId?: number;
   isDone?: boolean;
-  type?: "inventory" | "unlist" | "auction" | "view";
+  type?: "inventory" | "listed" | "auction" | "view";
   render?: () => void;
   onClick?: () => void;
 }
@@ -39,7 +38,7 @@ export default function ProductCard({
     <>
       <div onClick={() => router.push(`/product/${productId}`)}>
         <Card shadow="sm" className="h-full">
-          <CardBody className="overflow-visible p-0 flex flex-col">
+          <CardBody className="overflow-visible flex flex-col">
             <Image
               shadow="sm"
               radius="lg"
@@ -49,52 +48,51 @@ export default function ProductCard({
               src={image}
             />
           </CardBody>
-          <CardFooter className="text-small block">
+          <CardFooter className="text-small block space-y-2">
             <div className="w-full">{name}</div>
 
             {type == "auction" ? (
-              <div>
-                <p className="text-default-500 flex items-center">
-                  Price: {price} MKC
-                </p>
-                <div className="justify-between lg:justify-end flex gap-2">
+              <div className="md:justify-between md:flex md:items-center">
+                <p className="text-default-500">Price: {price} MKC</p>
+                <div className="md:justify-between md:flex gap-x-3">
                   <Button
                     onClick={() => setIsFinishAuction(true)}
                     variant="flat"
                     color="success"
                     disabled={!isDone}
-                    className="p-2 m-0">
+                    className="w-full my-2">
                     Finnish
                   </Button>
                   <Button
                     onClick={() => setIsCancelAuction(true)}
                     variant="flat"
                     color="primary"
-                    className="p-2 m-0">
+                    className="w-full my-2">
                     Cancel
                   </Button>
                 </div>
               </div>
             ) : (
               <>
-                {type == "inventory" ? (
-                  <div className="justify-between lg:justify-end flex gap-2">
+                {type == "inventory" && (
+                  <div className="md:justify-between md:flex gap-x-3">
                     <Button
                       onClick={() => setIsCreateAuction(true)}
                       variant="flat"
                       color="primary"
-                      className="p-2 m-0">
+                      className="w-full my-2">
                       Auction
                     </Button>
                     <Button
                       onClick={() => setIsListOpen(true)}
                       variant="flat"
                       color="primary"
-                      className="p-2 m-0">
+                      className="w-full my-2">
                       List
                     </Button>
                   </div>
-                ) : (
+                )}
+                {type == "listed" && (
                   <div className="justify-between flex">
                     <p className="text-default-500 flex items-center">
                       Price: {price} MKC

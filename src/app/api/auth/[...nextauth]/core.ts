@@ -1,5 +1,6 @@
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { IUser } from "@/_types_";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -29,10 +30,11 @@ export const authOptions: AuthOptions = {
         if (response?.error) {
           throw new Error(response?.error);
         }
-        const { user, accessToken } = response;
+        const { user, accessToken, mkc } = response;
         return {
           ...user,
           accessToken,
+          mkc,
         };
       },
     }),
@@ -45,12 +47,19 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user };
-    },
-    async session({ session, token }) {
-      session.user = token as any;
+    async session({ session, token, user }) {
+      session.user = token.user as IUser;
       return session;
+    },
+    async jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.user = user;
+      }
+      if (trigger === "update" && session) {
+        token = { ...token, user: session };
+        return token;
+      }
+      return token;
     },
   },
 };

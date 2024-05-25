@@ -18,7 +18,7 @@ export interface IProduct {
   value: string;
 }
 
-export interface IProductItem {
+export interface IProductInfo {
   id: number;
   name?: string;
   type?: string;
@@ -26,17 +26,22 @@ export interface IProductItem {
   images: string[];
   //Listing
   price?: number;
-  author?: string;
-  manufacturer?: string;
+  author?: IUserInfo;
+  manufacturer?: IUserInfo;
+
+  //Auction
+  initialPrice?: number;
+  lastBid?: number;
+  lastBidder?: IUserInfo;
+  startTime?: number;
+  endTime?: number;
 }
 
 export interface IExchange {
   id?: number;
-  sender?: string;
-  receiver?: string;
-  senderTokenIds?: number[];
-  receiverTokenIds?: number[];
-  active?: boolean;
+  other?: IUserInfo;
+  yourProducts?: IProductInfo[];
+  otherProducts?: IProductInfo[];
 }
 
 export interface IProfileInfo {
@@ -65,6 +70,21 @@ export interface IUserInfo {
   avatar?: string;
   role?: number;
   createdAt?: Date;
+  accessToken?: string;
   status?: number;
   isPublic?: boolean;
+}
+
+export interface IUser {
+  id: string;
+  name: string;
+  wallet: string;
+  banner: string;
+  avatar: string;
+  role: number;
+  createdAt: Date;
+  accessToken: string;
+  status: number;
+  mkc: number;
+  isPublic: boolean;
 }

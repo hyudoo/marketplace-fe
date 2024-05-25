@@ -1,55 +1,60 @@
 "use client";
 
 import { IUserInfo } from "@/_types_";
-import getCurrentUser from "@/lib/hooks/getCurrentUser";
 import axios from "@/lib/axios";
-import { useModal } from "@/reduxs/use-modal-store";
 import { UploadButton } from "@/utils/uploadthing";
-import { Avatar, Button, cn, Input, Switch, Tooltip } from "@nextui-org/react";
-import { getSession, useSession } from "next-auth/react";
+import {
+  Avatar,
+  Button,
+  cn,
+  Image,
+  Input,
+  Switch,
+  Tooltip,
+} from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 import React from "react";
 import toast from "react-hot-toast";
 import { showSortAddress } from "@/utils";
 import { GoCopy } from "react-icons/go";
 import { FaXmark } from "react-icons/fa6";
 
-export default function UserProfile() {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const { onOpen } = useModal();
-  const [yourProfile, setYourProfile] = React.useState<IUserInfo>();
-  const session = useSession();
-  const getUserInfo = React.useCallback(async () => {
-    const user = await getCurrentUser();
-    setYourProfile(user);
-  }, []);
+interface IUserSettingProps {
+  user: IUserInfo;
+}
 
-  React.useEffect(() => {
-    console.log("session", session);
-    getUserInfo();
-  }, [getUserInfo, session]);
+const UserSetting: React.FC<IUserSettingProps> = ({ user }) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const session = useSession();
+  const [yourProfile, setYourProfile] = React.useState<IUserInfo>(user);
 
   const onSubmit = async () => {
-    const res = await axios.patch(
-      "/user/update",
-      {
-        name: yourProfile?.name,
-        avatar: yourProfile?.avatar,
-        isPublic: yourProfile?.isPublic ? true : false,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${session?.data?.user.accessToken}`,
+    setIsLoading(true);
+    try {
+      await axios.patch(
+        "/user/update",
+        {
+          name: yourProfile?.name,
+          avatar: yourProfile?.avatar,
+          banner: yourProfile?.banner,
+          isPublic: yourProfile?.isPublic ? true : false,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${yourProfile?.accessToken}`,
+          },
+        }
+      );
 
-    await session.update({
-      user: {
-        name: yourProfile?.name,
-        avatar: yourProfile?.avatar,
-        isPublic: yourProfile?.isPublic,
-      },
-    });
+      await session.update({
+        ...yourProfile,
+      });
+      toast.success("Update profile successfully");
+    } catch (error) {
+      toast.error("Somethings went wrongs");
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="space-y-2 bg-white">
@@ -96,7 +101,7 @@ export default function UserProfile() {
           setYourProfile({ ...yourProfile, name: e.target.value })
         }
       />
-
+      <div className="px-5">Avatar:</div>
       <div className="relative mx-3 pb-4 mb-6 border-2 border-slate-300 rounded-2xl mt-2">
         {yourProfile?.avatar ? (
           <div className="flex justify-center min-h-32 md:min-h-40 items-center">
@@ -135,7 +140,44 @@ export default function UserProfile() {
           }}
         />
       </div>
-
+      <div className="px-5">Banner:</div>
+      <div className="relative mx-3 pb-4 mb-6 border-2 border-slate-300 rounded-2xl mt-2">
+        {yourProfile?.banner ? (
+          <div className="flex justify-center min-h-32 md:min-h-40 items-center">
+            <div className="relative h-28 md:h-32">
+              <Image
+                className="h-28 w-80 md:h-32 md:w-96"
+                alt="NextUI Fruit Image with Zoom"
+                src={yourProfile?.banner}
+              />
+              <div
+                className="z-10 hover:cursor-pointer absolute text-red-400  hover:text-red-600 top-0 right-1 h-4 w-4 md:h-6 md:w-6"
+                onClick={() => setYourProfile({ ...yourProfile, banner: "" })}>
+                <FaXmark />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="min-h-24 md:min-h-36 flex text-slate-500 items-center justify-center">
+            Upload your Banner
+          </div>
+        )}
+        <UploadButton
+          endpoint="avatarUploader"
+          onClientUploadComplete={(res: any) => {
+            setYourProfile({ ...yourProfile, banner: res?.[0].url });
+          }}
+          onUploadError={(error: Error) => {
+            toast.error("Upload image error!");
+          }}
+          appearance={{
+            button: "text-blue-600 text-sm font-medium",
+            container:
+              "z-10 w-max flex-row rounded-lg border-cyan-300 bg-blue-200 px-1 border absolute transform -translate-x-1/2 inset-x-1/2 cursor-pointer hover:bg-blue-300 hover:border-cyan-400 hover:text-cyan-600 ",
+            allowedContent: "hidden",
+          }}
+        />
+      </div>
       <div className="space-x-2 p-3">
         <p className="font-bold pl-3">Wallet Address:</p>
         <Tooltip content="Copy">
@@ -161,4 +203,6 @@ export default function UserProfile() {
       </Button>
     </div>
   );
-}
+};
+
+export default UserSetting;
