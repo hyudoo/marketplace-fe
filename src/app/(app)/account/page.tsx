@@ -4,10 +4,13 @@ import getCurrentUser from "@/lib/hooks/getCurrentUser";
 import axios from "@/lib/axios";
 import React from "react";
 import { Divider } from "@nextui-org/react";
+import { redirect } from "next/navigation";
 
 export default async function App() {
   const user = await getCurrentUser();
-
+  if (!user) {
+    redirect("/");
+  }
   const res1 = await axios.get("/user/inventory", {
     headers: {
       Authorization: `Bearer ${user?.accessToken}`,

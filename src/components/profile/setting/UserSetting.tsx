@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { showSortAddress } from "@/utils";
 import { GoCopy } from "react-icons/go";
 import { FaXmark } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 interface IUserSettingProps {
   user: IUserInfo;
@@ -27,6 +28,12 @@ const UserSetting: React.FC<IUserSettingProps> = ({ user }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const session = useSession();
   const [yourProfile, setYourProfile] = React.useState<IUserInfo>(user);
+  const router = useRouter();
+  React.useEffect(() => {
+    if (!session?.data) {
+      router.push("/");
+    }
+  }, [session, router]);
 
   const onSubmit = async () => {
     setIsLoading(true);
@@ -34,10 +41,7 @@ const UserSetting: React.FC<IUserSettingProps> = ({ user }) => {
       await axios.patch(
         "/user/update",
         {
-          name: yourProfile?.name,
-          avatar: yourProfile?.avatar,
-          banner: yourProfile?.banner,
-          isPublic: yourProfile?.isPublic ? true : false,
+          data: yourProfile,
         },
         {
           headers: {

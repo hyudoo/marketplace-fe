@@ -1,8 +1,3 @@
-export interface IWalletInfo {
-  address: string;
-  mkc: number;
-}
-
 export interface IRate {
   bnbRate: number;
 }
@@ -20,7 +15,7 @@ export interface IProduct {
 
 export interface IProductInfo {
   id: number;
-  name?: string;
+  name: string;
   type?: string;
   description?: string;
   images: string[];
@@ -50,16 +45,6 @@ export interface IProfileInfo {
   bio: string;
   avatar: string;
   isPublic: boolean;
-}
-
-export interface IAuctionInfo {
-  author: string;
-  productId: number | string;
-  initialPrice: number;
-  lastBid: number;
-  lastBidder: string;
-  startTime: number;
-  endTime: number;
 }
 
 export interface IUserInfo {

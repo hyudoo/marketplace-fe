@@ -86,14 +86,7 @@ const InventoryTab: React.FC<IInventoryTab> = ({ products, type }) => {
     <CardBody>
       <div className="gap-2 grid grid-cols-2 sm:grid-cols-5">
         {items?.map((product, index) => (
-          <InventoryCard
-            key={index}
-            productId={product.id}
-            name={product.name}
-            image={product.images[0]}
-            price={product.price}
-            type={type}
-          />
+          <InventoryCard key={index} product={product} type={type} />
         ))}
       </div>
       <div className="w-full flex justify-center mt-4">

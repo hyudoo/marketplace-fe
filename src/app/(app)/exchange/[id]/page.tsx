@@ -5,6 +5,7 @@ import UserProfile from "@/components/profile/UserProfile";
 import { Card, CardHeader, Divider } from "@nextui-org/react";
 import { CiLock } from "react-icons/ci";
 import CreateExchange from "@/components/exchange/CreateExchange";
+import { redirect } from "next/navigation";
 
 interface IParams {
   id: number;
@@ -12,6 +13,9 @@ interface IParams {
 
 export default async function Exchange({ params }: { params: IParams }) {
   const user = await getCurrentUser();
+  if (!user) {
+    redirect("/");
+  }
   const res = await axios.get(`/user/${params?.id}`, {
     headers: {
       Authorization: `Bearer ${user?.accessToken}`,
@@ -42,12 +46,6 @@ export default async function Exchange({ params }: { params: IParams }) {
       Authorization: `Bearer ${user?.accessToken}`,
     },
   });
-  let otherProducts = res1?.data?.products;
-  otherProducts = otherProducts
-    .concat(otherProducts)
-    .concat(otherProducts)
-    .concat(otherProducts)
-    .concat(otherProducts);
   return (
     <>
       <UserProfile user={profile!} isCurrentUser={false} />
@@ -55,8 +53,7 @@ export default async function Exchange({ params }: { params: IParams }) {
 
       <CreateExchange
         other={profile}
-        // otherProducts={res1?.data?.products}
-        otherProducts={otherProducts}
+        otherProducts={res1?.data?.products}
         yourProducts={res2?.data?.products}
       />
     </>

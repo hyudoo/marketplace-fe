@@ -9,39 +9,53 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import AuctionContract from "@/contracts/AuctionContract";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
+import { useRouter } from "next/navigation";
+import { IProductInfo } from "@/_types_";
+import toast from "react-hot-toast";
 
 interface IFinishAuctionModal {
   isOpen: boolean;
-  id: number;
-  render: () => void;
+  product: IProductInfo;
   onClose: () => void;
 }
-
 const FinishAuctionModal: React.FC<IFinishAuctionModal> = ({
   isOpen,
-  id,
-  render,
+  product,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   // redux
   const { onOpen } = useModal();
-  const { wallet, signer } = useAppSelector((state) => state.account);
-  const dispatch = useAppDispatch();
+  const session = useSession();
+  const router = useRouter();
 
   const handleSubmit = async () => {
-    if (!signer || !wallet || !id || !render) return;
+    if (!session?.data || !product) return;
+    if (product?.endTime! < Date.now()) {
+      toast.error("It's not yet time to end the auction");
+      return;
+    }
+    if (session?.data?.user?.id == product?.lastBidder?.id) {
+      toast.error(
+        "This item has no bidders. You can only cancel the auction!!"
+      );
+      return;
+    }
+    const signer = await getSigner(session?.data?.user?.wallet);
     try {
       setIsLoading(true);
       const auctionContract = new AuctionContract(signer);
-      const tx = await auctionContract.finishAuction(id);
-      onOpen("success", { hash: tx, title: "ACCEPT EXCHANGE" });
-      render();
-      dispatch(setUpdate(true));
+      const tx = await auctionContract.finishAuction(product?.id);
+      await session.update({
+        ...session?.data?.user,
+        mkc: session?.data?.user?.mkc + product?.lastBid!,
+      });
+      onOpen("success", { hash: tx, title: "FINISH AUCTIONS" });
       onClose();
+      router.refresh();
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {

@@ -1,5 +1,4 @@
 "use client";
-declare var window: any;
 import { formatAccountBalance } from "@/utils";
 import { signIn, signOut, useSession } from "next-auth/react";
 import React from "react";
@@ -16,37 +15,31 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
-import { ethers } from "ethers";
 import { useModal } from "@/reduxs/use-modal-store";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { HiOutlineLogout, HiOutlinePlusCircle } from "react-icons/hi";
+import { getAddress } from "@/lib/hooks/getSigner";
 export default function NavigationLayout() {
   const router = useRouter();
   const { onOpen } = useModal();
   const { data: session } = useSession();
 
   const onConnectMetamask = async () => {
-    if (window.ethereum) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
+    const address = await getAddress();
+    signIn("credentials", {
+      wallet: address,
+      redirect: false,
+    }).then((callback: any) => {
+      if (callback?.error) {
+        toast.error(callback?.error);
+      }
 
-      signIn("credentials", {
-        wallet: address,
-        redirect: false,
-      }).then((callback: any) => {
-        if (callback?.error) {
-          toast.error(callback?.error);
-        }
-
-        if (callback?.ok && !callback?.error) {
-          toast.success("Connect wallet successfully!");
-          router.refresh();
-        }
-      });
-    }
+      if (callback?.ok && !callback?.error) {
+        toast.success("Connect wallet successfully!");
+        router.refresh();
+      }
+    });
   };
   return (
     <Navbar isBordered maxWidth="full">
@@ -57,7 +50,7 @@ export default function NavigationLayout() {
         <p className="font-bold text-inherit">Blocket</p>
       </NavbarBrand>
       <NavbarContent as="div" className="items-center" justify="end">
-        {session?.user?.mkc && (
+        {session?.user && (
           <Chip
             variant="flat"
             avatar={<Avatar src="/logo.png" />}

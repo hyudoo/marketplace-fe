@@ -21,21 +21,6 @@ export default class MarketContract extends Erc721 {
     }
   }
 
-  getProductListedOnMarketPlace = async () => {
-    const items = await this._contract.getListedProducts();
-    const products = items.map((item: any) => ({
-      author: item.author,
-      price: this._toEther(item.price),
-      productId: item.productId,
-    }));
-    return products;
-  };
-
-  getMyProductListed = async (address: string) => {
-    const products = await this.getProductListedOnMarketPlace();
-    return products.filter((p: any) => p.author === address);
-  };
-
   listProduct = async (tokenId: number, price: number) => {
     const tx = await this._contract.listProduct(
       tokenId,
@@ -62,14 +47,5 @@ export default class MarketContract extends Erc721 {
       this._option
     );
     return this._handleTransactionResponse(tx);
-  };
-
-  getListedProductByID = async (id: number) => {
-    const item = await this._contract.getListedProductByID(id);
-    return {
-      author: item.author,
-      price: this._toEther(item.price),
-      productId: item.productId,
-    };
   };
 }

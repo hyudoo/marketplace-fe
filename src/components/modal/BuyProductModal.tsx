@@ -8,17 +8,18 @@ import {
   Button,
 } from "@nextui-org/react";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 import { useModal } from "@/reduxs/use-modal-store";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface IBuyProductModal {
   isOpen: boolean;
   title: string;
   productId: number;
-  render?: () => void;
   productPrice: number;
   onClose: () => void;
 }
@@ -26,30 +27,37 @@ interface IBuyProductModal {
 const BuyProductModal: React.FC<IBuyProductModal> = ({
   isOpen,
   title,
-  render,
   productId,
   productPrice,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   // redux
-  const { signer } = useAppSelector((state) => state.account);
   const { onOpen } = useModal();
-  const dispatch = useAppDispatch();
+  const session = useSession();
+  const router = useRouter();
   const handleSubmit = async () => {
+    if (!session?.data || !productId || !productPrice) {
+      return;
+    }
+    if (session?.data?.user?.mkc < productPrice) {
+      toast.error("You don't have enough MKC. Please buy MKC to continue.");
+      onOpen("openCrowdSale");
+      return;
+    }
     try {
-      if (!signer || !productId || !productPrice) return;
+      const signer = await getSigner(session?.data?.user?.wallet);
       setIsLoading(true);
-      const marketCoins = new MarketCoinsContract(signer);
-      const marketContract = new MarketPlaceContract(signer);
+      const marketCoins = new MarketCoinsContract(signer!);
+      const marketContract = new MarketPlaceContract(signer!);
       await marketCoins.approve(marketContract._contractAddress, productPrice);
-
       const tx = await marketContract.buyProduct(productId);
+      await session.update({
+        ...session?.data?.user,
+        mkc: session?.data?.user?.mkc - productPrice,
+      });
       onOpen("success", { hash: tx, title: "BUY PRODUCT" });
-      dispatch(setUpdate(true));
-      if (render) {
-        render();
-      }
+      router.refresh();
       onClose();
     } catch (err) {
       console.log("handleBuyProduct->error", err);
@@ -71,6 +79,7 @@ const BuyProductModal: React.FC<IBuyProductModal> = ({
         <ModalBody>
           <div className="flex gap-x-1 text-sm items-center justify-center">
             You want to buy <div className="font-bold"> {title} </div>
+            with price {productPrice} MKC?
           </div>
 
           <Button

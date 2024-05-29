@@ -72,6 +72,12 @@ const UserProfile: React.FC<IUserProfileProps> = ({ user, isCurrentUser }) => {
                   onClick={() => router.push("/account/setting")}>
                   Setting
                 </DropdownItem>
+                <DropdownItem
+                  color="default"
+                  endContent={<CiSettings />}
+                  onClick={() => router.push("/account/createProduct")}>
+                  Create Product
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           )}

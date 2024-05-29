@@ -11,30 +11,27 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import AuctionContract from "@/contracts/AuctionContract";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
 
-interface IJoinActionModal {
+interface IJoinAuctionModal {
   isOpen: boolean;
   id: number;
   title: string;
-  render?: () => void;
   onClose: () => void;
 }
 
-const JoinActionModal: React.FC<IJoinActionModal> = ({
+const JoinAuctionModal: React.FC<IJoinAuctionModal> = ({
   isOpen,
   id,
   title,
-  render,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const { wallet, signer } = useAppSelector((state) => state.account);
-  const dispatch = useAppDispatch();
   const { onOpen } = useModal();
 
   const { handleSubmit, setValue } = useForm<FieldValues>({
@@ -44,25 +41,27 @@ const JoinActionModal: React.FC<IJoinActionModal> = ({
   });
 
   const { onOpenChange } = useDisclosure();
+  const router = useRouter();
+  const session = useSession();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    if (data.price <= 0 || !signer || !wallet || !id || !render) return;
-
+    if (data.price <= 0 || !session?.data || !id) return;
+    const signer = await getSigner(session?.data?.user?.wallet);
     try {
       setIsLoading(true);
-      const marketCoins = new MarketCoinsContract(signer);
+      const marketCoins = new MarketCoinsContract(signer!);
       const auctionContract = new AuctionContract(signer);
       await marketCoins.approve(auctionContract._contractAddress, data.price);
       const tx = await auctionContract.joinAuction(id, data.price);
+      await session.update({
+        ...session?.data?.user,
+        mkc: session?.data?.user?.mkc - data.price,
+      });
       onOpen("success", { hash: tx, title: "JOIN AUCTION" });
-      dispatch(setUpdate(true));
-      if (render) {
-        render();
-      }
       onClose();
+      router.refresh();
     } catch (error) {
       console.log("handleListProduct -> error", error);
-      // console.log("handleListProduct -> error message", error?.message);
     } finally {
       setIsLoading(false);
     }
@@ -115,4 +114,4 @@ const JoinActionModal: React.FC<IJoinActionModal> = ({
   );
 };
 
-export default JoinActionModal;
+export default JoinAuctionModal;

@@ -3,7 +3,7 @@ import React from "react";
 import { IProductInfo, IUserInfo } from "@/_types_";
 import TransitHistoryModal from "../modal/TransitHistoryModal";
 import BuyProductModal from "../modal/BuyProductModal";
-import UpdatePriceProductModal from "../modal/UpdatePriceProductModal";
+import UpdatePriceProductModal from "../modal/UpdatePriceModal";
 import {
   Card,
   CardHeader,
@@ -14,7 +14,7 @@ import {
   Divider,
   Avatar,
 } from "@nextui-org/react";
-import JoinActionModal from "../modal/JoinActionModal";
+import JoinAuctionModal from "../modal/JoinAuctionModal";
 import { useRouter } from "next/navigation";
 import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
 import { useSession } from "next-auth/react";
@@ -237,7 +237,7 @@ const ProductView: React.FC<IProductViewProps> = ({
                       radius="full"
                       size="sm"
                       isDisabled={
-                        !session ||
+                        !session?.data ||
                         product?.lastBidder?.id == session?.data?.user?.id ||
                         product?.author?.id == session?.data?.user?.id
                       }
@@ -288,7 +288,7 @@ const ProductView: React.FC<IProductViewProps> = ({
         onClose={() => setIsBuyOpen(false)}
       />
 
-      <JoinActionModal
+      <JoinAuctionModal
         isOpen={isAuctionOpen}
         onClose={() => setIsAuctionOpen(false)}
         id={product?.id}

@@ -3,6 +3,7 @@
 import React from "react";
 import {
   Avatar,
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -15,6 +16,7 @@ import { IProductInfo, IUserInfo } from "@/_types_";
 import { useRouter } from "next/navigation";
 import ExchangeItem from "./ExchangeItem";
 import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
+import ExchangeModal from "../modal/ExchangeModal";
 interface IExchangeProps {
   other?: IUserInfo;
   yourProducts?: IProductInfo[];
@@ -27,6 +29,7 @@ export default function CreateExchange({
   otherProducts,
 }: IExchangeProps) {
   const router = useRouter();
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [yourIndex, setYourIndex] = React.useState<number>(1);
   const [otherIndex, setOtherIndex] = React.useState<number>(1);
   const [yourItems, setYourItems] = React.useState<IProductInfo[]>();
@@ -136,90 +139,107 @@ export default function CreateExchange({
   };
 
   return (
-    <Card className="px-2">
-      <div className="flex items-center justify-center p-3">
-        <div className="text-gray-600 font-semibold pr-4">
-          Create Exchange With:
-        </div>
-        <div
-          className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
-          onClick={() => router.push(`/account/${other?.id}`)}>
-          <Avatar
-            className="mr-3"
-            isFocusable
-            size="sm"
-            isBordered
-            alt="NextUI Fruit Image with Zoom"
-            src={other?.avatar}
-          />
-          <div className="hover:border-b-1 items-center border-cyan-800">
-            {other?.name || "Unnamed"}
+    <>
+      <Card className="px-2">
+        <div className="flex items-center justify-center p-3">
+          <div className="text-gray-600 font-semibold pr-4">
+            Create Exchange With:
+          </div>
+          <div
+            className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
+            onClick={() => router.push(`/account/${other?.id}`)}>
+            <Avatar
+              className="mr-3"
+              isFocusable
+              size="sm"
+              isBordered
+              alt="NextUI Fruit Image with Zoom"
+              src={other?.avatar}
+            />
+            <div className="hover:border-b-1 items-center border-cyan-800">
+              {other?.name || "Unnamed"}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="md:grid md:grid-cols-2 flex flex-col gap-2">
-        <Card>
-          <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
-            Your Item
-          </CardHeader>
-          <CardBody>
-            <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-              {yourItems?.map((product, index) => (
-                <ExchangeItem
-                  onClick={() => handleClick("sender", product)}
-                  key={index}
-                  name={product.name}
-                  image={product.images[0]}
-                  isCheck={senderProducts.includes(product)}
+        <div className="md:grid md:grid-cols-2 flex flex-col gap-2">
+          <Card>
+            <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
+              Your Item
+            </CardHeader>
+            <CardBody>
+              <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+                {yourItems?.map((product, index) => (
+                  <ExchangeItem
+                    onClick={() => handleClick("sender", product)}
+                    key={index}
+                    name={product.name}
+                    image={product.images[0]}
+                    isCheck={senderProducts.includes(product)}
+                  />
+                ))}
+              </div>
+              <div className="w-full flex justify-center mt-4">
+                <Pagination
+                  className="gap-2"
+                  showControls
+                  total={yourTotal}
+                  initialPage={1}
+                  renderItem={renderItem}
+                  radius="full"
+                  variant="light"
+                  onChange={(value) => setYourIndex(value)}
                 />
-              ))}
-            </div>
-            <div className="w-full flex justify-center mt-4">
-              <Pagination
-                className="gap-2"
-                showControls
-                total={yourTotal}
-                initialPage={1}
-                renderItem={renderItem}
-                radius="full"
-                variant="light"
-                onChange={(value) => setYourIndex(value)}
-              />
-            </div>
-          </CardBody>
-        </Card>
+              </div>
+            </CardBody>
+          </Card>
 
-        <Card>
-          <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
-            Other Item
-          </CardHeader>
-          <CardBody>
-            <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-              {otherItems?.map((product, index) => (
-                <ExchangeItem
-                  onClick={() => handleClick("receiver", product)}
-                  key={index}
-                  name={product.name}
-                  image={product.images[0]}
-                  isCheck={receiverProducts.includes(product)}
+          <Card>
+            <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
+              Other Item
+            </CardHeader>
+            <CardBody>
+              <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+                {otherItems?.map((product, index) => (
+                  <ExchangeItem
+                    onClick={() => handleClick("receiver", product)}
+                    key={index}
+                    name={product.name}
+                    image={product.images[0]}
+                    isCheck={receiverProducts.includes(product)}
+                  />
+                ))}
+              </div>
+              <div className="w-full flex justify-center mt-4">
+                <Pagination
+                  className="gap-2"
+                  showControls
+                  total={otherTotal}
+                  initialPage={1}
+                  renderItem={renderItem}
+                  radius="full"
+                  variant="light"
+                  onChange={(value) => setOtherIndex(value)}
                 />
-              ))}
-            </div>
-            <div className="w-full flex justify-center mt-4">
-              <Pagination
-                className="gap-2"
-                showControls
-                total={otherTotal}
-                initialPage={1}
-                renderItem={renderItem}
-                radius="full"
-                variant="light"
-                onChange={(value) => setOtherIndex(value)}
-              />
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-    </Card>
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+        <div className="text-center mt-3">
+          <Button
+            className="w-full md:w-20"
+            color="primary"
+            onClick={() => setIsOpen(true)}>
+            Create
+          </Button>
+        </div>
+      </Card>
+      <ExchangeModal
+        isOpen={isOpen}
+        other={other}
+        yourProducts={senderProducts}
+        otherProducts={receiverProducts}
+        onClose={() => setIsOpen(false)}
+      />
+    </>
   );
 }

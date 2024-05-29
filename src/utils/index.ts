@@ -32,18 +32,10 @@ export const formatDate = (date: Date): string => {
 
 export const formatAccountBalance = (balance: number) => {
   const suffixes = ["", "k", "m", "b", "t"];
-  const suffixNum = Math.floor(balance.toString().length / 3) - 1;
-  let shortBalance = parseFloat(
-    (suffixNum !== 0
-      ? balance / Math.pow(1000, suffixNum)
-      : balance
-    ).toPrecision(3)
-  );
-
-  if (shortBalance % 1 !== 0) {
-    return shortBalance.toFixed(1) + suffixes[suffixNum];
-  }
-
+  const suffixNum = Math.floor(balance.toString().length / 3);
+  let shortBalance = (
+    suffixNum !== 0 ? balance / Math.pow(1000, suffixNum) : balance
+  ).toPrecision(3);
   return shortBalance + suffixes[suffixNum];
 };
 

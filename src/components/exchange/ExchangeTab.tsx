@@ -12,9 +12,10 @@ import React from "react";
 
 interface IExchangeTab {
   exchanges?: IExchange[];
+  type: "exchange" | "incoming-exchange";
 }
 
-const ExchangeTab: React.FC<IExchangeTab> = ({ exchanges }) => {
+const ExchangeTab: React.FC<IExchangeTab> = ({ exchanges, type }) => {
   const [index, setIndex] = React.useState<number>(1);
   const [items, setItems] = React.useState<IExchange[]>();
   const total = Math.ceil(exchanges?.length! / 5);
@@ -91,7 +92,7 @@ const ExchangeTab: React.FC<IExchangeTab> = ({ exchanges }) => {
             other={exchange?.other}
             yourProducts={exchange?.yourProducts}
             otherProducts={exchange?.otherProducts}
-            type="exchange"
+            type={type}
           />
         ))}
       </div>

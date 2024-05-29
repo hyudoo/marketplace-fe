@@ -127,7 +127,7 @@ const AuctionPlace: React.FC<IAuctionPlaceProps> = ({ products }) => {
       />
       <Card className="mx-3">
         <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
-          Market Place
+          Auctions
         </CardHeader>
         <CardBody>
           <div className="gap-2 grid grid-cols-2 sm:grid-cols-5">

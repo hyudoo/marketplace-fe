@@ -66,7 +66,7 @@ const ExchangeView: React.FC<IExchangeView> = ({
                   </Chip>
                 </Tooltip>
               </CardHeader>
-              <ExchangeTab exchanges={exchanges} />
+              <ExchangeTab exchanges={exchanges} type="exchange" />
             </Card>
           </Tab>
           <Tab
@@ -85,7 +85,10 @@ const ExchangeView: React.FC<IExchangeView> = ({
               <CardHeader className="items-center justify-center uppercase font-bold text-xl">
                 Incoming Exchange
               </CardHeader>
-              <ExchangeTab exchanges={incomingExchanges} />
+              <ExchangeTab
+                exchanges={incomingExchanges}
+                type="incoming-exchange"
+              />
             </Card>
           </Tab>
         </Tabs>

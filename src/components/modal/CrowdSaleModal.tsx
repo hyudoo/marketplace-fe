@@ -4,7 +4,6 @@ import { IPackage, IRate } from "../../_types_";
 import { useModal } from "@/reduxs/use-modal-store";
 import InvestCard from "@/components/InvestCard";
 import CrowdSaleContract from "../../contracts/CrowdSaleContract";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import { packages } from "../../constants";
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import {
@@ -15,19 +14,18 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
 const CrowdSaleProviderModal = () => {
   const [pak, setPak] = React.useState<IPackage>();
   const [rate, setRate] = React.useState<IRate>({ bnbRate: 0 });
   const [isProcessing, setIsProcessing] = React.useState<boolean>(false);
-  const { wallet, signer } = useAppSelector((state) => state.account);
 
   // redux
   const { isOpen, onClose, type, onOpen } = useModal();
   const isModalOpen = isOpen && type === "openCrowdSale";
   const { onOpenChange } = useDisclosure();
-  const dispatch = useAppDispatch();
-
+  const session = useSession();
   const getRate = React.useCallback(async () => {
     const crowdContract = new CrowdSaleContract();
     const bnbRate = await crowdContract.getBnbRate();
@@ -40,13 +38,17 @@ const CrowdSaleProviderModal = () => {
 
   const handleBuyMKC = async (pk: IPackage) => {
     try {
-      if (!signer) return;
+      if (!session?.data) return;
+      const signer = await getSigner(session?.data?.user?.wallet);
       setPak(pk);
       setIsProcessing(true);
       const crowdContract = new CrowdSaleContract(signer);
       const tx = await crowdContract.buyTokenByBNB(pk.amount);
-      dispatch(setUpdate(true));
       onOpen("success", { hash: tx, title: "BUY MARKET COINS" });
+      await session.update({
+        ...session?.data?.user,
+        mkc: session?.data?.user?.mkc + pk.amount,
+      });
     } catch (error) {
       console.log("handleBuyMKC -> error", error);
     } finally {
@@ -76,7 +78,6 @@ const CrowdSaleProviderModal = () => {
                 key={index}
                 isBuying={isProcessing && pak?.key === pk.key}
                 rate={rate.bnbRate}
-                walletInfo={wallet}
                 onBuy={() => handleBuyMKC(pk)}
               />
             ))}

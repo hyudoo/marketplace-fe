@@ -79,16 +79,17 @@ export default function ExchangeCard({
           </Button>
         </CardFooter>
       </Card>
-      {/* <AcceptExchangeModal
+      <AcceptExchangeModal
         isOpen={isOpenAcceptModal}
         id={exchangeId!}
+        products={yourProducts!}
         onClose={() => setIsOpenAcceptModal(false)}
       />
       <CancelExchangeModal
         isOpen={isOpenDeclineModal}
         id={exchangeId!}
         onClose={() => setIsOpenDeclineModal(false)}
-      /> */}
+      />
     </>
   );
 }

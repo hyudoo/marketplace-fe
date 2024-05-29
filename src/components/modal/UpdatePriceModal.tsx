@@ -11,10 +11,11 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
 
 interface IUpdatePriceProductModal {
   isOpen: boolean;
@@ -30,11 +31,10 @@ const UpdatePriceProductModal: React.FC<IUpdatePriceProductModal> = ({
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const { wallet, signer } = useAppSelector((state) => state.account);
-  const dispatch = useAppDispatch();
   const { onOpen } = useModal();
-
-  const { handleSubmit, setValue, watch } = useForm<FieldValues>({
+  const router = useRouter();
+  const session = useSession();
+  const { handleSubmit, setValue } = useForm<FieldValues>({
     defaultValues: {
       price: 0,
     },
@@ -43,14 +43,15 @@ const UpdatePriceProductModal: React.FC<IUpdatePriceProductModal> = ({
   const { onOpenChange } = useDisclosure();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    if (data.price <= 0 || !signer || !wallet || !id) return;
+    if (data.price <= 0 || !session?.data || !id) return;
+    const signer = await getSigner(session?.data?.user?.wallet);
     try {
       setIsLoading(true);
       const marketContract = new MarketPlaceContract(signer);
       const tx = await marketContract.updateListingProductPrice(id, data.price);
       onOpen("success", { hash: tx, title: "UPDATE PRICE LIST PRODUCT" });
-      dispatch(setUpdate(true));
       onClose();
+      router.refresh();
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {

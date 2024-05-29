@@ -1,18 +1,10 @@
 "use client";
 
 import React from "react";
-import {
-  Button,
-  Card,
-  CardHeader,
-  Chip,
-  Tab,
-  Tabs,
-  Tooltip,
-} from "@nextui-org/react";
+import { Card, CardHeader, Chip, Tab, Tabs } from "@nextui-org/react";
 import { IProductInfo } from "@/_types_";
 import InventoryTab from "./InventoryTab";
-import { IoCartOutline, IoAddOutline } from "react-icons/io5";
+import { IoCartOutline } from "react-icons/io5";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { RiAuctionLine } from "react-icons/ri";
 interface IInventory {

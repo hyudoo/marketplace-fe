@@ -9,57 +9,60 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
+import { IProductInfo, IUserInfo } from "@/_types_";
 import { useModal } from "@/reduxs/use-modal-store";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
+import ProductContract from "@/contracts/ProductContract";
 import { useRouter } from "next/navigation";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
-
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
 interface IExchangeModalProps {
   isOpen: boolean;
-  address: string;
-  senderIds?: number[];
-  receiverIds?: number[];
-  senderProductName?: string[];
-  receiverProductName?: string[];
+  other?: IUserInfo;
+  yourProducts?: IProductInfo[];
+  otherProducts?: IProductInfo[];
   onClose: () => void;
 }
 
 const ExchangeModal: React.FC<IExchangeModalProps> = ({
   isOpen,
-  address,
-  senderIds,
-  receiverIds,
-  senderProductName,
-  receiverProductName,
+  other,
+  yourProducts,
+  otherProducts,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const router = useRouter();
   // redux
   const { onOpen } = useModal();
-  const { wallet, signer } = useAppSelector((state) => state.account);
-  const dispatch = useAppDispatch();
   const { onOpenChange } = useDisclosure();
+  const yourProductNames = yourProducts?.map((productName) => productName.name);
+  const otherProductNames = otherProducts?.map(
+    (productName) => productName.name
+  );
+  const yourProductIds = yourProducts?.map((product) => product.id);
+  const otherProductIds = otherProducts?.map((product) => product.id);
 
+  const router = useRouter();
+  const session = useSession();
   const handleSubmit = async () => {
-    if (!signer || !wallet || !address || (!senderIds && !receiverIds)) return;
+    if (!session?.data || !other || !yourProducts || !otherProducts) return;
+    const signer = await getSigner(session?.data?.user?.wallet);
     try {
       setIsLoading(true);
-      const productContract = new SupplyChainContract(signer);
+      const productContract = new ProductContract(signer);
       const exchangeContract = new ExchangeProductContract(signer);
-      for (let id of senderIds!) {
+      for (let id of yourProductIds!) {
         await productContract.approve(exchangeContract._contractAddress, id);
       }
       const tx = await exchangeContract.createTransaction(
-        address,
-        senderIds!,
-        receiverIds!
+        other?.wallet!,
+        yourProductIds!,
+        otherProductIds!
       );
       onOpen("success", { hash: tx, title: "EXCHANGE PRODUCT" });
-      dispatch(setUpdate(true));
+      onClose();
       router.push("/exchange");
+      router.refresh();
     } catch (error) {
       console.log("handleListProduct -> error", error);
     } finally {
@@ -81,11 +84,11 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
         <ModalBody>
           <div className="gap-x-1 text-sm items-center justify-center">
             You want to exchange
-            <div className="font-bold"> {senderProductName?.toString()} </div>
+            <div className="font-bold"> {yourProductNames?.toString()} </div>
             with
-            <div className="font-bold"> {receiverProductName?.toString()} </div>
-            from address
-            <div className="font-bold"> {address} </div>
+            <div className="font-bold"> {otherProductNames?.toString()} </div>
+            from
+            <div className="font-bold"> {other?.name} </div>
           </div>
 
           <Button

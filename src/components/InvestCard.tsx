@@ -7,23 +7,19 @@ import {
   CardBody,
   CardHeader,
 } from "@nextui-org/react";
-import { IPackage, IWalletInfo } from "@/_types_";
+import { IPackage } from "@/_types_";
 import { numberFormat } from "@/utils";
+import { useSession } from "next-auth/react";
 
 interface IProps {
   pak: IPackage;
   isBuying: boolean;
   rate: number;
-  walletInfo?: IWalletInfo;
   onBuy?: () => void;
 }
-export default function InvestCard({
-  pak,
-  isBuying,
-  rate,
-  walletInfo,
-  onBuy,
-}: IProps) {
+
+export default function InvestCard({ pak, isBuying, rate, onBuy }: IProps) {
+  const session = useSession();
   return (
     <Card isFooterBlurred radius="lg" className="border-none w-full">
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
@@ -48,7 +44,7 @@ export default function InvestCard({
           {numberFormat(pak.amount / rate)} BNB
         </p>
         <Button
-          disabled={!walletInfo?.address || isBuying}
+          disabled={!session?.data || isBuying}
           className="text-tiny text-white bg-black/20"
           variant="flat"
           color="default"

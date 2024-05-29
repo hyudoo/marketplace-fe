@@ -10,9 +10,9 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import moment from "moment";
-import JoinActionModal from "../modal/JoinActionModal";
-import { useAppSelector } from "@/reduxs/hooks";
+import JoinAuctionModal from "../modal/JoinAuctionModal";
 import { IUserInfo } from "@/_types_";
+import { useSession } from "next-auth/react";
 interface IProductProps {
   author?: IUserInfo;
   lastBid?: number;
@@ -37,8 +37,13 @@ export default function AuctionCard({
 }: IProductProps) {
   const router = useRouter();
   const [isJoinAuction, setIsJoinAuction] = React.useState<boolean>(false);
-  const { wallet } = useAppSelector((state) => state.account);
-
+  const session = useSession();
+  const [isDisabled, setDisabled] = React.useState<boolean>(
+    !session?.data ||
+      author?.id == session?.data?.user?.id ||
+      lastBidder?.id == session?.data?.user?.id
+  );
+  const [canJoin, setCanJoin] = React.useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const [countdown, setCountdown] = useState<string>("");
 
@@ -53,13 +58,16 @@ export default function AuctionCard({
         );
         setCountdown(`Begin in ${remainingTime.humanize()}`);
         setText("Upcoming");
+        setCanJoin(true);
       } else if (currentDateTime < endDateTime) {
         const remainingTime = moment.duration(
           endDateTime.diff(currentDateTime)
         );
         setCountdown(`Remaining ${remainingTime.humanize()}`);
         setText("In progress");
+        setCanJoin(false);
       } else {
+        setCanJoin(true);
         setText("Finished");
       }
     };
@@ -119,18 +127,14 @@ export default function AuctionCard({
               variant="flat"
               color="primary"
               type="submit"
-              disabled={
-                !wallet ||
-                author == wallet?.address ||
-                lastBidder == wallet?.address
-              }
+              disabled={isDisabled || canJoin}
               className="w-full mt-2">
               Join
             </Button>
           </CardFooter>
         </Card>
       </div>
-      <JoinActionModal
+      <JoinAuctionModal
         isOpen={isJoinAuction}
         onClose={() => setIsJoinAuction(false)}
         id={productId!}

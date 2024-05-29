@@ -75,7 +75,7 @@ export default function MarketItem({
                 variant="flat"
                 color="primary"
                 className="w-full md:w-20"
-                disabled={!session?.data}
+                disabled={!session?.data || session.data?.user.id == authorId}
                 onClick={() => setIsBuyOpen(true)}>
                 Buy
               </Button>
@@ -87,7 +87,6 @@ export default function MarketItem({
         isOpen={isBuyOpen}
         title={name!}
         productId={productId!}
-        render={render!}
         productPrice={price as number}
         onClose={() => setIsBuyOpen(false)}
       />
