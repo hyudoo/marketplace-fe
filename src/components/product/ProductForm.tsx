@@ -9,7 +9,7 @@ import { products } from "@/constants";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import ProductContract from "@/contracts/ProductContract";
-import { useModal } from "@/reduxs/use-modal-store";
+import { useModal } from "@/lib/use-modal-store";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { HiOutlineXCircle } from "react-icons/hi";

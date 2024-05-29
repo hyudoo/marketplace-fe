@@ -8,7 +8,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import React from "react";
-import { useModal } from "@/reduxs/use-modal-store";
+import { useModal } from "@/lib/use-modal-store";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";

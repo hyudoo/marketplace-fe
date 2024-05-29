@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import React from "react";
-import { useModal } from "@/reduxs/use-modal-store";
+import { useModal } from "@/lib/use-modal-store";
 import { showTransactionHash } from "@/utils";
 
 const SuccessModal = () => {

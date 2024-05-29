@@ -10,7 +10,7 @@ import {
 import React from "react";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import MarketCoinsContract from "@/contracts/MarketCoinsContract";
-import { useModal } from "@/reduxs/use-modal-store";
+import { useModal } from "@/lib/use-modal-store";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
 import { useRouter } from "next/navigation";

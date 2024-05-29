@@ -10,7 +10,7 @@ import {
   Input,
 } from "@nextui-org/react";
 import React from "react";
-import { useModal } from "@/reduxs/use-modal-store";
+import { useModal } from "@/lib/use-modal-store";
 import ProductContract from "@/contracts/ProductContract";
 import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";

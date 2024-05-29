@@ -1,7 +1,7 @@
 "use client";
 
 import { IPackage, IRate } from "../../_types_";
-import { useModal } from "@/reduxs/use-modal-store";
+import { useModal } from "@/lib/use-modal-store";
 import InvestCard from "@/components/InvestCard";
 import CrowdSaleContract from "../../contracts/CrowdSaleContract";
 import { packages } from "../../constants";
