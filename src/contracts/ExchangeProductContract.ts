@@ -52,38 +52,4 @@ export default class ExchangeProductContract extends Erc721 {
     console.log("tx", tx);
     return this._handleTransactionResponse(tx);
   };
-
-  getTradeBySender = async (address: string): Promise<number[]> => {
-    let ids = await this._contract.getTradeBySender(address);
-    ids = ids.map((id: any) => this._toNumber(id));
-    return ids.filter((id: any) => id > 0);
-  };
-
-  getTradeByReceiver = async (address: string): Promise<number[]> => {
-    let ids = await this._contract.getTradeByReceiver(address);
-    ids = ids.map((id: any) => this._toNumber(id));
-    return ids.filter((id: any) => id > 0);
-  };
-
-  getTradeById = async (_id: number): Promise<IExchange> => {
-    const obj = await this._contract.getTradeById(_id);
-    return {
-      id: _id,
-      sender: obj.sender,
-      receiver: obj.receiver,
-      senderTokenIds: obj.senderTokenIds.map((id: any) => this._toNumber(id)),
-      receiverTokenIds: obj.receiverTokenIds.map((id: any) =>
-        this._toNumber(id)
-      ),
-    };
-  };
-
-  getTradeByIds = async (_ids: Array<number>) => {
-    return Promise.all(
-      _ids.map(async (id) => {
-        const obj: IExchange = await this.getTradeById(id);
-        return obj;
-      })
-    );
-  };
 }

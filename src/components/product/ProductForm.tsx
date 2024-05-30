@@ -8,12 +8,13 @@ import { UploadButton } from "@/utils/uploadthing";
 import { products } from "@/constants";
 import axios from "axios";
 import dynamic from "next/dynamic";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
-import { useAppSelector } from "@/reduxs/hooks";
-import { useModal } from "@/reduxs/use-modal-store";
+import ProductContract from "@/contracts/ProductContract";
+import { useModal } from "@/lib/use-modal-store";
 import { useRouter } from "next/navigation";
-import { notification } from "antd";
-
+import { toast } from "react-hot-toast";
+import { HiOutlineXCircle } from "react-icons/hi";
+import { getSigner } from "@/lib/hooks/getSigner";
+import { useSession } from "next-auth/react";
 const CustomEditor = dynamic(() => import("../custom-editor"), { ssr: false });
 
 export default function App() {
@@ -27,25 +28,40 @@ export default function App() {
     },
   });
   const { onOpen } = useModal();
+  const session = useSession();
   const router = useRouter();
 
+  React.useEffect(() => {
+    if (!session?.data) {
+      router.push("/");
+    }
+  }, [session, router]);
+
   const images = watch("images");
-  const { wallet, signer } = useAppSelector((state) => state.account);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    data.images = [
+      "https://utfs.io/f/2a14b691-01ae-4137-abf8-0c36c3426bab-1j.jpg",
+      "https://utfs.io/f/b025c48a-9c90-457a-8eb4-5c2c855bccba-1i.jpg",
+      "https://utfs.io/f/78776b0e-fc29-4e25-848a-2fad36bb3916-1h.jpg",
+      "https://utfs.io/f/cd012118-3c57-48b1-bccc-1df210e95cd1-1g.jpg",
+      "https://utfs.io/f/27ae43e1-0bd0-4129-904f-d0e7b1cab14a-1f.jpg",
+      "https://utfs.io/f/e18f92a0-c579-4743-ae43-a2f2084ba475-1e.jpg",
+      "https://utfs.io/f/251e054c-72ac-449a-aadc-f089480a42ce-1d.jpg",
+    ];
+    data.description =
+      "<p>*Specifications:&nbsp;</p><p>- Long flight range: 3 km&nbsp;</p><p>- Flight time: 28-30 minutes&nbsp;</p><p>- 3-axis anti-vibration gimbal&nbsp;</p><p>- Battery capacity 2400mAh&nbsp;</p><p>- Brushless motor&nbsp;</p><p>- Charging time 4-5 hours</p>";
+    if (!session.data) {
+      router.push("/");
+    }
+
     if (data.images.length == 0) {
-      notification.error({
-        message: "Form Error",
-        description: "Please upload at least one image",
-      });
+      toast.error("Please upload at least one image");
       return;
     }
 
     if (data.description.length == 0) {
-      notification.error({
-        message: "Form Error",
-        description: "Please write a description",
-      });
+      toast.error("Please write a description");
       return;
     }
 
@@ -53,13 +69,17 @@ export default function App() {
       setIsLoading(true);
       let res = await axios.post("/api/files", data);
       let { IpfsHash } = res.data;
-      const contract = new SupplyChainContract(signer);
+      console.log("IpfsHash", IpfsHash);
+      const wallet = session?.data?.user?.wallet!;
+      const signer = await getSigner(wallet);
+      const contract = new ProductContract(signer);
       const tx = await contract.addProduct({
-        address: wallet?.address,
+        address: wallet,
         cid: IpfsHash?.IpfsHash,
       });
       onOpen("success", { hash: tx, title: "ADD PRODUCT" });
-      router.push("/inventory");
+      router.push("/account");
+      router.refresh();
     } catch (error) {
       console.log("handleSubmit -> error", error);
     } finally {
@@ -114,19 +134,7 @@ export default function App() {
                   onClick={() =>
                     setValue("images", images.toSpliced(index, 1))
                   }>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
-                  </svg>
+                  <HiOutlineXCircle />
                 </div>
               </div>
             ))}
@@ -142,10 +150,7 @@ export default function App() {
             setValue("images", images);
           }}
           onUploadError={(error: Error) => {
-            notification.error({
-              message: "Upload image error!",
-              description: `${error.message}`,
-            });
+            toast.error("Upload image error!");
           }}
           appearance={{
             button: "text-blue-600 text-sm font-medium",
@@ -161,10 +166,7 @@ export default function App() {
         onChange={(e: any) => setValue("description", e)}
       />
       <div className="flex justify-center mt-3">
-        <Button
-          className="w-full md:w-3 md:flex"
-          type="submit"
-          isLoading={isLoading}>
+        <Button className="w-full md:w-20" type="submit" isLoading={isLoading}>
           Submit
         </Button>
       </div>

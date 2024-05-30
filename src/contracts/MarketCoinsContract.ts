@@ -7,8 +7,4 @@ export default class MarketCoinsContract extends Erc20 {
   constructor(provider: ethers.JsonRpcSigner) {
     super(provider, getMarketCoinsAddress(), getMarketCoinsAbi());
   }
-
-  getBalance(address: string) {
-    return this._contract.balanceOf(address);
-  }
 }

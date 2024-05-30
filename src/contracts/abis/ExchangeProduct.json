@@ -2,7 +2,7 @@
     {
         "inputs": [
             {
-                "internalType": "contract SupplyChain",
+                "internalType": "contract Product",
                 "name": "_product",
                 "type": "address"
             }
@@ -88,13 +88,13 @@
             {
                 "indexed": false,
                 "internalType": "uint256[]",
-                "name": "senderTokenIds",
+                "name": "senderProductIds",
                 "type": "uint256[]"
             },
             {
                 "indexed": false,
                 "internalType": "uint256[]",
-                "name": "receiverTokenIds",
+                "name": "receiverProductIds",
                 "type": "uint256[]"
             }
         ],
@@ -119,13 +119,13 @@
             {
                 "indexed": false,
                 "internalType": "uint256[]",
-                "name": "senderTokenIds",
+                "name": "senderProductIds",
                 "type": "uint256[]"
             },
             {
                 "indexed": false,
                 "internalType": "uint256[]",
-                "name": "receiverTokenIds",
+                "name": "receiverProductIds",
                 "type": "uint256[]"
             }
         ],
@@ -167,12 +167,12 @@
             },
             {
                 "internalType": "uint256[]",
-                "name": "_senderTokenIds",
+                "name": "_senderProductIds",
                 "type": "uint256[]"
             },
             {
                 "internalType": "uint256[]",
-                "name": "_receiverTokenIds",
+                "name": "_receiverProductIds",
                 "type": "uint256[]"
             }
         ],
@@ -205,12 +205,12 @@
                     },
                     {
                         "internalType": "uint256[]",
-                        "name": "senderTokenIds",
+                        "name": "senderProductIds",
                         "type": "uint256[]"
                     },
                     {
                         "internalType": "uint256[]",
-                        "name": "receiverTokenIds",
+                        "name": "receiverProductIds",
                         "type": "uint256[]"
                     },
                     {
@@ -317,7 +317,7 @@
         "name": "product",
         "outputs": [
             {
-                "internalType": "contract SupplyChain",
+                "internalType": "contract Product",
                 "name": "",
                 "type": "address"
             }
@@ -335,7 +335,7 @@
     {
         "inputs": [
             {
-                "internalType": "contract SupplyChain",
+                "internalType": "contract Product",
                 "name": "_product",
                 "type": "address"
             }

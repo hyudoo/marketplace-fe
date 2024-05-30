@@ -37,7 +37,6 @@ class Erc721 extends BaseInterface {
     toAddress: string,
     tokenId: string | number
   ): Promise<string> {
-    //https://github.com/ethers-io/ethers.js/issues/1160
     const tx: TransactionResponse = await this._contract[
       "safeTransferFrom(address,address,uint256)"
     ](fromAddress, toAddress, tokenId, this._option);

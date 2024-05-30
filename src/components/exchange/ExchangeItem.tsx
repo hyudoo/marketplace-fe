@@ -7,7 +7,7 @@ interface IProductProps {
   image: string;
   isCheck?: boolean;
   productId?: number;
-  onClick?: () => void;
+  onClick?: (e: any) => void;
 }
 
 export default function ExchangeItem({

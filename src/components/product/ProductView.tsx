@@ -1,16 +1,9 @@
 "use client";
 import React from "react";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
-import { IAuctionInfo, IProductItem, IProfileInfo } from "@/_types_";
-import {
-  getAuctionAddress,
-  getMarketPlaceAddress,
-} from "@/contracts/utils/getAddress";
-import MarketContract from "@/contracts/MarketPlaceContract";
-import { useAppSelector } from "@/reduxs/hooks";
+import { IProductInfo, IUserInfo } from "@/_types_";
 import TransitHistoryModal from "../modal/TransitHistoryModal";
 import BuyProductModal from "../modal/BuyProductModal";
-import UpdatePriceProductModal from "../modal/UpdatePriceProductModal";
+import UpdatePriceProductModal from "../modal/UpdatePriceModal";
 import {
   Card,
   CardHeader,
@@ -21,66 +14,32 @@ import {
   Divider,
   Avatar,
 } from "@nextui-org/react";
-import AuctionContract from "@/contracts/AuctionContract";
-import JoinActionModal from "../modal/JoinActionModal";
-import ProfileContract from "@/contracts/ProfileContract";
+import JoinAuctionModal from "../modal/JoinAuctionModal";
 import { useRouter } from "next/navigation";
+import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
+import { useSession } from "next-auth/react";
 interface IProductViewProps {
-  productId: number;
+  product: IProductInfo;
+  transitHistory: IUserInfo[];
 }
-const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
+const ProductView: React.FC<IProductViewProps> = ({
+  product,
+  transitHistory,
+}) => {
   const [index, setIndex] = React.useState<number>(0);
-  const [product, setProduct] = React.useState<IProductItem>();
-  const [mainImage, setMainImage] = React.useState<string>();
-  const [slideImage, setSlideImage] = React.useState<string[]>();
-  const [canBuy, setCanBuy] = React.useState<boolean>(false);
+  const [mainImage, setMainImage] = React.useState<string>(
+    product?.images?.[0]
+  );
+  const [slideImage, setSlideImage] = React.useState<string[]>(
+    product?.images?.slice(0, 4)
+  );
   const [isTransitOpen, setIsTransitOpen] = React.useState<boolean>(false);
   const [isBuyOpen, setIsBuyOpen] = React.useState<boolean>(false);
   const [isAuctionOpen, setIsAuctionOpen] = React.useState<boolean>(false);
   const [isUpdateOpen, setIsUpdateOpen] = React.useState<boolean>(false);
-  const { wallet } = useAppSelector((state) => state.account);
-  const [canUpdatePrice, setCanUpdatePrice] = React.useState<boolean>(false);
-  const [isAuction, setIsAuction] = React.useState<boolean>(false);
-  const [auctionInfo, setAuctionInfo] = React.useState<IAuctionInfo>();
-  const [manufacturerProfile, setManufacturerProfile] =
-    React.useState<IProfileInfo>();
-  const [authorProfile, setAuthorProfile] = React.useState<IProfileInfo>();
-  const [lastBidderProfile, setLastBidderProfile] =
-    React.useState<IProfileInfo>();
+  const session = useSession();
 
   const router = useRouter();
-
-  const getProductInfo = React.useCallback(async () => {
-    const contract = new SupplyChainContract();
-    const product = await contract.getProductInfoById(productId);
-    setProduct(product);
-    setMainImage(product?.images[0]);
-    setSlideImage(product?.images.slice(0, 4));
-    const res = await contract.ownerOf(productId);
-    if (res === getMarketPlaceAddress()) {
-      setCanBuy(true);
-      const marketContract = new MarketContract();
-      const item = await marketContract.getListedProductByID(productId);
-      setProduct({
-        ...product,
-        price: item.price,
-      });
-    } else if (res === getAuctionAddress()) {
-      setIsAuction(true);
-      const auctionContract = new AuctionContract();
-      const info = await auctionContract.getAuction(productId);
-      console.log("info", info);
-      setAuctionInfo(info);
-    }
-
-    if (product?.author == wallet?.address) {
-      setCanUpdatePrice(true);
-    }
-  }, [productId, wallet?.address]);
-
-  React.useEffect(() => {
-    getProductInfo();
-  }, [getProductInfo]);
 
   const handleNextImage = () => {
     if (!product || !product.images || product.images.length === 0) {
@@ -104,41 +63,6 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
     }
   };
 
-  React.useEffect(() => {
-    const interval = setInterval(async () => {
-      if (!product) return;
-      const profileContract = new ProfileContract();
-      const manufacturer = await profileContract.getProfileByAddress(
-        product?.manufacturer as string
-      );
-      const author = await profileContract.getProfileByAddress(
-        product?.author as string
-      );
-
-      setAuthorProfile(author);
-      setManufacturerProfile(manufacturer);
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [product]);
-
-  React.useEffect(() => {
-    const interval = setInterval(async () => {
-      if (!isAuction || !auctionInfo) return;
-      const profileContract = new ProfileContract();
-      const lastBidder = await profileContract.getProfileByAddress(
-        auctionInfo?.lastBidder as string
-      );
-      setLastBidderProfile(lastBidder);
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [auctionInfo, isAuction]);
-
   return (
     <>
       <div className="md:grid md:grid-cols-3 space-x-2 p-2 w-full bg-white">
@@ -158,17 +82,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                 variant="light"
                 className="h-full"
                 onClick={handlePreviousImage}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-5 h-5">
-                  <path
-                    fillRule="evenodd"
-                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <IoChevronBackOutline />
               </Button>
             </div>
             <div className="grid grid-cols-4 gap-1">
@@ -190,17 +104,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                 variant="light"
                 className="h-full"
                 onClick={handleNextImage}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-5 h-5">
-                  <path
-                    fillRule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <IoChevronForward />
               </Button>
             </div>
           </div>
@@ -233,7 +137,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                 <div
                   className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
                   onClick={() =>
-                    router.push(`/profile/${product?.manufacturer}`)
+                    router.push(`/account/${product?.manufacturer?.id}`)
                   }>
                   <Avatar
                     className="mr-3"
@@ -241,10 +145,10 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                     isFocusable
                     isBordered
                     alt="NextUI Fruit Image with Zoom"
-                    src={manufacturerProfile?.avatar}
+                    src={product?.manufacturer?.avatar}
                   />
                   <div className="items-center hover:border-b-1 border-cyan-800">
-                    {manufacturerProfile?.name}
+                    {product?.manufacturer?.name || "Unnamed"}
                   </div>
                 </div>
               </div>
@@ -254,28 +158,30 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                 <div className="text-gray-600 font-semibold">Author:</div>
                 <div
                   className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
-                  onClick={() => router.push(`/profile/${product?.author}`)}>
+                  onClick={() =>
+                    router.push(`/account/${product?.author?.id}`)
+                  }>
                   <Avatar
                     className="mr-3"
                     isFocusable
                     size="sm"
                     isBordered
                     alt="NextUI Fruit Image with Zoom"
-                    src={authorProfile?.avatar}
+                    src={product?.author?.avatar}
                   />
                   <div className="hover:border-b-1 items-center border-cyan-800">
-                    {authorProfile?.name}
+                    {product?.author?.name || "Unnamed"}
                   </div>
                 </div>
               </div>
 
               <Divider />
-              {canBuy && (
+              {product?.price && (
                 <div className="justify-between flex w-full py-2">
                   <p className="text-xs md:text-sm text-gray-600 font-semibold items-center flex">
                     Price: {product?.price} MKC
                   </p>
-                  {canUpdatePrice ? (
+                  {product?.author?.id == session?.data?.user?.id ? (
                     <Button
                       color="primary"
                       radius="full"
@@ -288,7 +194,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                       color="primary"
                       radius="full"
                       size="sm"
-                      isDisabled={!wallet}
+                      isDisabled={!session?.data}
                       onClick={() => setIsBuyOpen(true)}>
                       Buy Now
                     </Button>
@@ -296,7 +202,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                 </div>
               )}
 
-              {isAuction && (
+              {product?.lastBid && (
                 <div>
                   <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
                     <div className="text-gray-600 font-semibold">
@@ -305,7 +211,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                     <div
                       className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
                       onClick={() =>
-                        router.push(`/profile/${auctionInfo?.lastBidder}`)
+                        router.push(`/account/${product?.lastBidder?.id}`)
                       }>
                       <Avatar
                         className="mr-3"
@@ -313,17 +219,17 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                         size="sm"
                         isBordered
                         alt="NextUI Fruit Image with Zoom"
-                        src={lastBidderProfile?.avatar}
+                        src={product?.lastBidder?.avatar}
                       />
                       <div className="hover:border-b-1 items-center border-cyan-800">
-                        {lastBidderProfile?.name}
+                        {product?.lastBidder?.name || "Unnamed"}
                       </div>
                     </div>
                   </div>
                   <Divider />
                   <div className="flex justify-between py-2">
                     <p className="text-xs md:text-sm text-gray-600 font-semibold items-center flex">
-                      Bid: {auctionInfo?.lastBid} MKC
+                      Bid: {product?.lastBid} MKC
                     </p>
                     <Button
                       className="items-center flex justify-center"
@@ -331,9 +237,9 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
                       radius="full"
                       size="sm"
                       isDisabled={
-                        !wallet ||
-                        auctionInfo?.lastBidder == wallet?.address ||
-                        auctionInfo?.author == wallet?.address
+                        !session?.data ||
+                        product?.lastBidder?.id == session?.data?.user?.id ||
+                        product?.author?.id == session?.data?.user?.id
                       }
                       onClick={() => setIsAuctionOpen(true)}>
                       Join Auction
@@ -362,7 +268,7 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
 
       <TransitHistoryModal
         isOpen={isTransitOpen}
-        id={productId}
+        history={transitHistory}
         title={product?.name!}
         onClose={() => setIsTransitOpen(false)}
       />
@@ -370,22 +276,22 @@ const ProductView: React.FC<IProductViewProps> = ({ productId }) => {
       <UpdatePriceProductModal
         isOpen={isUpdateOpen}
         title={product?.name!}
-        id={productId}
+        id={product?.id}
         onClose={() => setIsUpdateOpen(false)}
       />
 
       <BuyProductModal
         isOpen={isBuyOpen}
         title={product?.name!}
-        productId={productId}
+        productId={product?.id}
         productPrice={product?.price!}
         onClose={() => setIsBuyOpen(false)}
       />
 
-      <JoinActionModal
+      <JoinAuctionModal
         isOpen={isAuctionOpen}
         onClose={() => setIsAuctionOpen(false)}
-        id={productId}
+        id={product?.id}
         title={product?.name!}
       />
     </>

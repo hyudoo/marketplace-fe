@@ -8,42 +8,42 @@ import {
   Button,
 } from "@nextui-org/react";
 import React from "react";
-import { useModal } from "@/reduxs/use-modal-store";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
+import { useModal } from "@/lib/use-modal-store";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 
 interface ICancelExchangeModal {
   isOpen: boolean;
   id: number;
-  render: () => void;
   onClose: () => void;
 }
 
 const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
   isOpen,
   id,
-  render,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   // redux
   const { onOpen } = useModal();
-  const { wallet, signer } = useAppSelector((state) => state.account);
-  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const session = useSession();
   const handleSubmit = async () => {
-    if (!signer || !wallet || !id || !render) return;
+    if (!session?.data || !id) return;
+    const signer = await getSigner(session?.data?.user?.wallet);
     try {
       setIsLoading(true);
       const marketContract = new ExchangeProductContract(signer);
       const tx = await marketContract.cancelTransaction(id);
       onOpen("success", { hash: tx, title: "CANCEL EXCHANGE" });
-      dispatch(setUpdate(true));
-      render();
-      onClose();
+      router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Cancel Exchange Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

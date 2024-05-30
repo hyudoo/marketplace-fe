@@ -8,48 +8,53 @@ import {
   Button,
 } from "@nextui-org/react";
 import React from "react";
-import { useModal } from "@/reduxs/use-modal-store";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
+import { useModal } from "@/lib/use-modal-store";
 import ExchangeProductContract from "@/contracts/ExchangeProductContract";
-import SupplyChainContract from "@/contracts/SupplyChainContract";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
+import ProductContract from "@/contracts/ProductContract";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
+import { IProductInfo } from "@/_types_";
+import toast from "react-hot-toast";
 
 interface IAcceptExchangeModal {
   isOpen: boolean;
   id: number;
-  render: () => void;
+  products: IProductInfo[];
   onClose: () => void;
 }
 
 const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
   isOpen,
   id,
-  render,
+  products,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const session = useSession();
+  const router = useRouter();
   // redux
   const { onOpen } = useModal();
-  const { wallet, signer } = useAppSelector((state) => state.account);
-  const dispatch = useAppDispatch();
   const handleSubmit = async () => {
-    if (!signer || !wallet || !id || !render) return;
+    if (!session?.data || !id || !products) return;
     try {
+      const signer = await getSigner(session?.data?.user?.wallet);
       setIsLoading(true);
-      const productContract = new SupplyChainContract(signer);
+      const productContract = new ProductContract(signer);
       const exchangeContract = new ExchangeProductContract(signer);
-      const exchange = await exchangeContract.getTradeById(id);
-      for (let id of exchange.receiverTokenIds!) {
-        await productContract.approve(exchangeContract._contractAddress, id);
+      for (let product of products) {
+        await productContract.approve(
+          exchangeContract._contractAddress,
+          product.id
+        );
       }
       const tx = await exchangeContract.acceptTransaction(id);
       onOpen("success", { hash: tx, title: "ACCEPT EXCHANGE" });
-      dispatch(setUpdate(true));
-      render();
-      onClose();
+      router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Accept Exchange Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

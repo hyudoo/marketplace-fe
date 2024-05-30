@@ -10,55 +10,42 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import moment from "moment";
-import JoinActionModal from "../modal/JoinActionModal";
-import { useAppSelector } from "@/reduxs/hooks";
-import { IProfileInfo } from "@/_types_";
-import ProfileContract from "@/contracts/ProfileContract";
+import JoinAuctionModal from "../modal/JoinAuctionModal";
+import { IUserInfo } from "@/_types_";
+import { useSession } from "next-auth/react";
 interface IProductProps {
-  author?: string;
+  author?: IUserInfo;
   lastBid?: number;
-  lastBidder?: string;
+  lastBidder?: IUserInfo;
   name?: string;
   image: string;
   productId?: number;
-  startTime: number;
-  endTime: number;
+  startTime?: number;
+  endTime?: number;
   render?: () => void;
-  onRender?: () => void;
 }
 
 export default function AuctionCard({
   author,
-  lastBid,
   lastBidder,
+  lastBid,
   name,
   image,
   startTime,
   endTime,
   productId,
-  onRender,
 }: IProductProps) {
   const router = useRouter();
   const [isJoinAuction, setIsJoinAuction] = React.useState<boolean>(false);
-  const { wallet } = useAppSelector((state) => state.account);
-
+  const session = useSession();
+  const [isDisabled, setDisabled] = React.useState<boolean>(
+    !session?.data ||
+      author?.id == session?.data?.user?.id ||
+      lastBidder?.id == session?.data?.user?.id
+  );
+  const [canJoin, setCanJoin] = React.useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const [countdown, setCountdown] = useState<string>("");
-  const [lastBidderProfile, setLastBidderProfile] =
-    React.useState<IProfileInfo>();
-
-  React.useEffect(() => {
-    const interval = setInterval(async () => {
-      if (!lastBidder) return;
-      const profileContract = new ProfileContract();
-      const bidder = await profileContract.getProfileByAddress(lastBidder);
-      setLastBidderProfile(bidder);
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [lastBidder]);
 
   useEffect(() => {
     const startDateTime = moment(startTime);
@@ -69,17 +56,19 @@ export default function AuctionCard({
         const remainingTime = moment.duration(
           startDateTime.diff(currentDateTime)
         );
-        setCountdown(`Upcoming ${remainingTime.humanize()}`);
+        setCountdown(`Begin in ${remainingTime.humanize()}`);
         setText("Upcoming");
+        setCanJoin(true);
       } else if (currentDateTime < endDateTime) {
         const remainingTime = moment.duration(
           endDateTime.diff(currentDateTime)
         );
-        setCountdown(`Finishes in ${remainingTime.humanize()}`);
+        setCountdown(`Remaining ${remainingTime.humanize()}`);
         setText("In progress");
+        setCanJoin(false);
       } else {
-        setCountdown(`This auction has been finished`);
-        setCountdown("Finished");
+        setCanJoin(true);
+        setText("Finished");
       }
     };
     const interval = setInterval(updateCountdown, 1000);
@@ -101,7 +90,7 @@ export default function AuctionCard({
               {text}
             </Chip>
           )}
-          <CardBody className="overflow-visible p-0 flex flex-col">
+          <CardBody className="overflow-visible flex flex-col">
             <Image
               shadow="sm"
               radius="lg"
@@ -111,58 +100,45 @@ export default function AuctionCard({
               src={image}
             />
           </CardBody>
-          <CardFooter className="text-small block space-y-1">
-            <div className="w-full flex justify-center">
-              <Chip variant="flat" color="primary">
-                {countdown}
-              </Chip>
-            </div>
+          <CardFooter className="text-small block">
+            {countdown && <div>{countdown}</div>}
+
             <div className="w-full">{name}</div>
-            <div className="lg:justify-between lg:flex">
-              <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
-                <div className="text-gray-600">Last Bidder:</div>
-                <div
-                  className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
-                  onClick={() => router.push(`/profile/${lastBidder}`)}>
-                  <Avatar
-                    className="mr-3"
-                    isFocusable
-                    size="sm"
-                    isBordered
-                    alt="NextUI Fruit Image with Zoom"
-                    src={lastBidderProfile?.avatar}
-                  />
-                  <div className="hover:border-b-1 items-center border-cyan-800">
-                    {lastBidderProfile?.name}
-                  </div>
+            <div className="text-xs md:text-sm lg:flex lg:justify-between py-3">
+              <div className="text-gray-600">Last Bidder:</div>
+              <div
+                className="flex text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
+                onClick={() => router.push(`/account/${lastBidder?.id}`)}>
+                <Avatar
+                  className="mr-2 w-5 h-5"
+                  isFocusable
+                  isBordered
+                  alt="NextUI Fruit Image with Zoom"
+                  src={lastBidder?.avatar}
+                />
+                <div className="hover:border-b-1 border-cyan-800">
+                  {lastBidder?.name || "Unnamed"}
                 </div>
               </div>
-              <div className="text-small">Last bid: {lastBid} MKC</div>
             </div>
-            <div className="flex justify-center">
-              <Button
-                onClick={() => setIsJoinAuction(true)}
-                variant="flat"
-                color="primary"
-                type="submit"
-                disabled={
-                  !wallet ||
-                  author == wallet?.address ||
-                  lastBidder == wallet?.address
-                }
-                className="w-full md:w-3 md:flex">
-                Join
-              </Button>
-            </div>
+            <div className="text-small">Last bid: {lastBid} MKC</div>
+            <Button
+              onClick={() => setIsJoinAuction(true)}
+              variant="flat"
+              color="primary"
+              type="submit"
+              disabled={isDisabled || canJoin}
+              className="w-full mt-2">
+              Join
+            </Button>
           </CardFooter>
         </Card>
       </div>
-      <JoinActionModal
+      <JoinAuctionModal
         isOpen={isJoinAuction}
         onClose={() => setIsJoinAuction(false)}
         id={productId!}
         title={name!}
-        render={onRender!}
       />
     </>
   );

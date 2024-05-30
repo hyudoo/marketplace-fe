@@ -9,8 +9,7 @@ export const getMarketCoinsAddress = () =>
 
 export const getCrowdSaleAddress = () => getAddress(SMART_ADDRESS.CrowdSale);
 
-export const getSupplyChainAddress = () =>
-  getAddress(SMART_ADDRESS.SupplyChain);
+export const getProductAddress = () => getAddress(SMART_ADDRESS.Product);
 
 export const getMarketPlaceAddress = () =>
   getAddress(SMART_ADDRESS.MarketPlace);
@@ -19,5 +18,3 @@ export const getExchangeProductAddress = () =>
   getAddress(SMART_ADDRESS.ExchangeProduct);
 
 export const getAuctionAddress = () => getAddress(SMART_ADDRESS.Auction);
-
-export const getProfileAddress = () => getAddress(SMART_ADDRESS.Profile);

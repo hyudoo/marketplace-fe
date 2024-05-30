@@ -8,42 +8,42 @@ import {
   Button,
 } from "@nextui-org/react";
 import React from "react";
-import { useModal } from "@/reduxs/use-modal-store";
-import { useAppDispatch, useAppSelector } from "@/reduxs/hooks";
+import { useModal } from "@/lib/use-modal-store";
 import AuctionContract from "@/contracts/AuctionContract";
-import { setUpdate } from "@/reduxs/accounts/account.slices";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 
 interface ICancelAuctionModal {
   isOpen: boolean;
   id: number;
-  render: () => void;
   onClose: () => void;
 }
 
 const CancelAuctionModal: React.FC<ICancelAuctionModal> = ({
   isOpen,
   id,
-  render,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   // redux
+  const router = useRouter();
+  const session = useSession();
   const { onOpen } = useModal();
-  const { wallet, signer } = useAppSelector((state) => state.account);
-  const dispatch = useAppDispatch();
   const handleSubmit = async () => {
-    if (!signer || !wallet || !id || !render) return;
+    if (!session?.data || !id) return;
+    const signer = await getSigner(session?.data?.user?.wallet);
     try {
       setIsLoading(true);
       const auctioncontract = new AuctionContract(signer);
       const tx = await auctioncontract.cancelAuction(id);
       onOpen("success", { hash: tx, title: "CANCEL AUCTION" });
-      dispatch(setUpdate(true));
-      render();
-      onClose();
+      router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Cancel Auction Failed.");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };
