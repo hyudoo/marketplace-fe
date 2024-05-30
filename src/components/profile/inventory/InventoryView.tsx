@@ -10,13 +10,13 @@ import { RiAuctionLine } from "react-icons/ri";
 interface IInventory {
   inventory?: IProductInfo[];
   listedProducts?: IProductInfo[];
-  auctiondProducts?: IProductInfo[];
+  auctionProducts?: IProductInfo[];
 }
 
 const InventoryView: React.FC<IInventory> = ({
   inventory,
   listedProducts,
-  auctiondProducts,
+  auctionProducts,
 }) => {
   const [selected, setSelected] = React.useState("inventory");
   return (
@@ -77,7 +77,7 @@ const InventoryView: React.FC<IInventory> = ({
               <RiAuctionLine />
               <span>Auctions</span>
               <Chip size="sm" variant="faded">
-                {auctiondProducts?.length || 0}
+                {auctionProducts?.length || 0}
               </Chip>
             </div>
           }>
@@ -85,7 +85,7 @@ const InventoryView: React.FC<IInventory> = ({
             <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
               YOUR AUCTIONS PRODUCTS
             </CardHeader>
-            <InventoryTab products={auctiondProducts} type="auction" />
+            <InventoryTab products={auctionProducts} type="auction" />
           </Card>
         </Tab>
       </Tabs>

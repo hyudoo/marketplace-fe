@@ -1,11 +1,17 @@
-import UserSetting from "@/components/profile/setting/UserSetting";
-import getCurrentUser from "@/lib/hooks/getCurrentUser";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function UserProfile() {
-  const user = await getCurrentUser();
-  if (!user) {
-    redirect("/");
-  }
-  return <UserSetting user={user!} />;
+import UserSetting from "@/components/profile/setting/UserSetting";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function UserProfile() {
+  const session = useSession();
+  const router = useRouter();
+  useEffect(() => {
+    if (!session?.data) {
+      router.push("/");
+    }
+  });
+  return <UserSetting user={session?.data?.user!} />;
 }

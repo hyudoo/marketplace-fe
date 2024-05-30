@@ -1,40 +1,58 @@
+"use client";
+
 import InventoryView from "@/components/profile/inventory/InventoryView";
 import UserProfile from "@/components/profile/UserProfile";
-import getCurrentUser from "@/lib/hooks/getCurrentUser";
 import axios from "@/lib/axios";
-import React from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Divider } from "@nextui-org/react";
-import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export default async function App() {
-  const user = await getCurrentUser();
-  if (!user) {
-    redirect("/");
-  }
-  const res1 = await axios.get("/user/inventory", {
-    headers: {
-      Authorization: `Bearer ${user?.accessToken}`,
-    },
-  });
-  const res2 = await axios.get("/user/listed", {
-    headers: {
-      Authorization: `Bearer ${user?.accessToken}`,
-    },
-  });
+export default function App() {
+  const [inventory, setInventory] = useState([]);
+  const [listedProducts, setListedProducts] = useState([]);
+  const [auctionProducts, setAuctionProducts] = useState([]);
+  const session = useSession();
+  const router = useRouter();
 
-  const res3 = await axios.get("/user/auctionlisted", {
-    headers: {
-      Authorization: `Bearer ${user?.accessToken}`,
-    },
-  });
+  const fetchInventory = useCallback(async () => {
+    if (!session?.data) {
+      router.push("/");
+    }
+    const res1 = await axios.get("/user/inventory", {
+      headers: {
+        Authorization: `Bearer ${session?.data?.user?.accessToken}`,
+      },
+    });
+    setInventory(res1?.data?.products);
+
+    const res2 = await axios.get("/user/listed", {
+      headers: {
+        Authorization: `Bearer ${session?.data?.user?.accessToken}`,
+      },
+    });
+    setListedProducts(res2?.data?.products);
+
+    const res3 = await axios.get("/user/auctionlisted", {
+      headers: {
+        Authorization: `Bearer ${session?.data?.user?.accessToken}`,
+      },
+    });
+    setAuctionProducts(res3?.data?.products);
+  }, [session, router]);
+
+  useEffect(() => {
+    fetchInventory();
+  }, [fetchInventory]);
+
   return (
     <>
-      <UserProfile user={user!} isCurrentUser={true} />
+      <UserProfile user={session?.data?.user!} isCurrentUser={true} />
       <Divider className="my-4" />
       <InventoryView
-        inventory={res1?.data?.products}
-        listedProducts={res2?.data?.products}
-        auctiondProducts={res3?.data?.products}
+        inventory={inventory}
+        listedProducts={listedProducts}
+        auctionProducts={auctionProducts}
       />
     </>
   );
