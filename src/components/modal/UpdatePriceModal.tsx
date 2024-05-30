@@ -16,6 +16,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 
 interface IUpdatePriceProductModal {
   isOpen: boolean;
@@ -50,11 +51,11 @@ const UpdatePriceProductModal: React.FC<IUpdatePriceProductModal> = ({
       const marketContract = new MarketPlaceContract(signer);
       const tx = await marketContract.updateListingProductPrice(id, data.price);
       onOpen("success", { hash: tx, title: "UPDATE PRICE LIST PRODUCT" });
-      onClose();
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Update Price Exchange Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

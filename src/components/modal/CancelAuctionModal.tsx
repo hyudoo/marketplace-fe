@@ -13,6 +13,7 @@ import AuctionContract from "@/contracts/AuctionContract";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 
 interface ICancelAuctionModal {
   isOpen: boolean;
@@ -38,11 +39,11 @@ const CancelAuctionModal: React.FC<ICancelAuctionModal> = ({
       const auctioncontract = new AuctionContract(signer);
       const tx = await auctioncontract.cancelAuction(id);
       onOpen("success", { hash: tx, title: "CANCEL AUCTION" });
-      onClose();
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Cancel Auction Failed.");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

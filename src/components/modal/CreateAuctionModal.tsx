@@ -78,11 +78,11 @@ const CreateAuctionModal: React.FC<ICreateAuctionModal> = ({
         Math.round(end.getTime() / 1000)
       );
       onOpen("success", { hash: tx, title: "CREATE AUCTION SUCCESS" });
-      onClose();
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Create Auction Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

@@ -13,6 +13,7 @@ import MarketPlaceContract from "@/contracts/MarketPlaceContract";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 
 interface IUnlistProductModal {
   isOpen: boolean;
@@ -41,11 +42,11 @@ const UnlistProductModal: React.FC<IUnlistProductModal> = ({
       const marketContract = new MarketPlaceContract(signer);
       const tx = await marketContract.unlistProduct(id);
       onOpen("success", { hash: tx, title: "UNLIST PRODUCT" });
-      onClose();
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Unlist Product Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

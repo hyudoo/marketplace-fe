@@ -58,10 +58,10 @@ const BuyProductModal: React.FC<IBuyProductModal> = ({
       });
       onOpen("success", { hash: tx, title: "BUY PRODUCT" });
       router.refresh();
-      onClose();
     } catch (err) {
-      console.log("handleBuyProduct->error", err);
+      toast.error("Buy Product Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

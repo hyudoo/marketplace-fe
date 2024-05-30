@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
 import { IProductInfo } from "@/_types_";
+import toast from "react-hot-toast";
 
 interface IAcceptExchangeModal {
   isOpen: boolean;
@@ -49,11 +50,11 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
       }
       const tx = await exchangeContract.acceptTransaction(id);
       onOpen("success", { hash: tx, title: "ACCEPT EXCHANGE" });
-      onClose();
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Accept Exchange Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

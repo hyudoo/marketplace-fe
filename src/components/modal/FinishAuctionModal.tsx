@@ -57,7 +57,7 @@ const FinishAuctionModal: React.FC<IFinishAuctionModal> = ({
       onClose();
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Finish Auction Failed!!!");
     } finally {
       setIsLoading(false);
     }

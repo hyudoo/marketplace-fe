@@ -13,6 +13,7 @@ import ExchangeProductContract from "@/contracts/ExchangeProductContract";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 
 interface ICancelExchangeModal {
   isOpen: boolean;
@@ -38,11 +39,11 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
       const marketContract = new ExchangeProductContract(signer);
       const tx = await marketContract.cancelTransaction(id);
       onOpen("success", { hash: tx, title: "CANCEL EXCHANGE" });
-      onClose();
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Cancel Exchange Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

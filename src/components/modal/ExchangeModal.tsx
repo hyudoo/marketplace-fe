@@ -16,6 +16,7 @@ import ProductContract from "@/contracts/ProductContract";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 interface IExchangeModalProps {
   isOpen: boolean;
   other?: IUserInfo;
@@ -60,12 +61,12 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
         otherProductIds!
       );
       onOpen("success", { hash: tx, title: "EXCHANGE PRODUCT" });
-      onClose();
       router.push("/exchange");
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Create Exchange Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

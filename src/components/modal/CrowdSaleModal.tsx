@@ -16,6 +16,7 @@ import {
 import React from "react";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 const CrowdSaleProviderModal = () => {
   const [pak, setPak] = React.useState<IPackage>();
   const [rate, setRate] = React.useState<IRate>({ bnbRate: 0 });
@@ -50,7 +51,7 @@ const CrowdSaleProviderModal = () => {
         mkc: session?.data?.user?.mkc + pk.amount,
       });
     } catch (error) {
-      console.log("handleBuyMKC -> error", error);
+      toast.error("Buy MKC Failed!!!");
     } finally {
       setPak(undefined);
       setIsProcessing(false);

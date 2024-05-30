@@ -17,6 +17,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface IListProductModal {
   isOpen: boolean;
@@ -54,10 +55,10 @@ const ListProductModal: React.FC<IListProductModal> = ({
       const tx = await marketContract.listProduct(id, data.price);
       onOpen("success", { hash: tx, title: "LIST PRODUCT" });
       router.refresh();
-      onClose();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("List product failed.");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };

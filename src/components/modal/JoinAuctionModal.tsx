@@ -17,6 +17,7 @@ import MarketCoinsContract from "@/contracts/MarketCoinsContract";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
+import toast from "react-hot-toast";
 
 interface IJoinAuctionModal {
   isOpen: boolean;
@@ -58,11 +59,11 @@ const JoinAuctionModal: React.FC<IJoinAuctionModal> = ({
         mkc: session?.data?.user?.mkc - data.price,
       });
       onOpen("success", { hash: tx, title: "JOIN AUCTION" });
-      onClose();
       router.refresh();
     } catch (error) {
-      console.log("handleListProduct -> error", error);
+      toast.error("Join Auction Failed!!!");
     } finally {
+      onClose();
       setIsLoading(false);
     }
   };
