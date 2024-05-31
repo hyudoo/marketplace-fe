@@ -1,6 +1,5 @@
 import type { Config } from "tailwindcss";
 import { nextui } from "@nextui-org/react";
-import { withUt } from "uploadthing/tw";
 
 /** @type {import('tailwindcss').Config} */
 const config: Config = {

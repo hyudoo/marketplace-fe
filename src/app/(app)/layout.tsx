@@ -10,13 +10,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <NextUIProvider>
+    <NextUIProvider>
+      <AuthProvider>
         <ToasterProvider />
         <ModalProvider />
         <Navbar />
         {children}
-      </NextUIProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </NextUIProvider>
   );
 }

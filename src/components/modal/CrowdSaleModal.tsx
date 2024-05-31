@@ -1,31 +1,26 @@
-"use client";
-
 import { IPackage, IRate } from "../../_types_";
 import { useModal } from "@/lib/use-modal-store";
 import InvestCard from "@/components/InvestCard";
 import CrowdSaleContract from "../../contracts/CrowdSaleContract";
 import { packages } from "../../constants";
 import { HiOutlineShoppingCart } from "react-icons/hi";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import React from "react";
 import { useSession } from "next-auth/react";
 import { getSigner } from "@/lib/hooks/getSigner";
 import toast from "react-hot-toast";
-const CrowdSaleProviderModal = () => {
+
+interface ICrowdSaleModal {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const CrowdSaleModal: React.FC<ICrowdSaleModal> = ({ isOpen, onClose }) => {
   const [pak, setPak] = React.useState<IPackage>();
   const [rate, setRate] = React.useState<IRate>({ bnbRate: 0 });
   const [isProcessing, setIsProcessing] = React.useState<boolean>(false);
-
+  const { onOpen } = useModal();
   // redux
-  const { isOpen, onClose, type, onOpen } = useModal();
-  const isModalOpen = isOpen && type === "openCrowdSale";
-  const { onOpenChange } = useDisclosure();
   const session = useSession();
   const getRate = React.useCallback(async () => {
     const crowdContract = new CrowdSaleContract();
@@ -53,6 +48,7 @@ const CrowdSaleProviderModal = () => {
     } catch (error) {
       toast.error("Buy MKC Failed!!!");
     } finally {
+      onClose();
       setPak(undefined);
       setIsProcessing(false);
     }
@@ -61,8 +57,7 @@ const CrowdSaleProviderModal = () => {
   return (
     <Modal
       backdrop="blur"
-      isOpen={isModalOpen}
-      onOpenChange={onOpenChange}
+      isOpen={isOpen}
       placement="center"
       className="overflow-y-auto"
       size="5xl"
@@ -89,4 +84,4 @@ const CrowdSaleProviderModal = () => {
   );
 };
 
-export default CrowdSaleProviderModal;
+export default CrowdSaleModal;

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CrowdSaleProviderModal from "../modal/CrowdSaleModal";
 import SuccessModal from "../modal/SuccessModal";
 
 export const ModalProvider = () => {
@@ -16,7 +15,6 @@ export const ModalProvider = () => {
   }
   return (
     <>
-      <CrowdSaleProviderModal />
       <SuccessModal />
     </>
   );
