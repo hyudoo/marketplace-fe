@@ -1,46 +1,28 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
+import getCurrentUser from "@/lib/hooks/getCurrentUser";
 import axios from "@/lib/axios";
 import ExchangeView from "@/components/exchange/ExchangeView";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-export default function ExchangeHome() {
-  const session = useSession();
-  const [exchanges, setExchanges] = useState([]);
-  const [incomingExchanges, setIncomingExchanges] = useState([]);
-  const [users, setUsers] = useState([]);
-  const router = useRouter();
+import { redirect } from "next/navigation";
+export default async function ExchangeHome() {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/");
+  }
+  const res = await axios.get("/user/exchange", {
+    headers: {
+      Authorization: `Bearer ${user?.accessToken}`,
+    },
+  });
 
-  const fetchExchanges = useCallback(async () => {
-    if (!session?.data) {
-      router.push("/");
-    }
-    const res = await axios.get("/user/exchange", {
-      headers: {
-        Authorization: `Bearer ${session?.data?.user?.accessToken}`,
-      },
-    });
-    setExchanges(res?.data?.exchanges);
-    setIncomingExchanges(res?.data?.incomingExchanges);
-
-    const res1 = await axios.get("/user/getlistuser", {
-      headers: {
-        Authorization: `Bearer ${session?.data?.user?.accessToken}`,
-      },
-    });
-    setUsers(res1?.data);
-  }, [session, router]);
-
-  useEffect(() => {
-    fetchExchanges();
-  }, [fetchExchanges]);
-
+  const res1 = await axios.get("/user/getlistuser", {
+    headers: {
+      Authorization: `Bearer ${user?.accessToken}`,
+    },
+  });
   return (
     <ExchangeView
-      exchanges={exchanges}
-      incomingExchanges={incomingExchanges}
-      users={users}
+      exchanges={res?.data?.exchanges}
+      incomingExchanges={res?.data?.incomingExchanges}
+      users={res1?.data}
     />
   );
 }

@@ -2,7 +2,7 @@ import { IUserInfo } from "@/_types_";
 import axios from "@/lib/axios";
 import getCurrentUser from "@/lib/hooks/getCurrentUser";
 import UserProfile from "@/components/profile/UserProfile";
-import { Card, CardHeader, Divider } from "@nextui-org/react";
+import { Divider } from "@nextui-org/react";
 import { CiLock } from "react-icons/ci";
 import CreateExchange from "@/components/exchange/CreateExchange";
 import { redirect } from "next/navigation";
