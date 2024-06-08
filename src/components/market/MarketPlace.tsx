@@ -110,21 +110,39 @@ const MarketPlace: React.FC<IMarketPlaceProps> = ({ products }) => {
 
   return (
     <div className="flex w-full flex-col">
-      <Input
-        classNames={{
-          base: "max-w-full h-10",
-          mainWrapper: "h-full",
-          input: "text-small",
-          inputWrapper:
-            "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-        }}
-        placeholder="Type to search..."
-        size="sm"
-        startContent={<IoSearch />}
-        type="search"
-        value={search}
-        onChange={({ target }) => setSearch(target.value)}
-      />
+      <div className="m-3 flex justify-center">
+        <div className="w-full md:w-[440px] lg:w-[880px] rounded-2xl flex justify-center items-center bg-white ">
+          <Input
+            classNames={{
+              label: "text-black/50 dark:text-white/90",
+              input: [
+                "bg-transparent",
+                "text-black/90 dark:text-white/90",
+                "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+              ],
+              innerWrapper: "bg-transparent",
+              inputWrapper: [
+                "shadow-xl",
+                "bg-default-200/50",
+                "dark:bg-default/60",
+                "backdrop-blur-xl",
+                "backdrop-saturate-200",
+                "hover:bg-default-200/70",
+                "dark:hover:bg-default/70",
+                "group-data-[focus=true]:bg-default-200/50",
+                "dark:group-data-[focus=true]:bg-default/60",
+                "!cursor-text",
+              ],
+            }}
+            placeholder="Type to search..."
+            size="sm"
+            startContent={<IoSearch />}
+            type="search"
+            value={search}
+            onChange={({ target }) => setSearch(target.value)}
+          />
+        </div>
+      </div>
       <Card className="mx-3">
         <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
           Market Place

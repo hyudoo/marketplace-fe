@@ -54,7 +54,6 @@ export default function InventoryCard({ product, type }: IInventoryCardProps) {
                   <Button
                     onClick={() => setIsCancelAuction(true)}
                     variant="flat"
-                    color="primary"
                     className="w-full my-2">
                     Cancel
                   </Button>
@@ -97,7 +96,6 @@ export default function InventoryCard({ product, type }: IInventoryCardProps) {
                       <Button
                         onClick={() => setIsUnlistOpen(true)}
                         variant="flat"
-                        color="primary"
                         className="w-full my-2">
                         Unlist
                       </Button>

@@ -240,7 +240,7 @@
     },
     {
         "inputs": [],
-        "name": "AUCTION_SERVICE_FEE_RATE",
+        "name": "FEE_RATE",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -326,7 +326,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "getAuction",
+        "name": "getAuctionById",
         "outputs": [
             {
                 "components": [
@@ -376,7 +376,7 @@
     },
     {
         "inputs": [],
-        "name": "getListedProducts",
+        "name": "getAuctions",
         "outputs": [
             {
                 "components": [

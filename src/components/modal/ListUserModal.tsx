@@ -1,13 +1,17 @@
 import {
+  cn,
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   Button,
   Avatar,
+  Pagination,
+  PaginationItemRenderProps,
+  PaginationItemType,
 } from "@nextui-org/react";
 import React from "react";
-
+import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
 import { IUserInfo } from "@/_types_";
 import { useRouter } from "next/navigation";
 
@@ -24,6 +28,72 @@ const ListUserModal: React.FC<IListUserModalProps> = ({
 }) => {
   const router = useRouter();
 
+  const [index, setIndex] = React.useState<number>(1);
+  const total = Math.ceil(users?.length! / 10);
+  const [items, setItems] = React.useState<IUserInfo[]>();
+
+  const renderItem = ({
+    ref,
+    key,
+    value,
+    isActive,
+    onNext,
+    onPrevious,
+    setPage,
+    className,
+  }: PaginationItemRenderProps) => {
+    if (value === PaginationItemType.NEXT) {
+      return (
+        <button
+          key={key}
+          className={cn(className, "bg-default-200/50 min-w-8 w-8 h-8")}
+          onClick={onNext}>
+          <IoChevronForward />
+        </button>
+      );
+    }
+
+    if (value === PaginationItemType.PREV) {
+      return (
+        <button
+          key={key}
+          className={cn(className, "bg-default-200/50 min-w-8 w-8 h-8")}
+          onClick={onPrevious}>
+          <IoChevronBackOutline />
+        </button>
+      );
+    }
+
+    if (value === PaginationItemType.DOTS) {
+      return (
+        <button key={key} className={className}>
+          ...
+        </button>
+      );
+    }
+
+    // cursor is the default item
+    return (
+      <button
+        key={key}
+        ref={ref}
+        className={cn(
+          className,
+          isActive &&
+            "text-white bg-gradient-to-br from-indigo-500 to-pink-500 font-bold"
+        )}
+        onClick={() => setPage(value)}>
+        {value}
+      </button>
+    );
+  };
+
+  React.useEffect(() => {
+    const start = (index - 1) * 10;
+    const end = index * 10;
+    setItems(users?.slice(start, end));
+  }, [index, users]);
+
   return (
     <Modal
       backdrop="blur"
@@ -36,7 +106,7 @@ const ListUserModal: React.FC<IListUserModalProps> = ({
           LIST USER
         </ModalHeader>
         <ModalBody>
-          {users?.map((profile, index) => (
+          {items?.map((profile, index) => (
             <div className="flex justify-between" key={index}>
               <div
                 className="col-span-2 flex items-center hover:text-cyan-600 hover:cursor-pointer"
@@ -61,6 +131,18 @@ const ListUserModal: React.FC<IListUserModalProps> = ({
               </Button>
             </div>
           ))}
+          <div className="w-full flex justify-center mt-4">
+            <Pagination
+              className="gap-2"
+              showControls
+              total={total}
+              initialPage={1}
+              renderItem={renderItem}
+              radius="full"
+              variant="light"
+              onChange={(value) => setIndex(value)}
+            />
+          </div>
         </ModalBody>
       </ModalContent>
     </Modal>

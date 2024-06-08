@@ -27,12 +27,8 @@ const ProductView: React.FC<IProductViewProps> = ({
   transitHistory,
 }) => {
   const [index, setIndex] = React.useState<number>(0);
-  const [mainImage, setMainImage] = React.useState<string>(
-    product?.images?.[0]
-  );
-  const [slideImage, setSlideImage] = React.useState<string[]>(
-    product?.images?.slice(0, 4)
-  );
+  const [mainImage, setMainImage] = React.useState<string>();
+  const [slideImage, setSlideImage] = React.useState<string[]>();
   const [isTransitOpen, setIsTransitOpen] = React.useState<boolean>(false);
   const [isBuyOpen, setIsBuyOpen] = React.useState<boolean>(false);
   const [isAuctionOpen, setIsAuctionOpen] = React.useState<boolean>(false);
@@ -41,6 +37,20 @@ const ProductView: React.FC<IProductViewProps> = ({
 
   const router = useRouter();
 
+  React.useEffect(() => {
+    if (!product || !product.images || product.images.length === 0) {
+      return;
+    }
+    setMainImage(product?.images?.[0]);
+  }, [product]);
+
+  React.useEffect(() => {
+    if (!product || !product.images || product.images.length === 0) {
+      return;
+    }
+    setSlideImage(product?.images?.slice(index, index + 4));
+  }, [product, index]);
+
   const handleNextImage = () => {
     if (!product || !product.images || product.images.length === 0) {
       return;
@@ -48,7 +58,6 @@ const ProductView: React.FC<IProductViewProps> = ({
     if (index + 4 < product?.images?.length) {
       let i = index + 1;
       setIndex(i);
-      setSlideImage(product?.images?.slice(i, i + 4));
     }
   };
 
@@ -59,7 +68,6 @@ const ProductView: React.FC<IProductViewProps> = ({
     if (index > 0) {
       let i = index - 1;
       setIndex(i);
-      setSlideImage(product?.images?.slice(i, i + 4));
     }
   };
 
@@ -70,7 +78,6 @@ const ProductView: React.FC<IProductViewProps> = ({
           <Image
             width="100%"
             src={mainImage}
-            fallbackSrc="https://via.placeholder.com/300x200"
             alt="NextUI Image with fallback"
           />
           <div className="relative py-2">

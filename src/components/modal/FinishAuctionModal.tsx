@@ -34,7 +34,7 @@ const FinishAuctionModal: React.FC<IFinishAuctionModal> = ({
 
   const handleSubmit = async () => {
     if (!session?.data || !product) return;
-    if (product?.endTime! < Date.now()) {
+    if (product?.endTime! > Date.now()) {
       toast.error("It's not yet time to end the auction");
       return;
     }

@@ -38,6 +38,87 @@
             {
                 "indexed": true,
                 "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "receiver",
+                "type": "address"
+            }
+        ],
+        "name": "ExchangeCancelled",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "receiver",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256[]",
+                "name": "senderProductIds",
+                "type": "uint256[]"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256[]",
+                "name": "receiverProductIds",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "ExchangeCreated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "receiver",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256[]",
+                "name": "senderProductIds",
+                "type": "uint256[]"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256[]",
+                "name": "receiverProductIds",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "ExchangeSuccessful",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
                 "name": "previousOwner",
                 "type": "address"
             },
@@ -52,95 +133,14 @@
         "type": "event"
     },
     {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "receiver",
-                "type": "address"
-            }
-        ],
-        "name": "TransactionCancelled",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "receiver",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256[]",
-                "name": "senderProductIds",
-                "type": "uint256[]"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256[]",
-                "name": "receiverProductIds",
-                "type": "uint256[]"
-            }
-        ],
-        "name": "TransactionCreated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "receiver",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256[]",
-                "name": "senderProductIds",
-                "type": "uint256[]"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256[]",
-                "name": "receiverProductIds",
-                "type": "uint256[]"
-            }
-        ],
-        "name": "TransactionSuccessful",
-        "type": "event"
-    },
-    {
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_tradeId",
+                "name": "_exchangeId",
                 "type": "uint256"
             }
         ],
-        "name": "acceptTransaction",
+        "name": "acceptExchange",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -149,11 +149,11 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_tradeId",
+                "name": "_exchangeId",
                 "type": "uint256"
             }
         ],
-        "name": "cancelTransaction",
+        "name": "cancelExchange",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -176,7 +176,7 @@
                 "type": "uint256[]"
             }
         ],
-        "name": "createTransaction",
+        "name": "createExchange",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -185,11 +185,40 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_tradeId",
+                "name": "",
                 "type": "uint256"
             }
         ],
-        "name": "getTradeById",
+        "name": "exchanges",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "receiver",
+                "type": "address"
+            },
+            {
+                "internalType": "bool",
+                "name": "active",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_exchangeId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getExchangeById",
         "outputs": [
             {
                 "components": [
@@ -219,7 +248,7 @@
                         "type": "bool"
                     }
                 ],
-                "internalType": "struct ExchangeProduct.Transaction",
+                "internalType": "struct ExchangeProduct.ExchangeInfo",
                 "name": "",
                 "type": "tuple"
             }
@@ -235,7 +264,7 @@
                 "type": "address"
             }
         ],
-        "name": "getTradeByReceiver",
+        "name": "getReceiveExchange",
         "outputs": [
             {
                 "internalType": "uint256[]",
@@ -254,7 +283,7 @@
                 "type": "address"
             }
         ],
-        "name": "getTradeBySender",
+        "name": "getSendExchange",
         "outputs": [
             {
                 "internalType": "uint256[]",
@@ -343,35 +372,6 @@
         "name": "setProduct",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "trades",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "receiver",
-                "type": "address"
-            },
-            {
-                "internalType": "bool",
-                "name": "active",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {

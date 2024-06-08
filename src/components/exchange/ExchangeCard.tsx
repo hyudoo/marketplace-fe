@@ -74,9 +74,7 @@ export default function ExchangeCard({
             </Button>
           )}
 
-          <Button onClick={() => setIsOpenDeclineModal(true)} color="primary">
-            Cancel
-          </Button>
+          <Button onClick={() => setIsOpenDeclineModal(true)}>Cancel</Button>
         </CardFooter>
       </Card>
       <AcceptExchangeModal

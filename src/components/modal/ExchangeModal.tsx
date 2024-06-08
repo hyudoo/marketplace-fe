@@ -55,7 +55,7 @@ const ExchangeModal: React.FC<IExchangeModalProps> = ({
       for (let id of yourProductIds!) {
         await productContract.approve(exchangeContract._contractAddress, id);
       }
-      const tx = await exchangeContract.createTransaction(
+      const tx = await exchangeContract.createExchange(
         other?.wallet!,
         yourProductIds!,
         otherProductIds!

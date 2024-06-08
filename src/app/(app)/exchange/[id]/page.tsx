@@ -21,11 +21,21 @@ export default async function Exchange({ params }: { params: IParams }) {
       Authorization: `Bearer ${user?.accessToken}`,
     },
   });
+
   const profile: IUserInfo = res?.data as IUserInfo;
+
+  if (profile.id == user?.id) {
+    redirect("/");
+  }
+
   if (!profile?.isPublic) {
     return (
       <div className="gap-4">
-        <UserProfile user={profile!} isCurrentUser={user?.id == profile?.id} />
+        <UserProfile
+          user={profile!}
+          isCurrentUser={user?.id == profile?.id}
+          isAdmin={false}
+        />
         <Divider className="my-4" />
         <div className="text-2xl font-bold mt-2">
           <div className="flex justify-center">
@@ -48,7 +58,7 @@ export default async function Exchange({ params }: { params: IParams }) {
   });
   return (
     <>
-      <UserProfile user={profile!} isCurrentUser={false} />
+      <UserProfile user={profile!} isCurrentUser={false} isAdmin={false} />
       <Divider className="my-4" />
 
       <CreateExchange

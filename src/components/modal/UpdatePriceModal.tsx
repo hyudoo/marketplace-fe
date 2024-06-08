@@ -49,7 +49,7 @@ const UpdatePriceProductModal: React.FC<IUpdatePriceProductModal> = ({
     try {
       setIsLoading(true);
       const marketContract = new MarketPlaceContract(signer);
-      const tx = await marketContract.updateListingProductPrice(id, data.price);
+      const tx = await marketContract.updatePriceProduct(id, data.price);
       onOpen("success", { hash: tx, title: "UPDATE PRICE LIST PRODUCT" });
       router.refresh();
     } catch (error) {

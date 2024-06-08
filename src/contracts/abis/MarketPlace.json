@@ -149,12 +149,12 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "contract Product",
-                "name": "_product",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "_feeRate",
+                "type": "uint256"
             }
         ],
-        "name": "SetProduct",
+        "name": "SetFeeRate",
         "type": "event"
     },
     {
@@ -162,12 +162,12 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "uint256",
-                "name": "_tax",
-                "type": "uint256"
+                "internalType": "contract Product",
+                "name": "_product",
+                "type": "address"
             }
         ],
-        "name": "SetTax",
+        "name": "SetProduct",
         "type": "event"
     },
     {
@@ -218,7 +218,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "UpdateListingProductPrice",
+        "name": "UpdatePrice",
         "type": "event"
     },
     {
@@ -375,12 +375,12 @@
     {
         "inputs": [
             {
-                "internalType": "contract Product",
-                "name": "_product",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "_feeRate",
+                "type": "uint256"
             }
         ],
-        "name": "setProduct",
+        "name": "setFeeRate",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -388,12 +388,12 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
-                "name": "_tax",
-                "type": "uint256"
+                "internalType": "contract Product",
+                "name": "_product",
+                "type": "address"
             }
         ],
-        "name": "setTax",
+        "name": "setProduct",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -450,7 +450,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "updateListingProductPrice",
+        "name": "updatePriceProduct",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

@@ -37,7 +37,7 @@ const CancelExchangeModal: React.FC<ICancelExchangeModal> = ({
     try {
       setIsLoading(true);
       const marketContract = new ExchangeProductContract(signer);
-      const tx = await marketContract.cancelTransaction(id);
+      const tx = await marketContract.cancelExchange(id);
       onOpen("success", { hash: tx, title: "CANCEL EXCHANGE" });
       router.refresh();
     } catch (error) {

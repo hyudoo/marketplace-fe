@@ -48,7 +48,7 @@ const AcceptExchangeModal: React.FC<IAcceptExchangeModal> = ({
           product.id
         );
       }
-      const tx = await exchangeContract.acceptTransaction(id);
+      const tx = await exchangeContract.acceptExchange(id);
       onOpen("success", { hash: tx, title: "ACCEPT EXCHANGE" });
       router.refresh();
     } catch (error) {

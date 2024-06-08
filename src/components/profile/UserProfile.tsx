@@ -19,9 +19,14 @@ import { useRouter } from "next/navigation";
 interface IUserProfileProps {
   user: IUserInfo;
   isCurrentUser: boolean;
+  isAdmin: boolean;
 }
 
-const UserProfile: React.FC<IUserProfileProps> = ({ user, isCurrentUser }) => {
+const UserProfile: React.FC<IUserProfileProps> = ({
+  user,
+  isCurrentUser,
+  isAdmin,
+}) => {
   const router = useRouter();
 
   return (
@@ -74,6 +79,7 @@ const UserProfile: React.FC<IUserProfileProps> = ({ user, isCurrentUser }) => {
                 </DropdownItem>
                 <DropdownItem
                   color="default"
+                  hidden={isAdmin}
                   endContent={<CiSettings />}
                   onClick={() => router.push("/account/createProduct")}>
                   Create Product

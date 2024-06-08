@@ -3,7 +3,6 @@ import { Erc721 } from "./interfaces";
 import { getRPC } from "./utils/common";
 import { getExchangeProductAbi } from "./utils/getAbis";
 import { getExchangeProductAddress } from "./utils/getAddress";
-import { IExchange } from "@/_types_";
 
 export default class ExchangeProductContract extends Erc721 {
   constructor(provider?: ethers.JsonRpcSigner) {
@@ -22,12 +21,12 @@ export default class ExchangeProductContract extends Erc721 {
     }
   }
 
-  createTransaction = async (
+  createExchange = async (
     _receiver: string,
     _senderToken: number[],
     _receiverToken: number[]
   ) => {
-    const tx = await this._contract.createTransaction(
+    const tx = await this._contract.createExchange(
       _receiver,
       _senderToken,
       _receiverToken,
@@ -36,20 +35,19 @@ export default class ExchangeProductContract extends Erc721 {
     return this._handleTransactionResponse(tx);
   };
 
-  cancelTransaction = async (_transactionId: number) => {
-    const tx = await this._contract.cancelTransaction(
+  cancelExchange = async (_transactionId: number) => {
+    const tx = await this._contract.cancelExchange(
       _transactionId,
       this._option
     );
     return this._handleTransactionResponse(tx);
   };
 
-  acceptTransaction = async (_transactionId: number) => {
-    const tx = await this._contract.acceptTransaction(
+  acceptExchange = async (_transactionId: number) => {
+    const tx = await this._contract.acceptExchange(
       _transactionId,
       this._option
     );
-    console.log("tx", tx);
     return this._handleTransactionResponse(tx);
   };
 }
