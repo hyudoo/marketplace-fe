@@ -1,5 +1,4 @@
-// const BACKEND_URL = "https://marketplace-be-csqx.onrender.com";
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = "https://marketplace-be-csqx.onrender.com";
 import axios from "axios";
 
 export default axios.create({
