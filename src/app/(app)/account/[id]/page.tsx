@@ -34,11 +34,7 @@ export default async function Inventory({ params }: { params: IParams }) {
   const res1 = await axios.get(`/inventory/${profile?.wallet}`);
   return (
     <>
-      <UserProfile
-        user={profile!}
-        isCurrentUser={user?.id == profile?.id}
-        isAdmin={false}
-      />
+      <UserProfile user={profile!} isCurrentUser={false} isAdmin={false} />
       <Divider className="my-4" />
       <Card className="mx-3">
         <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">

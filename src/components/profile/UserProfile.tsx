@@ -3,7 +3,7 @@
 import { IUserInfo } from "@/_types_";
 import { formatDate, showSortAddress } from "@/utils";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { CiSettings } from "react-icons/ci";
+import { CiCirclePlus, CiSettings } from "react-icons/ci";
 import {
   Avatar,
   Button,
@@ -13,6 +13,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  cn,
 } from "@nextui-org/react";
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -63,30 +64,37 @@ const UserProfile: React.FC<IUserProfileProps> = ({
           </div>
         </div>
         <div>
-          {isCurrentUser && (
-            <Dropdown placement="bottom">
-              <DropdownTrigger>
-                <Button variant="light">
-                  <HiDotsHorizontal />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="Dynamic Actions" variant="flat">
+          <Dropdown placement="bottom">
+            <DropdownTrigger>
+              <Button variant="light">
+                <HiDotsHorizontal />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Dynamic Actions" variant="flat">
+              {isCurrentUser ? (
                 <DropdownItem
                   color="default"
                   endContent={<CiSettings />}
                   onClick={() => router.push("/account/setting")}>
                   Setting
                 </DropdownItem>
+              ) : (
                 <DropdownItem
                   color="default"
-                  hidden={isAdmin}
                   endContent={<CiSettings />}
-                  onClick={() => router.push("/account/createProduct")}>
-                  Create Product
+                  onClick={() => router.push(`/exchange/${user?.id}`)}>
+                  Create Exchange
                 </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          )}
+              )}
+              <DropdownItem
+                color="default"
+                endContent={<CiCirclePlus />}
+                className={cn("", !isAdmin && "hidden")}
+                onClick={() => router.push("/account/createProduct")}>
+                Create Product
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </div>
     </>

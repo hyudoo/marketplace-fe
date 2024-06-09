@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import ExchangeItem from "./ExchangeItem";
 import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
 import ExchangeModal from "../modal/ExchangeModal";
+import EmptyItem from "./EmptyItem";
 interface IExchangeProps {
   other?: IUserInfo;
   yourProducts?: IProductInfo[];
@@ -167,29 +168,39 @@ export default function CreateExchange({
               Your Item
             </CardHeader>
             <CardBody>
-              <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-                {yourItems?.map((product, index) => (
-                  <ExchangeItem
-                    onClick={() => handleClick("sender", product)}
-                    key={index}
-                    name={product.name}
-                    image={product.images[0]}
-                    isCheck={senderProducts.includes(product)}
-                  />
-                ))}
-              </div>
-              <div className="w-full flex justify-center mt-4">
-                <Pagination
-                  className="gap-2"
-                  showControls
-                  total={yourTotal}
-                  initialPage={1}
-                  renderItem={renderItem}
-                  radius="full"
-                  variant="light"
-                  onChange={(value) => setYourIndex(value)}
-                />
-              </div>
+              {yourItems?.length == 0 ? (
+                <div className="flex min-h-full justify-center items-center">
+                  <EmptyItem />
+                </div>
+              ) : (
+                <>
+                  <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+                    {yourItems?.map((product, index) => (
+                      <ExchangeItem
+                        onClick={() => handleClick("sender", product)}
+                        key={index}
+                        name={product.name}
+                        image={product.images[0]}
+                        isCheck={senderProducts.includes(product)}
+                      />
+                    ))}
+                  </div>
+                  {yourTotal > 1 && (
+                    <div className="w-full flex justify-center mt-4">
+                      <Pagination
+                        className="gap-2"
+                        showControls
+                        total={yourTotal}
+                        initialPage={1}
+                        renderItem={renderItem}
+                        radius="full"
+                        variant="light"
+                        onChange={(value) => setYourIndex(value)}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
             </CardBody>
           </Card>
 
@@ -198,29 +209,39 @@ export default function CreateExchange({
               Other Item
             </CardHeader>
             <CardBody>
-              <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-                {otherItems?.map((product, index) => (
-                  <ExchangeItem
-                    onClick={() => handleClick("receiver", product)}
-                    key={index}
-                    name={product.name}
-                    image={product.images[0]}
-                    isCheck={receiverProducts.includes(product)}
-                  />
-                ))}
-              </div>
-              <div className="w-full flex justify-center mt-4">
-                <Pagination
-                  className="gap-2"
-                  showControls
-                  total={otherTotal}
-                  initialPage={1}
-                  renderItem={renderItem}
-                  radius="full"
-                  variant="light"
-                  onChange={(value) => setOtherIndex(value)}
-                />
-              </div>
+              {otherItems?.length == 0 ? (
+                <div className="flex min-h-full justify-center items-center">
+                  <EmptyItem />
+                </div>
+              ) : (
+                <>
+                  <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+                    {otherItems?.map((product, index) => (
+                      <ExchangeItem
+                        onClick={() => handleClick("receiver", product)}
+                        key={index}
+                        name={product.name}
+                        image={product.images[0]}
+                        isCheck={receiverProducts.includes(product)}
+                      />
+                    ))}
+                  </div>
+                  {otherTotal > 1 && (
+                    <div className="w-full flex justify-center mt-4">
+                      <Pagination
+                        className="gap-2"
+                        showControls
+                        total={otherTotal}
+                        initialPage={1}
+                        renderItem={renderItem}
+                        radius="full"
+                        variant="light"
+                        onChange={(value) => setOtherIndex(value)}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
             </CardBody>
           </Card>
         </div>

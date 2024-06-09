@@ -11,6 +11,7 @@ import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
 import { IProductInfo } from "@/_types_";
 import React from "react";
 import ExchangeItem from "./ExchangeItem";
+import EmptyState from "../EmptyState";
 
 interface IExchangeCardBodyProps {
   products?: IProductInfo[];
@@ -85,28 +86,36 @@ const ExchangeCardBody: React.FC<IExchangeCardBodyProps> = ({ products }) => {
 
   return (
     <CardBody>
-      <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-        {items?.map((product, index) => (
-          <ExchangeItem
-            key={index}
-            productId={product.id}
-            image={product?.images[0]}
-            name={product.name}
-          />
-        ))}
-      </div>
-      <div className="w-full flex justify-center mt-4">
-        <Pagination
-          className="gap-2"
-          showControls
-          total={total}
-          initialPage={1}
-          renderItem={renderItem}
-          radius="full"
-          variant="light"
-          onChange={(value) => setIndex(value)}
-        />
-      </div>
+      {items?.length === 0 ? (
+        <div className="min-h-[700px] flex justify-center items-center">
+          <EmptyState />
+        </div>
+      ) : (
+        <>
+          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+            {items?.map((product, index) => (
+              <ExchangeItem
+                key={index}
+                productId={product.id}
+                image={product?.images[0]}
+                name={product.name}
+              />
+            ))}
+          </div>
+          <div className="w-full flex justify-center mt-4">
+            <Pagination
+              className="gap-2"
+              showControls
+              total={total}
+              initialPage={1}
+              renderItem={renderItem}
+              radius="full"
+              variant="light"
+              onChange={(value) => setIndex(value)}
+            />
+          </div>
+        </>
+      )}
     </CardBody>
   );
 };

@@ -18,6 +18,7 @@ import {
   IoChevronForward,
   IoSearch,
 } from "react-icons/io5";
+import EmptyState from "../EmptyState";
 interface IMarketPlaceProps {
   products: IProductInfo[];
 }
@@ -148,32 +149,40 @@ const MarketPlace: React.FC<IMarketPlaceProps> = ({ products }) => {
           Market Place
         </CardHeader>
         <CardBody>
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-5">
-            {items?.map((product, index) => (
-              <MarketItem
-                key={index}
-                authorId={product.author?.id}
-                authorName={product.author?.name}
-                authorImage={product.author?.avatar}
-                name={product.name}
-                image={product.images[0]}
-                price={product.price}
-                productId={product.id}
-              />
-            ))}
-          </div>
-          <div className="w-full flex justify-center mt-4">
-            <Pagination
-              className="gap-2"
-              showControls
-              total={total}
-              initialPage={1}
-              renderItem={renderItem}
-              radius="full"
-              variant="light"
-              onChange={(value) => setIndex(value)}
-            />
-          </div>
+          {items?.length === 0 ? (
+            <div className="min-h-[700px] flex justify-center items-center">
+              <EmptyState />
+            </div>
+          ) : (
+            <>
+              <div className="gap-2 grid grid-cols-2 sm:grid-cols-5">
+                {items?.map((product, index) => (
+                  <MarketItem
+                    key={index}
+                    authorId={product.author?.id}
+                    authorName={product.author?.name}
+                    authorImage={product.author?.avatar}
+                    name={product.name}
+                    image={product.images[0]}
+                    price={product.price}
+                    productId={product.id}
+                  />
+                ))}
+              </div>
+              <div className="w-full flex justify-center mt-4">
+                <Pagination
+                  className="gap-2"
+                  showControls
+                  total={total}
+                  initialPage={1}
+                  renderItem={renderItem}
+                  radius="full"
+                  variant="light"
+                  onChange={(value) => setIndex(value)}
+                />
+              </div>
+            </>
+          )}
         </CardBody>
       </Card>
     </div>

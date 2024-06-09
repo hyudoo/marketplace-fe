@@ -11,6 +11,7 @@ import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
 import { IProductInfo } from "@/_types_";
 import InventoryCard from "./InventoryCard";
 import React from "react";
+import EmptyState from "@/components/EmptyState";
 interface IInventoryTab {
   products?: IProductInfo[];
   type: "inventory" | "listed" | "auction" | "view";
@@ -84,23 +85,31 @@ const InventoryTab: React.FC<IInventoryTab> = ({ products, type }) => {
 
   return (
     <CardBody>
-      <div className="gap-2 grid grid-cols-2 sm:grid-cols-5">
-        {items?.map((product, index) => (
-          <InventoryCard key={index} product={product} type={type} />
-        ))}
-      </div>
-      <div className="w-full flex justify-center mt-4">
-        <Pagination
-          className="gap-2"
-          showControls
-          total={total}
-          initialPage={1}
-          renderItem={renderItem}
-          radius="full"
-          variant="light"
-          onChange={(value) => setIndex(value)}
-        />
-      </div>
+      {items?.length === 0 ? (
+        <div className="min-h-[700px] flex justify-center items-center">
+          <EmptyState />
+        </div>
+      ) : (
+        <>
+          <div className="gap-2 grid grid-cols-2 sm:grid-cols-5">
+            {items?.map((product, index) => (
+              <InventoryCard key={index} product={product} type={type} />
+            ))}
+          </div>
+          <div className="w-full flex justify-center mt-4">
+            <Pagination
+              className="gap-2"
+              showControls
+              total={total}
+              initialPage={1}
+              renderItem={renderItem}
+              radius="full"
+              variant="light"
+              onChange={(value) => setIndex(value)}
+            />
+          </div>
+        </>
+      )}
     </CardBody>
   );
 };

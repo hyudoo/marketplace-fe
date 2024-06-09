@@ -29,7 +29,11 @@ export default async function App() {
   });
   return (
     <>
-      <UserProfile user={user!} isCurrentUser={true} isAdmin={user.role == 1} />
+      <UserProfile
+        user={user!}
+        isCurrentUser={true}
+        isAdmin={user?.role == 2}
+      />
       <Divider className="my-4" />
       <InventoryView
         inventory={res1?.data?.products}
