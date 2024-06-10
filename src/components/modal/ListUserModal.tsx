@@ -9,14 +9,19 @@ import {
   Pagination,
   PaginationItemRenderProps,
   PaginationItemType,
+  Input,
 } from "@nextui-org/react";
 import React from "react";
-import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
+import {
+  IoChevronBackOutline,
+  IoChevronForward,
+  IoSearch,
+} from "react-icons/io5";
 import { IUserInfo } from "@/_types_";
 import { useRouter } from "next/navigation";
 
 interface IListUserModalProps {
-  users?: IUserInfo[];
+  users: IUserInfo[];
   isOpen: boolean;
   onClose: () => void;
 }
@@ -29,9 +34,26 @@ const ListUserModal: React.FC<IListUserModalProps> = ({
   const router = useRouter();
 
   const [index, setIndex] = React.useState<number>(1);
-  const total = Math.ceil(users?.length! / 10);
+  const [total, setTotal] = React.useState(Math.ceil(users?.length! / 10));
   const [items, setItems] = React.useState<IUserInfo[]>();
+  const [search, setSearch] = React.useState<string>("");
+  const [filteredList, setFilteredList] = React.useState<IUserInfo[]>(users);
 
+  React.useEffect(() => {
+    const timeOut = setTimeout(() => {
+      if (search?.length > 0) {
+        const filteredList = users?.filter((product) =>
+          product?.name?.toLowerCase().includes(search.toLowerCase())
+        );
+        setFilteredList(filteredList);
+        setTotal(Math.ceil(filteredList?.length! / 10));
+      } else {
+        setTotal(Math.ceil(users?.length! / 10));
+        setFilteredList(users);
+      }
+    }, 1500);
+    return () => clearTimeout(timeOut);
+  }, [search, users]);
   const renderItem = ({
     ref,
     key,
@@ -91,8 +113,8 @@ const ListUserModal: React.FC<IListUserModalProps> = ({
   React.useEffect(() => {
     const start = (index - 1) * 10;
     const end = index * 10;
-    setItems(users?.slice(start, end));
-  }, [index, users]);
+    setItems(filteredList?.slice(start, end));
+  }, [index, filteredList]);
 
   return (
     <Modal
@@ -105,7 +127,38 @@ const ListUserModal: React.FC<IListUserModalProps> = ({
         <ModalHeader className="justify-center text-large m-2 border-b-2">
           LIST USER
         </ModalHeader>
-        <ModalBody>
+        <ModalBody className="mb-2">
+          <div className="w-full mb-2 rounded-2xl flex justify-center items-center bg-white ">
+            <Input
+              classNames={{
+                label: "text-black/50 dark:text-white/90",
+                input: [
+                  "bg-transparent",
+                  "text-black/90 dark:text-white/90",
+                  "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+                ],
+                innerWrapper: "bg-transparent",
+                inputWrapper: [
+                  "shadow-xl",
+                  "bg-default-200/50",
+                  "dark:bg-default/60",
+                  "backdrop-blur-xl",
+                  "backdrop-saturate-200",
+                  "hover:bg-default-200/70",
+                  "dark:hover:bg-default/70",
+                  "group-data-[focus=true]:bg-default-200/50",
+                  "dark:group-data-[focus=true]:bg-default/60",
+                  "!cursor-text",
+                ],
+              }}
+              placeholder="Type to search..."
+              size="sm"
+              startContent={<IoSearch />}
+              type="search"
+              value={search}
+              onChange={({ target }) => setSearch(target.value)}
+            />
+          </div>
           {items?.map((profile, index) => (
             <div className="flex justify-between" key={index}>
               <div
@@ -131,7 +184,7 @@ const ListUserModal: React.FC<IListUserModalProps> = ({
               </Button>
             </div>
           ))}
-          {total > 0 && (
+          {total > 1 && (
             <div className="w-full flex justify-center mt-4">
               <Pagination
                 className="gap-2"

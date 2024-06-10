@@ -99,7 +99,7 @@ const ExchangeView: React.FC<IExchangeView> = ({
         </Tabs>
       </div>
       <ListUserModal
-        users={users}
+        users={users!}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       />
