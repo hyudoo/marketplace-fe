@@ -168,7 +168,7 @@ export default function CreateExchange({
               Your Item
             </CardHeader>
             <CardBody>
-              {yourItems?.length == 0 ? (
+              {yourTotal == 0 ? (
                 <div className="flex min-h-full justify-center items-center">
                   <EmptyItem />
                 </div>
@@ -209,7 +209,7 @@ export default function CreateExchange({
               Other Item
             </CardHeader>
             <CardBody>
-              {otherItems?.length == 0 ? (
+              {otherTotal == 0 ? (
                 <div className="flex min-h-full justify-center items-center">
                   <EmptyItem />
                 </div>

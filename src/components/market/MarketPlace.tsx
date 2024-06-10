@@ -169,18 +169,20 @@ const MarketPlace: React.FC<IMarketPlaceProps> = ({ products }) => {
                   />
                 ))}
               </div>
-              <div className="w-full flex justify-center mt-4">
-                <Pagination
-                  className="gap-2"
-                  showControls
-                  total={total}
-                  initialPage={1}
-                  renderItem={renderItem}
-                  radius="full"
-                  variant="light"
-                  onChange={(value) => setIndex(value)}
-                />
-              </div>
+              {total > 1 && (
+                <div className="w-full flex justify-center mt-4">
+                  <Pagination
+                    className="gap-2"
+                    showControls
+                    total={total}
+                    initialPage={1}
+                    renderItem={renderItem}
+                    radius="full"
+                    variant="light"
+                    onChange={(value) => setIndex(value)}
+                  />
+                </div>
+              )}
             </>
           )}
         </CardBody>

@@ -20,14 +20,19 @@ import {
 
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { HiOutlineLogout, HiOutlinePlusCircle } from "react-icons/hi";
+import {
+  HiOutlineLogout,
+  HiOutlinePlusCircle,
+  HiOutlineRefresh,
+} from "react-icons/hi";
 import { getAddress } from "@/lib/hooks/getSigner";
 import CrowdSaleModal from "@/components/modal/CrowdSaleModal";
+import axios from "@/lib/axios";
 export default function NavigationLayout() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
 
   const onConnectMetamask = async () => {
     const address = await getAddress();
@@ -45,6 +50,27 @@ export default function NavigationLayout() {
       }
     });
   };
+
+  const refreshMKC = async () => {
+    if (!session) {
+      return;
+    }
+    try {
+      const mkc = await axios.get("/user/getbalance", {
+        headers: {
+          Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+      });
+      await update({
+        ...session?.user,
+        mkc: mkc?.data?.balance,
+      });
+      toast.success("Update MKC successfully");
+    } catch (error) {
+      toast.error("Something went wrongs");
+    }
+  };
+
   return (
     <>
       <Navbar
@@ -79,15 +105,28 @@ export default function NavigationLayout() {
 
         <NavbarContent as="div" justify="end">
           {session?.user && (
-            <Chip
-              variant="flat"
-              avatar={<Avatar src="/logo.png" />}
-              onClick={() => setIsOpen(true)}
-              endContent={<HiOutlinePlusCircle />}>
-              <p className="font-bold text-inherit text-tiny">
-                {formatAccountBalance(session?.user?.mkc || 0) || 0} MKC
-              </p>
-            </Chip>
+            <>
+              <Chip
+                variant="flat"
+                color="warning"
+                className="hover:cursor-pointer"
+                onClick={() => setIsOpen(true)}>
+                <p className="font-bold text-inherit text-tiny">Crowd Sales</p>
+              </Chip>
+              <Chip
+                variant="flat"
+                avatar={<Avatar src="/logo.png" />}
+                endContent={
+                  <HiOutlineRefresh
+                    className="hover:cursor-pointer"
+                    onClick={refreshMKC}
+                  />
+                }>
+                <p className="font-bold text-inherit text-tiny">
+                  {formatAccountBalance(session?.user?.mkc || 0) || 0} MKC
+                </p>
+              </Chip>
+            </>
           )}
           {session?.user ? (
             <Dropdown placement="bottom-end">

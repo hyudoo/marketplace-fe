@@ -131,18 +131,20 @@ const ListUserModal: React.FC<IListUserModalProps> = ({
               </Button>
             </div>
           ))}
-          <div className="w-full flex justify-center mt-4">
-            <Pagination
-              className="gap-2"
-              showControls
-              total={total}
-              initialPage={1}
-              renderItem={renderItem}
-              radius="full"
-              variant="light"
-              onChange={(value) => setIndex(value)}
-            />
-          </div>
+          {total > 0 && (
+            <div className="w-full flex justify-center mt-4">
+              <Pagination
+                className="gap-2"
+                showControls
+                total={total}
+                initialPage={1}
+                renderItem={renderItem}
+                radius="full"
+                variant="light"
+                onChange={(value) => setIndex(value)}
+              />
+            </div>
+          )}
         </ModalBody>
       </ModalContent>
     </Modal>

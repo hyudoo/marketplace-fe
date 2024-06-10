@@ -51,7 +51,7 @@ const FinishAuctionModal: React.FC<IFinishAuctionModal> = ({
       const tx = await auctionContract.finishAuction(product?.id);
       await session.update({
         ...session?.data?.user,
-        mkc: session?.data?.user?.mkc + product?.lastBid!,
+        mkc: session?.data?.user?.mkc + product?.lastBid! * 0.95,
       });
       onOpen("success", { hash: tx, title: "FINISH AUCTIONS" });
       onClose();

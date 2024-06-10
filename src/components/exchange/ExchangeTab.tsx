@@ -9,13 +9,15 @@ import {
 import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
 import ExchangeCard from "./ExchangeCard";
 import React from "react";
+import EmptyExchange from "./EmptyExchange";
 
 interface IExchangeTab {
   exchanges?: IExchange[];
   type: "exchange" | "incoming-exchange";
+  onOpen: () => void;
 }
 
-const ExchangeTab: React.FC<IExchangeTab> = ({ exchanges, type }) => {
+const ExchangeTab: React.FC<IExchangeTab> = ({ exchanges, type, onOpen }) => {
   const [index, setIndex] = React.useState<number>(1);
   const [items, setItems] = React.useState<IExchange[]>();
   const total = Math.ceil(exchanges?.length! / 5);
@@ -84,30 +86,40 @@ const ExchangeTab: React.FC<IExchangeTab> = ({ exchanges, type }) => {
 
   return (
     <CardBody>
-      <div className="gap-2">
-        {items?.map((exchange, index) => (
-          <ExchangeCard
-            key={index}
-            exchangeId={exchange?.id}
-            other={exchange?.other}
-            yourProducts={exchange?.yourProducts}
-            otherProducts={exchange?.otherProducts}
-            type={type}
-          />
-        ))}
-      </div>
-      <div className="w-full flex justify-center mt-4">
-        <Pagination
-          className="gap-2"
-          showControls
-          total={total}
-          initialPage={1}
-          renderItem={renderItem}
-          radius="full"
-          variant="light"
-          onChange={(value) => setIndex(value)}
-        />
-      </div>
+      {total === 0 ? (
+        <div className="min-h-[700px] flex justify-center items-center">
+          <EmptyExchange onOpen={onOpen} />
+        </div>
+      ) : (
+        <>
+          <div className="gap-2">
+            {items?.map((exchange, index) => (
+              <ExchangeCard
+                key={index}
+                exchangeId={exchange?.id}
+                other={exchange?.other}
+                yourProducts={exchange?.yourProducts}
+                otherProducts={exchange?.otherProducts}
+                type={type}
+              />
+            ))}
+          </div>
+          {total > 1 && (
+            <div className="w-full flex justify-center mt-4">
+              <Pagination
+                className="gap-2"
+                showControls
+                total={total}
+                initialPage={1}
+                renderItem={renderItem}
+                radius="full"
+                variant="light"
+                onChange={(value) => setIndex(value)}
+              />
+            </div>
+          )}
+        </>
+      )}
     </CardBody>
   );
 };

@@ -85,7 +85,7 @@ const InventoryTab: React.FC<IInventoryTab> = ({ products, type }) => {
 
   return (
     <CardBody>
-      {items?.length === 0 ? (
+      {total === 0 ? (
         <div className="min-h-[700px] flex justify-center items-center">
           <EmptyState />
         </div>
@@ -96,18 +96,20 @@ const InventoryTab: React.FC<IInventoryTab> = ({ products, type }) => {
               <InventoryCard key={index} product={product} type={type} />
             ))}
           </div>
-          <div className="w-full flex justify-center mt-4">
-            <Pagination
-              className="gap-2"
-              showControls
-              total={total}
-              initialPage={1}
-              renderItem={renderItem}
-              radius="full"
-              variant="light"
-              onChange={(value) => setIndex(value)}
-            />
-          </div>
+          {total > 1 && (
+            <div className="w-full flex justify-center mt-4">
+              <Pagination
+                className="gap-2"
+                showControls
+                total={total}
+                initialPage={1}
+                renderItem={renderItem}
+                radius="full"
+                variant="light"
+                onChange={(value) => setIndex(value)}
+              />
+            </div>
+          )}
         </>
       )}
     </CardBody>
