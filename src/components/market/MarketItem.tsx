@@ -56,19 +56,19 @@ export default function MarketItem({
           </CardBody>
           <CardFooter className="text-small block">
             <div className="w-full">{name}</div>
-            <div className="text-xs lg:text-sm lg:flex lg:justify-between py-3">
+            <div className="text-xs md:text-sm md:grid md:grid-cols-2 py-3">
               <div className="text-gray-600">Author:</div>
               <div
                 className="flex text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
                 onClick={() => router.push(`/account/${authorId}`)}>
                 <Avatar
                   isFocusable
-                  className="mr-2 w-5 h-5"
+                  className="mr-2 w-5 h-5 my-2 md:my-0"
                   isBordered
                   alt="NextUI Fruit Image with Zoom"
                   src={authorImage}
                 />
-                <div className="hover:border-b-1 border-cyan-800">
+                <div className="hover:border-b-1 border-cyan-800 flex items-center">
                   {authorName}
                 </div>
               </div>

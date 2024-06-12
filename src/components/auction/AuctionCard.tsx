@@ -38,11 +38,11 @@ export default function AuctionCard({
   const router = useRouter();
   const [isJoinAuction, setIsJoinAuction] = React.useState<boolean>(false);
   const session = useSession();
-  const [isDisabled, setDisabled] = React.useState<boolean>(
+  const isDisabled =
     !session?.data ||
-      author?.id == session?.data?.user?.id ||
-      lastBidder?.id == session?.data?.user?.id
-  );
+    author?.id == session?.data?.user?.id ||
+    lastBidder?.id == session?.data?.user?.id;
+
   const [canJoin, setCanJoin] = React.useState<boolean>(false);
   const [countdown, setCountdown] = useState<string>("");
 
@@ -55,7 +55,7 @@ export default function AuctionCard({
         const remainingTime = moment.duration(
           startDateTime.diff(currentDateTime)
         );
-        setCountdown(`Begin in ${remainingTime.humanize()}`);
+        setCountdown(`Start in ${remainingTime.humanize()}`);
         setCanJoin(true);
       } else if (currentDateTime < endDateTime) {
         const remainingTime = moment.duration(
@@ -64,6 +64,7 @@ export default function AuctionCard({
         setCountdown(`Remaining ${remainingTime.humanize()}`);
         setCanJoin(false);
       } else {
+        setCountdown("Finished");
         setCanJoin(true);
       }
     };
@@ -95,26 +96,51 @@ export default function AuctionCard({
             />
           </CardBody>
           <CardFooter className="text-small block">
-            {countdown && <div>{countdown}</div>}
+            {countdown && (
+              <div className="md:text-lg text-center mb-2">
+                <Chip variant="faded" color="primary">
+                  {countdown}
+                </Chip>
+              </div>
+            )}
 
             <div className="w-full">{name}</div>
-            <div className="text-xs lg:text-sm lg:flex lg:justify-between py-3">
-              <div className="text-gray-600">Last Bidder:</div>
+            <div className="text-xs md:text-sm md:grid md:grid-cols-2 py-3">
+              <div className="text-gray-600">Author:</div>
               <div
                 className="flex text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
-                onClick={() => router.push(`/account/${lastBidder?.id}`)}>
+                onClick={() => router.push(`/account/${author?.id}`)}>
                 <Avatar
-                  className="mr-2 w-5 h-5"
+                  className="mr-2 w-5 h-5 my-2 md:my-0"
                   isFocusable
                   isBordered
                   alt="NextUI Fruit Image with Zoom"
-                  src={lastBidder?.avatar}
+                  src={author?.avatar}
                 />
-                <div className="hover:border-b-1 border-cyan-800">
-                  {lastBidder?.name || "Unnamed"}
+                <div className="hover:border-b-1 border-cyan-800 flex items-center">
+                  {author?.name || "Unnamed"}
                 </div>
               </div>
             </div>
+            {lastBidder && (
+              <div className="text-xs md:text-sm md:grid md:grid-cols-2 py-3">
+                <div className="text-gray-600">Last Bidder:</div>
+                <div
+                  className="flex text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
+                  onClick={() => router.push(`/account/${lastBidder?.id}`)}>
+                  <Avatar
+                    className="mr-2 w-5 h-5 my-2 md:my-0"
+                    isFocusable
+                    isBordered
+                    alt="NextUI Fruit Image with Zoom"
+                    src={lastBidder?.avatar}
+                  />
+                  <div className="hover:border-b-1 border-cyan-800 flex items-center">
+                    {lastBidder?.name || "Unnamed"}
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="text-small">Last bid: {lastBid} MKC</div>
             <Button
               onClick={() => setIsJoinAuction(true)}
