@@ -5,6 +5,7 @@ import {
   Card,
   CardBody,
   CardFooter,
+  Chip,
   Image,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
@@ -18,7 +19,6 @@ interface IProductProps {
   image: string;
   price?: number | string;
   productId?: number;
-  render?: () => void;
 }
 
 export default function MarketItem({
@@ -29,7 +29,6 @@ export default function MarketItem({
   image,
   price,
   productId,
-  render,
 }: IProductProps) {
   const router = useRouter();
   const [isBuyOpen, setIsBuyOpen] = React.useState<boolean>(false);
@@ -39,6 +38,12 @@ export default function MarketItem({
     <>
       <div onClick={() => router.push(`/product/${productId}`)}>
         <Card shadow="sm" className="h-full">
+          <Chip
+            className="z-50 hover:cursor-pointer absolute left-1 top-1 text-center p-1 text-xs md:text-sm"
+            color="primary"
+            variant="flat">
+            ID: {productId}
+          </Chip>
           <CardBody className="overflow-visible flex flex-col">
             <Image
               shadow="sm"

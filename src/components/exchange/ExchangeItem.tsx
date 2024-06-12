@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Chip, Image } from "@nextui-org/react";
 import { showShorterString } from "@/utils";
 import { useRouter } from "next/navigation";
 interface IProductProps {
@@ -24,6 +24,12 @@ export default function ExchangeItem({
       <Card
         shadow="sm"
         className={isCheck ? "border-1 border-sky-700 h-full" : "h-full"}>
+        <Chip
+          className="z-50 hover:cursor-pointer absolute left-1 top-1 text-center p-1 text-xs md:text-sm"
+          color="primary"
+          variant="flat">
+          ID: {productId}
+        </Chip>
         <CardBody className="overflow-visible p-0 flex flex-col">
           <Image
             shadow="sm"

@@ -13,6 +13,7 @@ import {
   Image,
   Divider,
   Avatar,
+  Chip,
 } from "@nextui-org/react";
 import JoinAuctionModal from "../modal/JoinAuctionModal";
 import { useRouter } from "next/navigation";
@@ -74,7 +75,13 @@ const ProductView: React.FC<IProductViewProps> = ({
   return (
     <>
       <div className="md:grid md:grid-cols-3 space-x-2 p-2 w-full bg-white">
-        <div>
+        <div className="p-2 relative">
+          <Chip
+            className="z-50 hover:cursor-pointer absolute top-0 left-0 text-center p-2 text-xs md:text-sm"
+            color="primary"
+            variant="flat">
+            ID: {product?.id}
+          </Chip>
           <Image
             width="100%"
             src={mainImage}

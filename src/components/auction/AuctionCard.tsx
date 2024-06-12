@@ -44,7 +44,6 @@ export default function AuctionCard({
       lastBidder?.id == session?.data?.user?.id
   );
   const [canJoin, setCanJoin] = React.useState<boolean>(false);
-  const [text, setText] = useState<string>("");
   const [countdown, setCountdown] = useState<string>("");
 
   useEffect(() => {
@@ -57,18 +56,15 @@ export default function AuctionCard({
           startDateTime.diff(currentDateTime)
         );
         setCountdown(`Begin in ${remainingTime.humanize()}`);
-        setText("Upcoming");
         setCanJoin(true);
       } else if (currentDateTime < endDateTime) {
         const remainingTime = moment.duration(
           endDateTime.diff(currentDateTime)
         );
         setCountdown(`Remaining ${remainingTime.humanize()}`);
-        setText("In progress");
         setCanJoin(false);
       } else {
         setCanJoin(true);
-        setText("Finished");
       }
     };
     const interval = setInterval(updateCountdown, 1000);
@@ -81,15 +77,13 @@ export default function AuctionCard({
   return (
     <>
       <div onClick={() => router.push(`product/${productId}`)}>
-        <Card shadow="sm">
-          {text && (
-            <Chip
-              className="z-50 hover:cursor-pointer absolute right-1 text-center p-2"
-              color="primary"
-              variant="flat">
-              {text}
-            </Chip>
-          )}
+        <Card shadow="sm" className="h-full">
+          <Chip
+            className="z-50 hover:cursor-pointer absolute left-1 text-center p-2 text-xs md:text-sm"
+            color="primary"
+            variant="flat">
+            ID: {productId}
+          </Chip>
           <CardBody className="overflow-visible flex flex-col">
             <Image
               shadow="sm"
