@@ -180,6 +180,7 @@ export default function CreateExchange({
                         onClick={() => handleClick("sender", product)}
                         key={index}
                         name={product.name}
+                        productId={product?.id}
                         image={product.images[0]}
                         isCheck={senderProducts.includes(product)}
                       />
