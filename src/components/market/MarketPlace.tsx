@@ -155,7 +155,7 @@ const MarketPlace: React.FC<IMarketPlaceProps> = ({ products }) => {
             </div>
           ) : (
             <>
-              <div className="gap-2 grid grid-cols-2 sm:grid-cols-5">
+              <div className="gap-2 grid grid-cols-2 lg:grid-cols-5">
                 {items?.map((product, index) => (
                   <MarketItem
                     key={index}

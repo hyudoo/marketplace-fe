@@ -91,7 +91,7 @@ const InventoryTab: React.FC<IInventoryTab> = ({ products, type }) => {
         </div>
       ) : (
         <>
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-5">
+          <div className="gap-2 grid grid-cols-2 lg:grid-cols-5">
             {items?.map((product, index) => (
               <InventoryCard key={index} product={product} type={type} />
             ))}
