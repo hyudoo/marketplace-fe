@@ -52,7 +52,7 @@ export default function ExchangeCard({
             </div>
           </div>
         </div>
-        <div className="md:grid md:grid-cols-2 flex flex-col gap-2">
+        <div className="lg:grid lg:grid-cols-2 flex flex-col gap-2">
           <Card>
             <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
               Your Item

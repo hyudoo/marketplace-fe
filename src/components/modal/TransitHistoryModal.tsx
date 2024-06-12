@@ -39,7 +39,7 @@ const TransitHistoryModal: React.FC<ITransitHistoryModalProps> = ({
         </ModalHeader>
         <ModalBody>
           <div className="space-y-2 text-lg">
-            <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+            <div className="text-xs lg:text-sm grid grid-cols-3 items-center py-3">
               <div className="text-gray-600 font-semibold">Manufacturer:</div>
               <div
                 className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
@@ -58,7 +58,7 @@ const TransitHistoryModal: React.FC<ITransitHistoryModalProps> = ({
               </div>
             </div>
             <Divider />
-            <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+            <div className="text-xs lg:text-sm grid grid-cols-3 items-center py-3">
               <div className="text-gray-600 font-semibold">Author:</div>
               <div
                 className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
@@ -80,13 +80,13 @@ const TransitHistoryModal: React.FC<ITransitHistoryModalProps> = ({
             </div>
             <Divider />
           </div>
-          <div className="text-xs md:text-sm text-gray-600 font-semibold">
+          <div className="text-xs lg:text-sm text-gray-600 font-semibold">
             Transit History:
           </div>
           {history.map((item, index) => (
             <div
               key={index}
-              className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+              className="text-xs lg:text-sm grid grid-cols-3 items-center py-3">
               <div>{index + 1}</div>
               <div
                 className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"

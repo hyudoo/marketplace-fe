@@ -39,7 +39,7 @@ export default function MarketItem({
       <div onClick={() => router.push(`/product/${productId}`)}>
         <Card shadow="sm" className="h-full">
           <Chip
-            className="z-50 hover:cursor-pointer absolute left-1 top-1 text-center p-1 text-xs md:text-sm"
+            className="z-50 hover:cursor-pointer absolute left-1 top-1 text-center p-1 text-xs lg:text-sm"
             color="primary"
             variant="flat">
             ID: {productId}
@@ -56,7 +56,7 @@ export default function MarketItem({
           </CardBody>
           <CardFooter className="text-small block">
             <div className="w-full">{name}</div>
-            <div className="text-xs md:text-sm lg:flex lg:justify-between py-3">
+            <div className="text-xs lg:text-sm lg:flex lg:justify-between py-3">
               <div className="text-gray-600">Author:</div>
               <div
                 className="flex text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
@@ -74,12 +74,12 @@ export default function MarketItem({
               </div>
             </div>
 
-            <div className="md:justify-between md:flex md:items-center">
+            <div className="lg:justify-between lg:flex lg:items-center">
               <p className="text-default-500">Price: {price} MKC</p>
               <Button
                 variant="flat"
                 color="primary"
-                className="w-full md:w-20"
+                className="w-full lg:w-20"
                 disabled={!session?.data || session.data?.user.id == authorId}
                 onClick={() => setIsBuyOpen(true)}>
                 Buy

@@ -67,7 +67,7 @@ const CrowdSaleModal: React.FC<ICrowdSaleModal> = ({ isOpen, onClose }) => {
           <HiOutlineShoppingCart size={24} /> Crowd Sales
         </ModalHeader>
         <ModalBody>
-          <div className="gap-2 grid grid-cols-2 md:grid-cols-4">
+          <div className="gap-2 grid grid-cols-2 lg:grid-cols-4">
             {packages.map((pk, index) => (
               <InvestCard
                 pak={pk}

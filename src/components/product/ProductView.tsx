@@ -74,10 +74,10 @@ const ProductView: React.FC<IProductViewProps> = ({
 
   return (
     <>
-      <div className="md:grid md:grid-cols-3 space-x-2 p-2 w-full bg-white">
+      <div className="lg:grid lg:grid-cols-3 space-x-2 p-2 w-full bg-white">
         <div className="p-2 relative">
           <Chip
-            className="z-50 hover:cursor-pointer absolute top-0 left-0 text-center p-2 text-xs md:text-sm"
+            className="z-50 hover:cursor-pointer absolute top-0 left-0 text-center p-2 text-xs lg:text-sm"
             color="primary"
             variant="flat">
             ID: {product?.id}
@@ -146,7 +146,7 @@ const ProductView: React.FC<IProductViewProps> = ({
             </CardHeader>
             <Divider />
             <CardBody className="px-3 py-0 text-small text-default-400">
-              <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+              <div className="text-xs lg:text-sm grid grid-cols-3 items-center py-3">
                 <div className="text-gray-600 font-semibold">Manufacturer:</div>
                 <div
                   className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
@@ -168,7 +168,7 @@ const ProductView: React.FC<IProductViewProps> = ({
               </div>
               <Divider />
 
-              <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+              <div className="text-xs lg:text-sm grid grid-cols-3 items-center py-3">
                 <div className="text-gray-600 font-semibold">Author:</div>
                 <div
                   className="col-span-2 flex items-center text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"
@@ -192,7 +192,7 @@ const ProductView: React.FC<IProductViewProps> = ({
               <Divider />
               {product?.price && (
                 <div className="justify-between flex w-full py-2">
-                  <p className="text-xs md:text-sm text-gray-600 font-semibold items-center flex">
+                  <p className="text-xs lg:text-sm text-gray-600 font-semibold items-center flex">
                     Price: {product?.price} MKC
                   </p>
                   {product?.author?.id == session?.data?.user?.id ? (
@@ -218,7 +218,7 @@ const ProductView: React.FC<IProductViewProps> = ({
 
               {product?.lastBid && (
                 <div>
-                  <div className="text-xs md:text-sm grid grid-cols-3 items-center py-3">
+                  <div className="text-xs lg:text-sm grid grid-cols-3 items-center py-3">
                     <div className="text-gray-600 font-semibold">
                       Last Bidder:
                     </div>
@@ -242,7 +242,7 @@ const ProductView: React.FC<IProductViewProps> = ({
                   </div>
                   <Divider />
                   <div className="flex justify-between py-2">
-                    <p className="text-xs md:text-sm text-gray-600 font-semibold items-center flex">
+                    <p className="text-xs lg:text-sm text-gray-600 font-semibold items-center flex">
                       Bid: {product?.lastBid} MKC
                     </p>
                     <Button
@@ -265,7 +265,7 @@ const ProductView: React.FC<IProductViewProps> = ({
 
             <Divider />
             <CardFooter className="gap-3 flex flex-col">
-              <div className="text-xs md:text-sm w-full">
+              <div className="text-xs lg:text-sm w-full">
                 <div className="text-gray-600 font-semibold">
                   Product Description:
                 </div>

@@ -79,7 +79,7 @@ export default function AuctionCard({
       <div onClick={() => router.push(`product/${productId}`)}>
         <Card shadow="sm" className="h-full">
           <Chip
-            className="z-50 hover:cursor-pointer absolute left-1 text-center p-2 text-xs md:text-sm"
+            className="z-50 hover:cursor-pointer absolute left-1 text-center p-2 text-xs lg:text-sm"
             color="primary"
             variant="flat">
             ID: {productId}
@@ -98,7 +98,7 @@ export default function AuctionCard({
             {countdown && <div>{countdown}</div>}
 
             <div className="w-full">{name}</div>
-            <div className="text-xs md:text-sm lg:flex lg:justify-between py-3">
+            <div className="text-xs lg:text-sm lg:flex lg:justify-between py-3">
               <div className="text-gray-600">Last Bidder:</div>
               <div
                 className="flex text-gray-600/75 hover:text-cyan-600 hover:cursor-pointer"

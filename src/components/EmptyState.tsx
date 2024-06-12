@@ -4,7 +4,7 @@ export default function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <Image
-        className="w-3/5 md:w-1/5 mx-auto"
+        className="w-3/5 lg:w-1/5 mx-auto"
         src="empty-state.jpg"
         alt="empty-state"
       />

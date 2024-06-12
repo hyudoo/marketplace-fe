@@ -33,7 +33,7 @@ export default function InventoryCard({ product, type }: IInventoryCardProps) {
       <div onClick={() => router.push(`/product/${product?.id}`)}>
         <Card shadow="sm" className="h-full">
           <Chip
-            className="z-50 hover:cursor-pointer absolute left-1 top-1 text-center p-1 text-xs md:text-sm"
+            className="z-50 hover:cursor-pointer absolute left-1 top-1 text-center p-1 text-xs lg:text-sm"
             color="primary"
             variant="flat">
             ID: {product.id}

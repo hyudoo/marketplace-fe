@@ -108,23 +108,23 @@ const UserSetting: React.FC<IUserSettingProps> = ({ user }) => {
       <div className="px-5">Avatar:</div>
       <div className="relative mx-3 pb-4 mb-6 border-2 border-slate-300 rounded-2xl mt-2">
         {yourProfile?.avatar ? (
-          <div className="flex justify-center min-h-32 md:min-h-40 items-center">
-            <div className="relative w-28 md:w-36">
+          <div className="flex justify-center min-h-32 lg:min-h-40 items-center">
+            <div className="relative w-28 lg:w-36">
               <Avatar
-                className="w-28 h-28 md:w-32 md:h-32"
+                className="w-28 h-28 lg:w-32 lg:h-32"
                 isBordered
                 alt="NextUI Fruit Image with Zoom"
                 src={yourProfile?.avatar}
               />
               <div
-                className="z-10 hover:cursor-pointer absolute text-red-400  hover:text-red-600 top-0 right-1 h-4 w-4 md:h-6 md:w-6"
+                className="z-10 hover:cursor-pointer absolute text-red-400  hover:text-red-600 top-0 right-1 h-4 w-4 lg:h-6 lg:w-6"
                 onClick={() => setYourProfile({ ...yourProfile, avatar: "" })}>
                 <FaXmark />
               </div>
             </div>
           </div>
         ) : (
-          <div className="min-h-24 md:min-h-36 flex text-slate-500 items-center justify-center">
+          <div className="min-h-24 lg:min-h-36 flex text-slate-500 items-center justify-center">
             Upload your avatar
           </div>
         )}
@@ -147,22 +147,22 @@ const UserSetting: React.FC<IUserSettingProps> = ({ user }) => {
       <div className="px-5">Banner:</div>
       <div className="relative mx-3 pb-4 mb-6 border-2 border-slate-300 rounded-2xl mt-2">
         {yourProfile?.banner ? (
-          <div className="flex justify-center min-h-32 md:min-h-40 items-center">
-            <div className="relative h-28 md:h-32">
+          <div className="flex justify-center min-h-32 lg:min-h-40 items-center">
+            <div className="relative h-28 lg:h-32">
               <Image
-                className="h-28 w-80 md:h-32 md:w-96"
+                className="h-28 w-80 lg:h-32 lg:w-96"
                 alt="NextUI Fruit Image with Zoom"
                 src={yourProfile?.banner}
               />
               <div
-                className="z-10 hover:cursor-pointer absolute text-red-400  hover:text-red-600 top-0 right-1 h-4 w-4 md:h-6 md:w-6"
+                className="z-10 hover:cursor-pointer absolute text-red-400  hover:text-red-600 top-0 right-1 h-4 w-4 lg:h-6 lg:w-6"
                 onClick={() => setYourProfile({ ...yourProfile, banner: "" })}>
                 <FaXmark />
               </div>
             </div>
           </div>
         ) : (
-          <div className="min-h-24 md:min-h-36 flex text-slate-500 items-center justify-center">
+          <div className="min-h-24 lg:min-h-36 flex text-slate-500 items-center justify-center">
             Upload your Banner
           </div>
         )}

@@ -92,7 +92,7 @@ export default function App() {
       <div className="text-2xl font-bold flex items-center justify-center py-3">
         ADD PRODUCT
       </div>
-      <div className="md:grid md:grid-cols-2 mb-6 md:mb-2 space-y-4 md:space-y-0 gap-4 w-full">
+      <div className="lg:grid lg:grid-cols-2 mb-6 lg:mb-2 space-y-4 lg:space-y-0 gap-4 w-full">
         <Input
           variant={"bordered"}
           label="Name"
@@ -125,12 +125,12 @@ export default function App() {
             Upload your product images
           </div>
         ) : (
-          <div className="p-2 min-h-40 place-items-center grid grid-cols-3 md:flex md:flex-wrap gap-1 md:justify-center items-center justify-start">
+          <div className="p-2 min-h-40 place-items-center grid grid-cols-3 lg:flex lg:flex-wrap gap-1 lg:justify-center items-center justify-start">
             {images.map((image: any, index: number) => (
-              <div key={index} className="relative md:w-40">
+              <div key={index} className="relative lg:w-40">
                 <Image alt="NextUI Fruit Image with Zoom" src={image} />
                 <div
-                  className="z-10 hover:cursor-pointer absolute text-red-400  hover:text-red-600 top-0 right-1 h-4 w-4 md:h-6 md:w-6"
+                  className="z-10 hover:cursor-pointer absolute text-red-400  hover:text-red-600 top-0 right-1 h-4 w-4 lg:h-6 lg:w-6"
                   onClick={() =>
                     setValue("images", images.toSpliced(index, 1))
                   }>
@@ -166,7 +166,7 @@ export default function App() {
         onChange={(e: any) => setValue("description", e)}
       />
       <div className="flex justify-center mt-3">
-        <Button className="w-full md:w-20" type="submit" isLoading={isLoading}>
+        <Button className="w-full lg:w-20" type="submit" isLoading={isLoading}>
           Submit
         </Button>
       </div>

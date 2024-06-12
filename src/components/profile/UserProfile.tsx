@@ -42,7 +42,7 @@ const UserProfile: React.FC<IUserProfileProps> = ({
         />
 
         <Avatar
-          className="absolute w-36 h-36 md:w-48 md:h-48 border-2 left-4 z-10 -bottom-10 border-white drop-shadow-md text-large"
+          className="absolute w-36 h-36 lg:w-48 lg:h-48 border-2 left-4 z-10 -bottom-10 border-white drop-shadow-md text-large"
           src={user?.avatar}
         />
       </div>

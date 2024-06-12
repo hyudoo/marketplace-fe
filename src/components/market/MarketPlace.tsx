@@ -112,7 +112,7 @@ const MarketPlace: React.FC<IMarketPlaceProps> = ({ products }) => {
   return (
     <div className="flex w-full flex-col">
       <div className="m-3 flex justify-center">
-        <div className="w-full md:w-[440px] lg:w-[880px] rounded-2xl flex justify-center items-center bg-white ">
+        <div className="w-full lg:w-[440px] lg:w-[880px] rounded-2xl flex justify-center items-center bg-white ">
           <Input
             classNames={{
               label: "text-black/50 dark:text-white/90",
