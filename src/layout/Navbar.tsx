@@ -20,11 +20,7 @@ import {
 
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import {
-  HiOutlineLogout,
-  HiOutlinePlusCircle,
-  HiOutlineRefresh,
-} from "react-icons/hi";
+import { HiOutlineLogout, HiOutlineRefresh } from "react-icons/hi";
 import { getAddress } from "@/lib/hooks/getSigner";
 import CrowdSaleModal from "@/components/modal/CrowdSaleModal";
 import axios from "@/lib/axios";
@@ -123,7 +119,7 @@ export default function NavigationLayout() {
                   />
                 }>
                 <p className="font-bold text-inherit text-tiny">
-                  {formatAccountBalance(session?.user?.mkc || 0) || 0} MKC
+                  {formatAccountBalance(session?.user?.mkc)} MKC
                 </p>
               </Chip>
             </>
