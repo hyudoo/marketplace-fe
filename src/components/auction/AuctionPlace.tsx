@@ -146,7 +146,7 @@ const AuctionPlace: React.FC<IAuctionPlaceProps> = ({ products }) => {
       </div>
       <Card className="mx-3">
         <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
-          Auctions
+          Auction Place
         </CardHeader>
         <CardBody>
           {items?.length === 0 ? (

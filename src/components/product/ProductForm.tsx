@@ -39,18 +39,7 @@ export default function App() {
 
   const images = watch("images");
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    data.images = [
-      "https://utfs.io/f/2a14b691-01ae-4137-abf8-0c36c3426bab-1j.jpg",
-      "https://utfs.io/f/b025c48a-9c90-457a-8eb4-5c2c855bccba-1i.jpg",
-      "https://utfs.io/f/78776b0e-fc29-4e25-848a-2fad36bb3916-1h.jpg",
-      "https://utfs.io/f/cd012118-3c57-48b1-bccc-1df210e95cd1-1g.jpg",
-      "https://utfs.io/f/27ae43e1-0bd0-4129-904f-d0e7b1cab14a-1f.jpg",
-      "https://utfs.io/f/e18f92a0-c579-4743-ae43-a2f2084ba475-1e.jpg",
-      "https://utfs.io/f/251e054c-72ac-449a-aadc-f089480a42ce-1d.jpg",
-    ];
-    data.description =
-      "<p>*Specifications:&nbsp;</p><p>- Long flight range: 3 km&nbsp;</p><p>- Flight time: 28-30 minutes&nbsp;</p><p>- 3-axis anti-vibration gimbal&nbsp;</p><p>- Battery capacity 2400mAh&nbsp;</p><p>- Brushless motor&nbsp;</p><p>- Charging time 4-5 hours</p>";
+  const onSubmit: SubmitHandler<FieldValues> = async (data: any) => {
     if (!session.data) {
       router.push("/");
     }

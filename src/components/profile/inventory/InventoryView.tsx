@@ -75,7 +75,7 @@ const InventoryView: React.FC<IInventory> = ({
           title={
             <div className="flex items-center space-x-2">
               <RiAuctionLine />
-              <span>Auctions</span>
+              <span>Auction</span>
               <Chip size="sm" variant="faded">
                 {auctionProducts?.length || 0}
               </Chip>
@@ -83,7 +83,7 @@ const InventoryView: React.FC<IInventory> = ({
           }>
           <Card className="mx-3">
             <CardHeader className="items-center justify-center uppercase font-bold text-xl gap-x-1">
-              YOUR AUCTIONS PRODUCTS
+              YOUR AUCTION PRODUCTS
             </CardHeader>
             <InventoryTab products={auctionProducts} type="auction" />
           </Card>

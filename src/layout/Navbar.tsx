@@ -94,7 +94,7 @@ export default function NavigationLayout() {
             <Link
               className="font-bold text-black hover:cursor-pointer"
               onClick={() => router.push("/auction")}>
-              Auction
+              Auction Place
             </Link>
           </NavbarItem>
         </NavbarContent>
